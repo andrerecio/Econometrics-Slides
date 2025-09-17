@@ -1,6 +1,6 @@
 ---
 title: "Econometrics"
-subtitle: "Probability"
+subtitle: "Probability: 🎲, 🔮, 🪙"
 author: "Florian Oswald"
 date: "UniTo ESOMAS </br> `r Sys.Date()`"
 output:
@@ -80,7 +80,7 @@ countdown(
 
 *Probability* is a function that assigns a value in $[0,1]$ to a *set* (representing *events*).
 
-Consider a fair 6-sided dice.
+Consider a fair 6-sided dice. 🎲
 
 * Outcome space: $\Omega = \{1,2,3,4,5,6\}$
 * Event: a partition of $\Omega$.
@@ -89,27 +89,46 @@ Consider a fair 6-sided dice.
 
 For example, the events A ("the outcome is even") and B ("the outcome is odd") are:
 
-$$
-\begin{align}
+$$\begin{align}
 A &= \{2,4,6\},\\
 B &= \{1,3,5\}.
-\end{align}
-$$
+\end{align}$$
+
 Having a *fair* dice means that
 
-$$
-\Pr(1) = \dots = \Pr(6) = \frac{1}{6}
-$$
+$$\Pr(1) = \dots = \Pr(6) = \frac{1}{6}$$
+
+---
+
+class: inverse
+
+# Probabilities
+
+Given a fair 6-sided dice 🎲, i.e. an outcome space $\Omega = \{1,2,3,4,5,6\}$
+and events
+
+$$\begin{align}
+A &= \{2,4,6\},\\
+B &= \{1,3,5\}.
+\end{align}$$
+
+how does one determine the ***likelihood*** (or the **probability**) of event A occuring?
+
+
 
 ---
 
 # Discrete Random Variables
 
-A *Discrete Random Variable* is a function mapping outcomes to a measurements.
+A *Discrete Random Variable* is a function mapping outcomes to measurements.
 
-* For example, we might call $X$ the number we obtain from throwing the dice once.
+For example, we might call
 
-* For example, we might call $Y$ the 2 numbers we obtain from throwing the dice two times. 
+* $X$ the number we obtain from throwing the dice once.
+
+* $X_1,X_2$ the 2 numbers we obtain from throwing the dice two times. 
+
+* $D$ an indicator (either `0`, `1`) for whether a randomly sampled person answers "yes" or "no" when asked whether they have children. 
 
 
 ---
@@ -119,7 +138,7 @@ class: inverse
 
 The dealer tosses a fair coin. If it comes up tails (`T`) you win, if it's heads (`H`)you loose. 
 
-Suppose we've seen the following sequence of tosses so far, where `0` means heads, and `1` means tails:
+Suppose we've seen the following sequence of tosses so far:
 
 ```
 outcome:  H   H   H   H   H   H   H   H   H   H   ?
@@ -127,6 +146,14 @@ toss num: 1.  2.  3.  4.  5.  6.  7.  8.  9.  10. 11.
 ```
 
 You have lost 10 times in a row now. Does this increase the probability that you will win the next round? 
+
+--
+
+Which sequence is more likely to occur?
+
+1. `TTTTTTTTTT` (10 `T` in a row)?
+2. `HTHTTHTHHT` (random occurence of `T` and `H`)
+
 
 
 ---
@@ -145,7 +172,7 @@ Ok, but I already had 10 `H`! What's the next toss likely going to be given that
 $$
 \Pr(\text{toss 11 is Heads} | 10 \text{ Heads before})
 $$
-Let's calculate that probability!
+Let's calculate that probability on the board!
 
 
 ---
@@ -161,14 +188,12 @@ layout: true
 
 <div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
 
-
-
 ---
 
-## PDFs and CDFs of discrete RVs
+## PDF/PMF and CDF of discrete RVs
 
-* The PDF of a discrete RV is a table listing each outcome and the associated probability of observing it. (sometimes called probability *mass* function)
-* The CDF is the probability that a given RV takes on a value less than or equal a certain value. 
+* PDF/PMF: Probability Density/Mass Function. Table listing each outcome and the associated probability of observing it.
+* CDF: Cumulative Distribution Function. Probability that a given RV takes on a value *less than or equal a certain value* (requires a notion of *ordering* - e.g. what about a dice with 6 different **colors**?)
 
 ### For our 6-sided fair dice
 
@@ -180,10 +205,10 @@ text_pdf
 
 ---
 
-## PDFs and CDFs of discrete RVs
+## PDF/PMF and CDF of discrete RVs
 
-* The PDF of a discrete RV is a table listing each outcome and the associated probability of observing it. (sometimes called probability *mass* function)
-* The CDF is the probability that a given RV takes on a value less than or equal a certain value. 
+* PDF/PMF: Probability Density/Mass Function. Table listing each outcome and the associated probability of observing it.
+* CDF: Cumulative Distribution Function. Probability that a given RV takes on a value *less than or equal a certain value* (requires a notion of *ordering* - e.g. what about a dice with 6 different **colors**?)
 
 ### For our 6-sided fair dice
 
@@ -203,6 +228,56 @@ plot(num_pdf$cdf,
      xlab = "Outcomes",
      ylab="Cumulative Probability",
      pch=20) 
+```
+]
+
+
+
+---
+
+## PDF/PMF and CDF of discrete RVs
+
+* PDF/PMF: Probability Density/Mass Function. Table listing each outcome and the associated probability of observing it.
+* CDF: Cumulative Distribution Function. Probability that a given RV takes on a value *less than or equal a certain value* (requires a notion of *ordering* - e.g. what about a dice with 6 different **colors**?)
+
+### For our fair coin
+
+```{r,echo = FALSE}
+coin_pdf = data.frame(outcome = c(0,1), pdf= 1/2, cdf = cumsum(rep(1/2,2)))
+ctext_pdf = data.frame(outcome = c("H(0)","T(1)"), pdf= "1/2", cdf = paste0(1:2,"/2"))
+ctext_pdf
+```
+
+---
+
+
+
+## PDF/PMF and CDF of discrete RVs
+
+* PDF/PMF: Probability Density/Mass Function. Table listing each outcome and the associated probability of observing it.
+* CDF: Cumulative Distribution Function. Probability that a given RV takes on a value *less than or equal a certain value* (requires a notion of *ordering* - e.g. what about a dice with 6 different **colors**?)
+
+### For our fair coin
+
+.pull-left[
+
+```{r,echo = FALSE,fig.height=4}
+plot(coin_pdf$outcome,
+     coin_pdf$pdf,
+     xlab = "Outcomes",
+     ylab="Probability",
+     pch=20,xaxt = "n") 
+axis(1, at = c(0,1))
+```
+]
+
+.pull-right[
+```{r,echo = FALSE,fig.height=4}
+plot(coin_pdf$outcome,coin_pdf$cdf,
+     xlab = "Outcomes",
+     ylab="Cumulative Probability",
+     pch=20,xaxt = "n") 
+axis(1, at = c(0,1)) 
 ```
 ]
 
@@ -249,29 +324,29 @@ layout: true
 
 We write
 
-$$
-E(Y) = y_1 p_1 + \dots + y_n p_n
-$$
+$$E(Y) = y_1 p_1 + \dots + y_n p_n$$
 
 For example for our dice example, where $X$ is the result of throwing the dice: 
 
-$$
-\begin{align}
+
+$$\begin{align}
 E(X) &= 1 \times \Pr(1) + 2 \times \Pr(2) + \dots + 6 \times \Pr(6) \\
      &=
-\end{align}
-$$
+\end{align}$$
+
+
 **Everybody calculate this result now!**
 
 ---
 
-## Expected Value and Variance
+# Expected Value and Variance
 
 We write
 
 $$
 E(Y) = y_1 p_1 + \dots + y_n p_n
 $$
+
 ```{r, echo = FALSE}
 x = 1:6
 pr = 1/6
@@ -280,32 +355,64 @@ EX = sum(x * pr)
 
 For example for our dice example, where $X$ is the result of throwing the dice: 
 
-$$
-\begin{align}
+$$\begin{align}
 E(X) &= 1 \times \Pr(1) + 2 \times \Pr(2) + \dots + 6 \times \Pr(6) \\
      &= 1 \times \frac{1}{6} + 2 \times \frac{1}{6} + \dots + 6 \times \frac{1}{6} \\
      &= `r EX` \\
-\end{align}
-$$
-* Given the weight is constant ($1/6$), this is identical to the arithmetic mean of numbers 1,...6:
+\end{align}$$
 
-```{r}
-mean(1:6)
-```
+* So: We need to know ***all*** weights and values ($\Pr$ and $X$) in order to compute this quantity.
+
+
 
 ---
 
-## $E(X)$ is a Theoretical Concept
+# $E(X)$ is a Theoretical Concept. Mission Impossible?
 
-* $E(X)$ hinges on the fact that we know the precise probabilities of each outcome.
-* If we had a huge number of dice throws, we could form an *estimate* of $E(X)$, based on those data (more on that later)
+* Imagine you get this message:
+
+--
+
+1. Your mission, should you choose to accept it, is to inspect this device : 🔮. Whenever you touch it, it displays a number in $\{1,\dots,10\}$. E.g. `4,8,4,9,1,5,10,9,1`...kind of random.
+2. We must know the long-run average, i.e. E(🔮). Or something terrible will happen!
+3. This message will destroy itself in 10,9,8,...💣
+
+--
+
+* You **don't know** the theoretical distribution of all the numbers in 🔮 (the $\Pr$'s). Time is running ⏰
+
+--
+
+* What could you do? 🤔
+
+
+---
+
+<iframe src="https://giphy.com/embed/plVdDRfj5WV47sIAsh" width="960" height="538" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
+---
+
+# $E(X)$ is a Theoretical Concept. Mission Impossible?
+
+
+* If we had a huge number of observations from 🔮 (a *sample*), we could come up with a *guess* of E(🔮), based on the data we got. Empirical, like.
 
 ```{r}
 set.seed(12345)  # to ensure reproducibility
-x = sample(1:6, size = 10000, replace = TRUE)
-estimate = mean(x)
-estimate
+Ps = runif(10)
+Ps[c(2,3)] = 0
+Ps = Ps / sum(Ps) # generate random weights
+x = sample(1:10, size = 10000, replace = TRUE, prob = Ps)
+xbar = mean(x)
+xbar
 ```
+
+--
+
+* `xbar` = $\bar{x} = \frac{1}{N} \sum_i^{N} x_i$ is called *Sample Mean*, *Arithmetic Average*, *Sample Average*
+* $\bar{x}$ is an ***estimator*** for $E(X) = \mu_X$. ($E(X) = \mu_X$ by the way.)
+
+
 ---
 
 # Central Tendency - Mean and Median
@@ -313,7 +420,9 @@ estimate
 
 .pull-left[
 `mean(x)`: the average of all values in `x`.
-$$\bar{x} = \frac{1}{N}\sum_{i=1}^N x_i$$
+$$E(X) = \mu_X = \frac{1}{N}\sum_{i=1}^N x_i = \bar{x}$$
+
+***The second equality 👆 is correct only if...???***
 
 ```{r}
 x <- c(1,2,2,2,2,100)
@@ -326,7 +435,8 @@ mean(x) == sum(x) / length(x)
 
 .pull-right[
 `median`: the value $x_j$ below and above which 50% of the values in `x` lie. $m$ is the median if
-    $$\Pr(X \leq m) \geq 0.5 \text{ and } \Pr(X \geq m) \geq 0.5$$
+
+$$\Pr(X \leq m) \geq 0.5 \text{ and } \Pr(X \geq m) \geq 0.5$$
     
 The median is robust against *outliers*.
 
@@ -349,15 +459,12 @@ median(x)
 * A measure of *spread* of a distribution.
 * The definition of *variance* is
 
-$$
-var(Y) = E[(Y-\mu_Y)^2]
-$$
+$$var(Y) = E[(Y-\mu_Y)^2]$$
 
 if $Y$ is discrete,
 
-$$
-var(Y) = \sum_{i=1}^N (y_i-\mu_Y)^2 \times p_i.
-$$
+$$var(Y) = \sum_{i=1}^N (y_i-\mu_Y)^2 \times p_i.$$
+---
 
 ## Variance
 
@@ -397,8 +504,8 @@ var(x)
 ```{r,fig.width=5, fig.height=3}
 # % catholic in 47 french-speaking
 # swiss cantons in 1888
-plot(swiss$Catholic,rep(1,nrow(swiss)),pch = 3,cex = 2,
-     xlab = "% Catholic",yaxt = "n",ylab = "") 
+plot(swiss$Catholic,rep(1,nrow(swiss)),pch = 3,
+     cex = 2,xlab = "% Catholic",yaxt = "n",ylab = "") 
 ```
 ]
 
@@ -420,7 +527,7 @@ How do the values in column `Catholic` *vary*?
 
 # Computing Variance by hand
 
-1. Compute the variance of the our 6-sided dice!
+1. Compute the variance of our 6-sided dice!
 2. compute the variance of $X \sim \text{Bernoulli}(p)$!
 
 
@@ -429,7 +536,7 @@ How do the values in column `Catholic` *vary*?
 layout: false
 class: title-slide-section-red, middle
 
-# 2 Random Variables
+# Two Random Variables <br> $(X,Y)$, (🎲, 🎲), (🎲, 🪙), (🪙, 🪙)
 
 ---
 
@@ -441,8 +548,10 @@ layout: true
 
 ---
 
-# Two Random Variables
+# Two Random Variables: Example
 
+
+.pull-left[
 ```{r x-y-corr,echo=FALSE,message=FALSE,warning=FALSE}
 library(mvtnorm)
 set.seed(10)
@@ -454,6 +563,30 @@ y = ndat$X2
 par(pty="s")
 plot(x ~ y, xlab="x",ylab="y")
 ```
+]
+
+.pull-right[
+
+* Here, $X$ and $Y$ are ***joint normally*** distributed.
+* We would write $$(X, Y) \sim 
+\mathcal{N}\biggl(
+\begin{bmatrix}
+\mu_X \\
+\mu_Y
+\end{bmatrix},
+\,
+\Sigma
+\biggr)$$
+ 
+where $\Sigma$ is a *matrix*
+
+$$\begin{bmatrix}
+\sigma_X^2 & \rho \, \sigma_X \sigma_Y \\
+\rho \, \sigma_X \sigma_Y & \sigma_Y^2
+\end{bmatrix}$$
+
+]
+
 
 Taking as example the data in this plot, the concepts *covariance* and *correlation* relate to the following type of question:
 
@@ -536,7 +669,7 @@ gapminder_new %>%
   count(continent, fertility_above_2)
 ```
 
-Note that `count` will display `NA`s only if there are some.
+Note that `count` will display `NA`s only if there are any.
 
 ```{r}
 gapminder_new %>% filter(is.na(fertility)) %>% select(country)
@@ -590,12 +723,21 @@ prop_tab
 ]
 
 .pull-right[
-1. Compute the Distribution of countries with low fertility?
-2. Compute the Distribution of countries in Asia?
+1. Compute the Distribution of countries conditional on low fertility?
+2. Compute the Distribution of countries conditional on being in Asia?
+3. Compute the marginal distribution of high/low fertility
 ]
 
-```{r}
-prop_tab[,1] / sum(prop_tab[,1])
+```{r,echo = FALSE}
+r1 = prop_tab[,1] / sum(prop_tab[,1])
+```
+
+```{r,echo = FALSE}
+r2 = prop_tab[3,] / sum(prop_tab[3,])
+```
+
+```{r,echo = FALSE}
+r3 = colSums(prop_tab)
 ```
 
 ---
@@ -654,16 +796,6 @@ cor(gapminder_new$fertility,gapminder_new$infant_mortality, use = "complete.obs"
 
 ---
 
-# Correlation
-
-* [App](https://gustavek.shinyapps.io/corr_continuous/)
-
-```{r, echo = F}
-knitr::include_url("https://gustavek.shinyapps.io/corr_continuous/")
-```
-
----
-
 class: inverse
 
 # Task 4: Summarising data
@@ -688,17 +820,16 @@ background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 
-# That's it!
+# That's all for Probability!
 
 
 
 
 |                                                                                                            |                                   |
 | :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="https://github.com/ScPoEcon/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
+| <a href="https://github.com/floswald/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
+| <a href="https://floswald.github.io">.ScPored[<i class="fa fa-link fa-fw"></i>] | My Homepage |
+| <a href="https://scpoecon.github.io/ScPoEconometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
 
 ```{r makepdf, echo=FALSE,eval=FALSE}
 system("decktape chapter1.html chapter1.pdf --chrome-arg=--disable-web-security")

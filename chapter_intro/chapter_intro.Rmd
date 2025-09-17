@@ -134,6 +134,153 @@ test comment speaker note.
 
 ---
 
+
+# This Course
+
+- Teach you the basics of ***linear regression***, ***statistical inference*** and ***impact evaluation***.
+
+--
+
+- Equip you with a framework to think more deeply about ***causality***.
+
+--
+
+- Introduce you to the `R` software environment.
+
+--
+
+- ⚠️ This is *not* a course about `R`.
+
+--
+
+## Grading
+
+There are 2 modes:
+
+.pull-left[
+
+The **Good** Way:
+
+* come to class
+* take 5 quizzes on moodle during the semester (0% of grade).
+* take closed book exam (100%) early December 2025.
+
+]
+
+--
+
+.pull-right[
+
+The **Other** Way
+
+* (come to class?)
+* take closed book exam (100%) later.
+
+]
+
+---
+
+# Communication: Slack
+
+.pull-left[
+
+Questions like 
+
+* "I don't understand x"
+* "y does not work for me"
+* "when is the exam"
+* "can I come to office hours?" 
+
+will *only* be answered on Slack.
+
+All other questions via email to
+
+`florian.oswald@unito.it` or
+`kacper.krasowki@carloalberto.org`
+
+What is *Slack*??
+
+
+
+]
+
+--
+
+.pull-right[
+screenshot slack
+]
+
+---
+
+# Class Conduct and My Expectations 🧐
+
+--
+
+1. Come to class: You will understand better.
+
+--
+
+2. Be on time, be polite, don't use your phone. `#respect #reciprocity`
+
+--
+
+3. Open/Close your laptop when I say so. (take notes on paper)
+
+--
+
+4. Ask questions ***any time*** by raising your hand.
+
+--
+
+5. Work in groups: You can/should work in groups of 2-3 on the quizzes.
+
+
+---
+
+layout: false
+class: title-slide-section-red, middle
+
+# Notation in Slides
+
+---
+
+layout: true
+
+<div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
+
+---
+
+
+# Notation is Important
+
+1. Simple Text
+
+2. ***Important*** text is in italic red. **Very Important** text is in boldface red.
+
+3. Maths looks like this: $\int f(x) dx$
+
+4. `R` Code inline has pink background: `data(gapminder, package = "dslabs")`
+
+
+
+---
+
+class: inverse
+
+# Notation is Important
+
+1. Simple Text
+
+2. ***Important*** text is in italic red. **Very Important** text is in boldface red.
+
+3. Maths looks like this: $\int f(x) dx$
+
+4. `R` Code inline has pink background: `data(gapminder, package = "dslabs")`
+
+5. In-class tasks for you have a pink background. Do the tasks! 😉
+
+---
+
 layout: false
 class: title-slide-section-red, middle
 
@@ -180,6 +327,11 @@ layout: true
 <span style="visibility:hidden">[1]: This list has been inspired by [Ed Rubin's](https://github.com/edrubin/EC421S19).</span>  
 [2]: Learning `R` definitely requires time and effort but it's worth it, trust me! 
 ]
+
+???
+
+* Single user Stata/SE annual license costs 485 USD for education.
+* Student lab for 25 students costs 4135 USD per year.
 
 <!-- --- -->
 
@@ -256,6 +408,12 @@ head(gapminder,n = 4)
 ```
 ]
 
+???
+
+What do you think *gap* refers to here?
+
+Who has ever been to London?
+
 ---
 
 # In Practice: Data Wrangling
@@ -302,6 +460,8 @@ ggplot(data = gapminder_dplyr,
 ```
 ]
 
+--
+
 .pull-right[
 ```{r gampminder_plot, echo = FALSE}
 ```
@@ -309,7 +469,10 @@ ggplot(data = gapminder_dplyr,
 
 ???
 
-add note here
+* We map different features of the data to different ways of representing it
+* color
+* size of point
+* different scales for each
 
 ---
 
@@ -488,6 +651,32 @@ In practice:
 
 ---
 
+# Data *Types*. What kinds of **Data** are there actually?
+
+--
+
+👉 Numbers, text, categories, images, ...
+
+--
+
+Unfortunately, your (mine, everybody's) computer only "speaks" `0` and `1`. That's why software **encodes** different kinds of data differently:
+
+<br>
+
+| Data    | R Type                           | Binary Encoding |
+|---------|----------------------------------|-----------------------------|
+| `42`      | `r typeof(42)`                   | `101010` (integer in base-2)|
+| `"A"`     | `r typeof("A")`                  | `01000001` (ASCII)          |
+| `TRUE`    | `r typeof(TRUE)`                 | `1`                         |
+| `FALSE`   | `r typeof(FALSE)`                | `0`                         |
+| `factor("Male")`   | `r typeof(factor("Male"))`   | `00000001` |
+| `factor("Female")` | `r typeof(factor("Female"))` | `00000010` |
+
+
+
+
+---
+
 # Vectors
 
 
@@ -663,103 +852,6 @@ class: inverse
 
 Congratulations, you've created your first variable! Click on the `murders` object to see the new variable.
 
----
-
-layout: false
-class: title-slide-section-red, middle
-
-# Course Details
-
----
-
-layout: true
-
-<div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
-
----
-
-# This Course
-
-- Teach you the basics of ***linear regression***, ***statistical inference*** and ***impact evaluation***.
-
---
-
-- Equip you with a framework to think more deeply about ***causality***.
-
---
-
-- Introduce you to the `R` software environment.
-
---
-
-- ⚠️ This is *not* a course about `R`.
-
---
-
-## Grading
-
-1. There will be a closed book exam (70% of your grade).
-
---
-
-1. There will be 5 quizzes on moodle during the semester (30%).
-
---
-
-1. There will no R question on the exam but my hope that it will help you understand difficult theoretical concepts.
-
----
-
-# Course Materials and Useful Resources
-
-.pull-left[
-## Econometrics
-- [*Introduction to Econometrics* by Stock and Watson - main textbook!](https://uspc-spo.primo.exlibrisgroup.com/permalink/33USPC_SPO/mgsi7h/alma991003436429705808)
-- [*Mastering Metrics* by Angrist and Pischke](https://uspc-spo.primo.exlibrisgroup.com/permalink/33USPC_SPO/1d4eftp/alma991003947949705808)
-- [*Introductory Econometrics: A Modern Approach* by Wooldridge](https://uspc-spo.primo.exlibrisgroup.com/permalink/33USPC_SPO/mgsi7h/alma991003442469705808)
-- [*Causal Inference: The Mixtape* by Cunningham](https://mixtape.scunning.com/)
-- [Ben Lambert's youtube channel](https://www.youtube.com/user/SpartacanUsuals)
-]
-
-.pull-right[
-## Metrics and `R`
-- [ModernDive](https://moderndive.com/)
-- [Introduction to Econometrics with R](https://www.econometrics-with-r.org/)
-- [R for Data Science](https://r4ds.had.co.nz/)
-- [Awesome R Learning Resources](https://github.com/iamericfletcher/awesome-r-learning-resources)
-]
-
-
----
-
-# Course Policies
-
-*Be nice. Be honest. Don't cheat.*
-
---
-
-(BTW you should apply these principles outside of the classroom as well ***#lifeadvice*** 😉)
-
---
-
-.pull-left[
-***Slack***
-
-We will ***exclusively*** use Slack for our interactions.
-
-Please ***DO NOT*** contact me by email (unless there's a legitimate reason to).
-
-]
-
---
-
-.pull-right[
-***Class conduct and expectations***
-
-*Come to class:* I will explain concepts in class, you will understand better.
-
-*Work in groups:* You can/should work in groups of 2-3 on the quizzes.
-]
 
 ---
 
@@ -768,17 +860,16 @@ background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 
-# That's it!
+# That's it for this lesson!
 
 
 
 
 |                                                                                                            |                                   |
 | :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="https://github.com/ScPoEcon/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
+| <a href="https://github.com/floswald/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
+| <a href="https://floswald.github.io">.ScPored[<i class="fa fa-link fa-fw"></i>] | My Homepage |
+| <a href="https://scpoecon.github.io/ScPoEconometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
 
 ```{r makepdf, echo=FALSE,eval=FALSE}
 system("decktape chapter1.html chapter1.pdf --chrome-arg=--disable-web-security")
