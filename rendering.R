@@ -10,6 +10,9 @@ replace_logos <- function(){
                                             pattern = "ScPo-shield.png",
                                             replacement = "unito-shield.png")
             curr = stringr::str_replace_all(string = curr,
+                                            pattern = "ScPoEconometrics: Advanced",
+                                            replacement = "Econometrics")
+            curr = stringr::str_replace_all(string = curr,
                                             pattern = "ScPoEconometrics",
                                             replacement = "Econometrics")
             curr = stringr::str_replace_all(string = curr,
