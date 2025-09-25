@@ -3,6 +3,20 @@
 * Here you can look at the slide for the [Econometrics](https://github.com/floswald/Econometrics) course.
 * This repo is frequently updated, so check back often.
 
+## Schedule
+
+A typical week will look as follows:
+
+|Day  | Time  | Location |
+|-----|:------|-----|
+| Tuesday | 14:00 - 15:30 | Aula Magna SME|
+| Wednesday | 11:15-12:30 | Aula 3 SME |
+|           | 12:45-13:45 | Aula 3 SME |
+| Friday    | 11:15-12:30 | Aula Azzurra SME |
+|           | 12:45-13:45 | Aula Azzurra SME |
+
+SME: Scuola di Management e Economia, Corso Unione Sovietica 218 bis, Torino
+
 
 ## Slides
 
