@@ -26,7 +26,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS </br> 2025-09-21
+### UniTo ESOMAS </br> 2025-09-27
 ]
 
 ---
@@ -41,10 +41,41 @@ layout: true
 
 
 
+# Welcome to Econometrics @ ESOMAS UniTo!
 
-# Welcome to Econometrics!
+
+## Team
+
+.pull-left[
+
+* My name is Florian Oswald, I'm a Professor at ESOMAS. Check out my [website](https://floswald.github.io)!
+
+* I work on urban, macro and IO topics.
+    
+* Our TA this year is [Kacper Krasowski](https://kacperkrasowski.github.io), PhD student at Collegio Carlo Alberto.
+
+]
 
 --
+
+.pull-right[
+    
+* I do a lot of computation (who doesn't). I like `R`, `python` and [`julia`](https://julialang.org) - I teach computational econ to our PhD students.
+
+* I profited *a lot* from the open source software (OSS) community
+* OSS is key to reproducible research. 
+
+👉 seeing that every day as [Data Editor](https://jpedataeditor.github.io)
+
+* I try to use and teach my students tools which enable greater reproducibility.
+
+]
+
+
+---
+
+# Welcome to Econometrics @ ESOMAS UniTo!
+
 
 - In this course you will learn the core tools of ***econometrics***.
  
@@ -295,7 +326,7 @@ test comment speaker note.
 .pull-left[
 The **Good** Way:
 * come to class
-* take 5 quizzes on moodle during the semester (0% of grade).
+* take 5(?) quizzes on moodle during the semester (0% of grade).
 * take closed book exam (100%) early December 2025.
 
 ]
@@ -308,6 +339,7 @@ The **Other** Way
 
 * (come to class?)
 * take closed book exam (100%) later.
+* (do worse on the exam.)
 
 ]
 
@@ -345,6 +377,19 @@ What is *Slack*??
 
 ---
 
+# Your To-Do List for Tomorrow
+
+1. Sign up on moodle: [https://elearning.unito.it/sme/course/view.php?id=8568](https://elearning.unito.it/sme/course/view.php?id=8568)
+
+2. From moodle, sign up on slack
+
+3. Update your laptop OS and install `R`: [https://cloud.r-project.org](https://cloud.r-project.org)
+
+4. Install `RStudio` at [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
+
+
+---
+
 # Class Conduct and My Expectations 🧐
 
 --
@@ -366,6 +411,10 @@ What is *Slack*??
 --
 
 5. Work in groups: You can/should work in groups of 2-3 on the quizzes.
+
+--
+
+6. Don't cheat in exam. No phones. Penalties are severe.
 
 
 ---
@@ -517,7 +566,206 @@ layout: true
 
 * The `gapminder` dataset contains data on life expectancy, GDP per capita and population by country between 1952 and 2007.
 
-* Suppose we want to know the average life expectancy and average GDP per capita for each continent in each year.
+* Let's first discuss some basics, and then try to answer a simple question.
+
+---
+
+# Loading a Dataset
+
+
+
+``` r
+# load gapminder package
+library(gapminder)
+# load the dataset from the gapminder package
+data(gapminder, package = "gapminder") 
+# show first 10 lines of this dataframe
+head(gapminder,n = 10)
+```
+
+```
+## # A tibble: 10 × 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8425333      779.
+##  2 Afghanistan Asia       1957    30.3  9240934      821.
+##  3 Afghanistan Asia       1962    32.0 10267083      853.
+##  4 Afghanistan Asia       1967    34.0 11537966      836.
+##  5 Afghanistan Asia       1972    36.1 13079460      740.
+##  6 Afghanistan Asia       1977    38.4 14880372      786.
+##  7 Afghanistan Asia       1982    39.9 12881816      978.
+##  8 Afghanistan Asia       1987    40.8 13867957      852.
+##  9 Afghanistan Asia       1992    41.7 16317921      649.
+## 10 Afghanistan Asia       1997    41.8 22227415      635.
+```
+
+
+---
+
+# What is a *Dataset*? 
+
+## Cross Sectional Data
+
+👉 **One index only:** `country`
+
+.pull-left[
+###  Cross Section of Countries in 1950
+
+```
+## # A tibble: 10 × 5
+##    country      year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan  1952    28.8  8425333      779.
+##  2 Albania      1952    55.2  1282697     1601.
+##  3 Algeria      1952    43.1  9279525     2449.
+##  4 Angola       1952    30.0  4232095     3521.
+##  5 Argentina    1952    62.5 17876956     5911.
+##  6 Australia    1952    69.1  8691212    10040.
+##  7 Austria      1952    66.8  6927772     6137.
+##  8 Bahrain      1952    50.9   120447     9867.
+##  9 Bangladesh   1952    37.5 46886859      684.
+## 10 Belgium      1952    68    8730405     8343.
+```
+]
+
+--
+
+.pull-right[
+###  Cross Section of Countries in 2007
+
+```
+## # A tibble: 10 × 5
+##    country      year lifeExp       pop gdpPercap
+##    &lt;fct&gt;       &lt;int&gt;   &lt;dbl&gt;     &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan  2007    43.8  31889923      975.
+##  2 Albania      2007    76.4   3600523     5937.
+##  3 Algeria      2007    72.3  33333216     6223.
+##  4 Angola       2007    42.7  12420476     4797.
+##  5 Argentina    2007    75.3  40301927    12779.
+##  6 Australia    2007    81.2  20434176    34435.
+##  7 Austria      2007    79.8   8199783    36126.
+##  8 Bahrain      2007    75.6    708573    29796.
+##  9 Bangladesh   2007    64.1 150448339     1391.
+## 10 Belgium      2007    79.4  10392226    33693.
+```
+]
+
+---
+
+# What is a *Dataset*? 
+
+## Panel (or longitudinal) Data 👉 **two indices:** `country` and `year`
+
+.pull-left[
+
+
+```
+## # A tibble: 18 × 6
+##    country continent  year lifeExp        pop gdpPercap
+##    &lt;fct&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;      &lt;int&gt;     &lt;dbl&gt;
+##  1 India   Asia       1952    37.4  372000000      547.
+##  2 India   Asia       1962    43.6  454000000      658.
+##  3 India   Asia       1972    50.7  567000000      724.
+##  4 India   Asia       1982    56.6  708000000      856.
+##  5 India   Asia       1992    60.2  872000000     1164.
+##  6 India   Asia       2002    62.9 1034172547     1747.
+##  7 Italy   Europe     1952    65.9   47666000     4931.
+##  8 Italy   Europe     1962    69.2   50843200     8244.
+##  9 Italy   Europe     1972    72.2   54365564    12269.
+## 10 Italy   Europe     1982    75.0   56535636    16537.
+## 11 Italy   Europe     1992    77.4   56840847    22014.
+## 12 Italy   Europe     2002    80.2   57926999    27968.
+## 13 Poland  Europe     1952    61.3   25730551     4029.
+## 14 Poland  Europe     1962    67.6   30329617     5339.
+## 15 Poland  Europe     1972    70.8   33039545     8007.
+## 16 Poland  Europe     1982    71.3   36227381     8452.
+## 17 Poland  Europe     1992    71.0   38370697     7739.
+## 18 Poland  Europe     2002    74.7   38625976    12002.
+```
+
+]
+
+--
+
+.pull-right[
+
+* Can you tell me what the definition of an `index` is in this context?
+
+* Why is `year` and `continent` not a valid index?
+
+* 🤔
+
+]
+
+---
+
+# What is a *Dataset*? 
+
+.pull-left[
+
+### Italy
+
+``` r
+gapminder %&gt;% 
+    filter(country == "Italy")
+```
+
+```
+## # A tibble: 12 × 6
+##    country continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Italy   Europe     1952    65.9 47666000     4931.
+##  2 Italy   Europe     1957    67.8 49182000     6249.
+##  3 Italy   Europe     1962    69.2 50843200     8244.
+##  4 Italy   Europe     1967    71.1 52667100    10022.
+##  5 Italy   Europe     1972    72.2 54365564    12269.
+##  6 Italy   Europe     1977    73.5 56059245    14256.
+##  7 Italy   Europe     1982    75.0 56535636    16537.
+##  8 Italy   Europe     1987    76.4 56729703    19207.
+##  9 Italy   Europe     1992    77.4 56840847    22014.
+## 10 Italy   Europe     1997    78.8 57479469    24675.
+## 11 Italy   Europe     2002    80.2 57926999    27968.
+## 12 Italy   Europe     2007    80.5 58147733    28570.
+```
+]
+
+--
+
+.pull-right[
+### Poland
+
+``` r
+gapminder %&gt;% 
+    filter(country == "Poland")
+```
+
+```
+## # A tibble: 12 × 6
+##    country continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Poland  Europe     1952    61.3 25730551     4029.
+##  2 Poland  Europe     1957    65.8 28235346     4734.
+##  3 Poland  Europe     1962    67.6 30329617     5339.
+##  4 Poland  Europe     1967    69.6 31785378     6557.
+##  5 Poland  Europe     1972    70.8 33039545     8007.
+##  6 Poland  Europe     1977    70.7 34621254     9508.
+##  7 Poland  Europe     1982    71.3 36227381     8452.
+##  8 Poland  Europe     1987    71.0 37740710     9082.
+##  9 Poland  Europe     1992    71.0 38370697     7739.
+## 10 Poland  Europe     1997    72.8 38654957    10160.
+## 11 Poland  Europe     2002    74.7 38625976    12002.
+## 12 Poland  Europe     2007    75.6 38518241    15390.
+```
+]
+
+
+
+---
+
+# In Practice: Data Wrangling
+
+
+* Suppose we want to know the average life expectancy and average GDP per capita for each **continent** in each year.
 
 --
 
@@ -525,58 +773,28 @@ layout: true
 
 --
 
-.pull-left[
-
-``` r
-# load gapminder package
-library(gapminder)
-# load the dataset from the gapminder package
-data(gapminder, package = "gapminder") 
-# show first 4 lines of this dataframe
-head(gapminder,n = 4)
-```
-]
-
-.pull-right[
-
-```
-## # A tibble: 4 × 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-```
-]
-
-???
-
-What do you think *gap* refers to here?
-
-Who has ever been to London?
-
----
-
-# In Practice: Data Wrangling
-
 * There are always several ways to achieve a goal. (As in life 😁)
 
 * Here we will only focus on the `dplyr` way:
 
+.pull-left[
 
 ``` r
 # compute the required statistics
-gapminder_dplyr &lt;- gapminder %&gt;% 
+# average life exp and gdp per cap
+gapminder_dplyr = gapminder %&gt;% 
   group_by(continent, year) %&gt;% 
   summarise(count = n(),
             mean_lifeexp = mean(lifeExp),
             mean_gdppercap = mean(gdpPercap))
 ```
 
+]
+
+.pull-right[
 
 ``` r
-# show first 5 lines of the new data
+# show first 5 lines of this new dataset
 head(gapminder_dplyr, n = 5)
 ```
 
@@ -591,6 +809,7 @@ head(gapminder_dplyr, n = 5)
 ## 4 Africa     1967    52         45.3          2050.
 ## 5 Africa     1972    52         47.5          2340.
 ```
+]
 
 ---
 
@@ -730,7 +949,7 @@ class: inverse
 
 # Task 1
 
-<div class="countdown" id="timer_b6869d11" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_e6f4ea4e" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -903,13 +1122,30 @@ example_data
 
 * In practice, you will be importing files that contain the data into `R` rather than creating `data.frame`s by hand.
 
+
+---
+
+layout: false
+class: title-slide-section-red, middle
+
+# Go to https://tinyurl.com/metrics-task2 
+
+### You need some real data for the next task.
+
+---
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+
 ---
 
 class: inverse
 
 # Task 2
 
-<div class="countdown" id="timer_09857060" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_359604a9" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">07</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -1087,7 +1323,7 @@ class: inverse
 
 # Task 3
 
-<div class="countdown" id="timer_7bf2b57f" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_47fa0071" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
