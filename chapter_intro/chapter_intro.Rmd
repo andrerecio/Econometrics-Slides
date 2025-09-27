@@ -57,10 +57,41 @@ countdown(
 ```
 
 
+# Welcome to Econometrics @ ESOMAS UniTo!
 
-# Welcome to Econometrics!
+
+## Team
+
+.pull-left[
+
+* My name is Florian Oswald, I'm a Professor at ESOMAS. Check out my [website](https://floswald.github.io)!
+
+* I work on urban, macro and IO topics.
+    
+* Our TA this year is [Kacper Krasowski](https://kacperkrasowski.github.io), PhD student at Collegio Carlo Alberto.
+
+]
 
 --
+
+.pull-right[
+    
+* I do a lot of computation (who doesn't). I like `R`, `python` and [`julia`](https://julialang.org) - I teach computational econ to our PhD students.
+
+* I profited *a lot* from the open source software (OSS) community
+* OSS is key to reproducible research. 
+
+👉 seeing that every day as [Data Editor](https://jpedataeditor.github.io)
+
+* I try to use and teach my students tools which enable greater reproducibility.
+
+]
+
+
+---
+
+# Welcome to Econometrics @ ESOMAS UniTo!
+
 
 - In this course you will learn the core tools of ***econometrics***.
  
@@ -311,7 +342,7 @@ test comment speaker note.
 .pull-left[
 The **Good** Way:
 * come to class
-* take 5 quizzes on moodle during the semester (0% of grade).
+* take 5(?) quizzes on moodle during the semester (0% of grade).
 * take closed book exam (100%) early December 2025.
 
 ]
@@ -324,6 +355,7 @@ The **Other** Way
 
 * (come to class?)
 * take closed book exam (100%) later.
+* (do worse on the exam.)
 
 ]
 
@@ -361,6 +393,19 @@ What is *Slack*??
 
 ---
 
+# Your To-Do List for Tomorrow
+
+1. Sign up on moodle: [https://elearning.unito.it/sme/course/view.php?id=8568](https://elearning.unito.it/sme/course/view.php?id=8568)
+
+2. From moodle, sign up on slack
+
+3. Update your laptop OS and install `R`: [https://cloud.r-project.org](https://cloud.r-project.org)
+
+4. Install `RStudio` at [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
+
+
+---
+
 # Class Conduct and My Expectations 🧐
 
 --
@@ -382,6 +427,10 @@ What is *Slack*??
 --
 
 5. Work in groups: You can/should work in groups of 2-3 on the quizzes.
+
+--
+
+6. Don't cheat in exam. No phones. Penalties are severe.
 
 
 ---
@@ -533,7 +582,111 @@ layout: true
 
 * The `gapminder` dataset contains data on life expectancy, GDP per capita and population by country between 1952 and 2007.
 
-* Suppose we want to know the average life expectancy and average GDP per capita for each continent in each year.
+* Let's first discuss some basics, and then try to answer a simple question.
+
+---
+
+# Loading a Dataset
+
+
+```{r gapminder, echo = T, eval = T}
+# load gapminder package
+library(gapminder)
+# load the dataset from the gapminder package
+data(gapminder, package = "gapminder") 
+# show first 10 lines of this dataframe
+head(gapminder,n = 10)
+```
+
+
+---
+
+# What is a *Dataset*? 
+
+## Cross Sectional Data
+
+👉 **One index only:** `country`
+
+.pull-left[
+###  Cross Section of Countries in 1950
+```{r,echo = FALSE}
+gapminder %>% 
+    filter(year == "1952") %>%
+    select(-continent) %>%
+    head(n = 10)
+```
+]
+
+--
+
+.pull-right[
+###  Cross Section of Countries in 2007
+```{r,echo = FALSE}
+gapminder %>% 
+    filter(year == "2007") %>%
+    select(-continent) %>%
+    head(n = 10)
+```
+]
+
+---
+
+# What is a *Dataset*? 
+
+## Panel (or longitudinal) Data 👉 **two indices:** `country` and `year`
+
+.pull-left[
+
+```{r,echo = FALSE}
+gapminder %>% 
+    filter(year %% 2 == 0, country %in% c("Italy","Poland","India"))
+```
+
+]
+
+--
+
+.pull-right[
+
+* Can you tell me what the definition of an `index` is in this context?
+
+* Why is `year` and `continent` not a valid index?
+
+* 🤔
+
+]
+
+---
+
+# What is a *Dataset*? 
+
+.pull-left[
+
+### Italy
+```{r}
+gapminder %>% 
+    filter(country == "Italy")
+```
+]
+
+--
+
+.pull-right[
+### Poland
+```{r}
+gapminder %>% 
+    filter(country == "Poland")
+```
+]
+
+
+
+---
+
+# In Practice: Data Wrangling
+
+
+* Suppose we want to know the average life expectancy and average GDP per capita for each **continent** in each year.
 
 --
 
@@ -541,49 +694,29 @@ layout: true
 
 --
 
-.pull-left[
-```{r, gapminder, echo = T, eval = F}
-# load gapminder package
-library(gapminder)
-# load the dataset from the gapminder package
-data(gapminder, package = "gapminder") 
-# show first 4 lines of this dataframe
-head(gapminder,n = 4)
-```
-]
-
-.pull-right[
-```{r, gapminder, echo = F, eval = T}
-```
-]
-
-???
-
-What do you think *gap* refers to here?
-
-Who has ever been to London?
-
----
-
-# In Practice: Data Wrangling
-
 * There are always several ways to achieve a goal. (As in life 😁)
 
 * Here we will only focus on the `dplyr` way:
 
+.pull-left[
 ```{r}
 # compute the required statistics
-gapminder_dplyr <- gapminder %>% 
+# average life exp and gdp per cap
+gapminder_dplyr = gapminder %>% 
   group_by(continent, year) %>% 
   summarise(count = n(),
             mean_lifeexp = mean(lifeExp),
             mean_gdppercap = mean(gdpPercap))
 ```
 
+]
+
+.pull-right[
 ```{r}
-# show first 5 lines of the new data
+# show first 5 lines of this new dataset
 head(gapminder_dplyr, n = 5)
 ```
+]
 
 ---
 
@@ -873,6 +1006,23 @@ example_data
 * A `data.frame` has 2 dimensions: *rows* and *columns*. Like a *matrix*. Can get elements with `[row_index,col_index]`.
 
 * In practice, you will be importing files that contain the data into `R` rather than creating `data.frame`s by hand.
+
+
+---
+
+layout: false
+class: title-slide-section-red, middle
+
+# Go to https://tinyurl.com/metrics-task2 
+
+### You need some real data for the next task.
+
+---
+
+layout: true
+
+<div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
+
 
 ---
 
