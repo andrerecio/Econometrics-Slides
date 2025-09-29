@@ -377,7 +377,7 @@ will *only* be answered on Slack.
 All other questions via email to
 
 `florian.oswald@unito.it` or
-`kacper.krasowki@carloalberto.org`
+`kacper.krasowski@carloalberto.org`
 
 What is *Slack*??
 
