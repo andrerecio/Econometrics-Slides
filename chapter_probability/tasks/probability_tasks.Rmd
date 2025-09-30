@@ -1,0 +1,93 @@
+---
+title: "Probability - Tasks"
+author: "Florian Oswald"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1: Probabilities
+
+Given a fair 6-sided dice 🎲, i.e. an outcome space $\Omega = \{1,2,3,4,5,6\}$
+and events
+
+$$\begin{align}
+A &= \{2,4,6\},\\
+B &= \{1,3,5\}.
+\end{align}$$
+
+Define $X$ as the outcome of rolling the dice once. What is $\Pr(X \in A)$?
+
+## Answer
+
+In this simple sample space (i.e. a sample space where each element has the same probability of occuring), we can just count. There are 6 elements in $\Omega$, event $A$ contains 3 of those, i.e. in 3 out of 6 cases $X$ could land on an even number. That is
+
+$$\Pr(X \in A) = \frac{\text{number of success}}{\text{all potential outcomes}} = \frac{3}{6} = 0.5$$
+
+
+---
+
+class: inverse
+
+# Task 2: 2 Dice
+
+Given two fair 6-sided dice 🎲 🎲, what is the probability of obtaining *at least* once the face "5"?
+
+Again, counting. The total number of events from 2 dice are
+
+```{r}
+o = outer(1:6,1:6,FUN = function(x,y){paste0("(",x,",",y,")")})
+o
+```
+i.e. for each potential value of the first dice (`1,2,...,6`) we have 6 values for the second dice (`1,2,...,6`). In total, 36 potential outcomes. 
+
+How many of those correspond to *at least* once the face "5"? Well, just look for "5" above! (Caution, don't count "(5,5)" twice!)
+
+So, we have 
+
+```{r}
+o[,5]
+```
+
+and 
+
+```{r}
+o[5,]
+```
+which together would make 12 elements, but we must not count "(5,5)" twice. Therefore,
+
+$$\Pr(\text{At least once "5"}) = \frac{11}{36}$$
+
+# Task: Computing Variance by hand
+
+1. Compute the variance of one 6-sided dice!
+
+$$Var(X) = E(X^2) - \mu_x^2$$
+
+we know that $\mu_x = 3.5 = \frac{7}{2}$ from before, so just need the first part.
+
+$$E(X^2) = \sum_{i=1}^6 \Pr(X = i) i^2 = \frac{1}{6} 91$$
+Therefore $$Var(X) = E(X^2) - \mu_x^2 =  \frac{91}{6} - \frac{49}{4} = 11.6667$$
+
+
+2. compute the variance of $X \sim \text{Bernoulli}(p)$!
+
+Again, 
+
+$$Var(X) = E(X^2) - \mu_x^2 = E(X^2) - p^2$$
+$E(X^2) = p 1^2 + (1-p) 0^2 = p$. this gives us
+
+$$Var(X) = E(X^2) - \mu_x^2 = p - p^2 = p(1-p)$$
+Bonus question: what value of $p$ maximizes this variance?
+
+```{r,echo = FALSE}
+x = seq(0,1,length.out = 100)
+y = x * (1-x)
+
+plot(x,y,type = "l")
+```
+
+
