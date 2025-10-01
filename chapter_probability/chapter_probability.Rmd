@@ -102,7 +102,7 @@ $$\Pr(1) = \dots = \Pr(6) = \frac{1}{6}$$
 
 class: inverse
 
-# Probabilities
+# Task 1: Probabilities
 
 Given a fair 6-sided dice 🎲, i.e. an outcome space $\Omega = \{1,2,3,4,5,6\}$
 and events
@@ -174,6 +174,14 @@ $$
 $$
 Let's calculate that probability on the board!
 
+
+---
+
+class: inverse
+
+# Task 2: 2 Dice
+
+Given two fair 6-sided dice 🎲 🎲, what is the probability of obtaining *at least* once the face "5"?
 
 ---
 
@@ -525,10 +533,14 @@ How do the values in column `Catholic` *vary*?
 
 ---
 
-# Computing Variance by hand
+class: inverse
+
+# Task 3: Computing Variance by hand
 
 1. Compute the variance of our 6-sided dice!
 2. compute the variance of $X \sim \text{Bernoulli}(p)$!
+    Bonus question: what value of $p$ maximizes this variance?
+
 
 
 ---
@@ -591,14 +603,6 @@ $$\begin{bmatrix}
 Taking as example the data in this plot, the concepts *covariance* and *correlation* relate to the following type of question:
 
 
-# missing
-
-joint and marginal dists
-8. conditional dists, independence, covariance, corr
-9. LIE
-10. correlation and conditional mean
-
-create/get a table and illustrate
 
 ---
 
@@ -656,30 +660,65 @@ prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margi
 prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margin = 2) 
 ```
 
-* `r emo::ji("warning")` To obtain `table`s or `crosstable`s with `NA`s, use the `useNA = "always"` or `useNA = "ifany"`
-
----
-
-# Tabulating Data
-
-Again the `count` function can get you there as well:
-
-```{r}
-gapminder_new %>%
-  count(continent, fertility_above_2)
-```
-
-Note that `count` will display `NA`s only if there are any.
-
-```{r}
-gapminder_new %>% filter(is.na(fertility)) %>% select(country)
-```
-
-
+* ⚠️ To obtain `table`s or `crosstable`s with `NA`s, use the `useNA = "always"` or `useNA = "ifany"`
 
 ---
 
 # Joint Distributions
+
+The probability that $X = x$ and $Y=y$ is
+
+$$\Pr(X=x,Y=y)$$
+
+```{r,echo = FALSE}
+r = data.frame(x0 = c(0.15,0.15),x1 = c(0.07,0.63))
+names(r) <- c("Rain (X=0)", "No Rain (X=1)")
+rownames(r) <- c("Long Commute (Y=0)", "Short Commute (Y=1)")
+r
+```
+
+for instance,
+
+* $\Pr(Y = 1, X = 0) = 0.15$
+---
+
+# Marginal Distributions
+
+$$\Pr(Y = y) = \sum_{i=1}^k \Pr(X=x_i, Y = y)$$
+
+```{r,echo = FALSE}
+r
+```
+
+* Probability of long commute, *irrespective of rain*, is 0.15 + 0.07 = 0.22
+
+* Probability of rain, *irrespective of length of commute*, is 0.15 + 0.15 = 0.3
+
+
+---
+
+class: inverse
+
+# Task 4 : Computing Marginal Distributions
+
+`r countdown(minutes = 5, top = 0)`
+
+.pull-left[
+```{r}
+r
+```
+]
+
+.pull-right[
+1. Compute the marginal distribution of $X$
+1. Compute the marginal distribution of $Y$
+]
+
+
+
+---
+
+# More Joint Distributions
 
 ```{r,echo = FALSE}
 gn = gapminder_new %>% filter(country != "Greenland")
@@ -704,15 +743,42 @@ What *fraction* of countries is in each bin?
 * $\Pr(X,Y)$ where X = `continent` and Y = `fertility_above_2`
 ]
 
---
+---
 
-👉 The *conditional distribution* is $\Pr(X=x|Y=y) = \frac{\Pr(X=x,Y=y)}{\Pr(Y=y)}$
+# Conditional distributions
+
+
+* Conditional distribution is $\Pr(X=x|Y=y) = \frac{\Pr(X=x,Y=y)}{\Pr(Y=y)}$
+
+* We **fix** the value of one variable, and look at the resulting distribution of the other variable.
+
+* Notice, the result must be a *valid* probability distribution, i.e., it must sum to 1.
+
+* We compute the probability as before, but restrict attention to where the condition we impose is true.
 
 ---
 
 class: inverse
 
-# Computing Conditional Distributions
+# Task 5: compute conditional distribution
+
+`r countdown(minutes = 3, top = 0)`
+
+
+Consider 
+
+```{r,echo = FALSE}
+r
+```
+
+* Suppose we know that it does not rain $x = 1$. What is the distribution of $Y$, *given* this knowledge, i.e. what is the distribution $\Pr(Y|X=1)$ ?
+
+
+---
+
+class: inverse
+
+# Task 6: Computing More Conditional Distributions
 
 `r countdown(minutes = 5, top = 0)`
 
@@ -728,19 +794,57 @@ prop_tab
 3. Compute the marginal distribution of high/low fertility
 ]
 
-```{r,echo = FALSE}
-r1 = prop_tab[,1] / sum(prop_tab[,1])
-```
-
-```{r,echo = FALSE}
-r2 = prop_tab[3,] / sum(prop_tab[3,])
-```
-
-```{r,echo = FALSE}
-r3 = colSums(prop_tab)
-```
 
 ---
+
+# Conditional expectation
+
+![](../img/photos/table2-3.png)
+
+---
+
+# LIE
+
+
+---
+
+# Independence
+
+
+---
+
+# Covariance
+
+
+---
+
+# Correlation
+
+
+---
+
+# Correlation and Conditional Mean
+
+
+---
+
+# Random Sampling
+
+* KC 2.5
+
+* i.i.d
+
+* 
+
+
+---
+
+# Sampling Distribution of Sample Average
+
+
+---
+
+# Mean and Variance of Sample Average
 
 # How are x and y related? Covariance and Correlation
 
@@ -784,15 +888,7 @@ cor(gapminder_new$fertility,gapminder_new$infant_mortality, use = "complete.obs"
 
 * **Correlation is always between -1 and 1!**
 
---
-
-```{r, echo = F, out.width = "100%"}
-# knitr::include_graphics("chapter_tidy_files/figure-html/correlation.svg")
-```
-
-.footnote[
-*Source: [mathisfun](https://www.mathsisfun.com/data/correlation.html)*
-]
+[mathisfun](https://www.mathsisfun.com/data/correlation.html)*
 
 ---
 
