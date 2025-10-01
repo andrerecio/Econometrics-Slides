@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 # Task 1: Probabilities
@@ -141,7 +142,7 @@ $$\frac{\text{number of times }Y=0}{\text{number of times no rain}} = \frac{0.07
 # Task 6: More conditional dists
 
 ```{r,echo = TRUE}
-library(gapminder)
+gapminder <- dslabs::gapminder
 gapminder_new <- gapminder %>%
   filter(year == 2015) %>%
   mutate(fertility_above_2 = (fertility > 2.1)) # dummy variable for fertility rate above replacement rate
@@ -162,4 +163,46 @@ r2 = prop_tab[3,] / sum(prop_tab[3,])
 r3 = colSums(prop_tab)
 ```
 
----
+
+# Task 7: Conditional Expectation
+
+
+![](../../img/photos/table2-3.png)
+
+1. What is the expected value of $M$? Hint: remember the formula for $E(Y)$ from a few slides ago
+
+2. What is the expected value of $M$ *given* $A=0$? Hint: Just replace the $\Pr$ parts in your formula!
+
+Formula is of course
+
+$$E(M)= \sum_i \Pr(M = m_i) m_i$$
+So, what is $\Pr(M = m_i)$, i.e. the **unconditional** distribution of M? Just fill in the values:
+
+$$0.8 \times 0 + 0.1 \times 1 + 0.06 \times 2 + 0.03 \times 3 + 0.01 \times 4 = 0.35$$
+
+Ok, next, the whole thing given $A=0$. Just grab the correct row from the above table, and recompute.
+
+```{r}
+pr_a0 = c(0.7,0.13,0.1,0.05,0.02)
+# check
+sum(pr_a0)
+```
+
+ok, we just need to sum that against values 0,1,2,3,4. That's a range, right?
+
+```{r}
+pr_a0 %*% 0:4 # the %*% performs a vector multiplication. a dot-product.
+```
+
+
+Well, for $A=1$ this is now super easy. Just grab the correct value from the table.
+
+```{r}
+pr_a1 = c(0.9,0.07,0.02,0.01,0.00)
+# check
+sum(pr_a1)
+```
+
+```{r}
+pr_a1 %*% 0:4
+```

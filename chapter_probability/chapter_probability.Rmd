@@ -59,19 +59,7 @@ countdown(
 
 # Probability
 
-
-1. Probabilities and RVs
-2. PDFs and CDFs of discrete
-3. PDFs and CDFs of cont
-4. E, Var
-5. funcs of RVs
-6. standardizing RVs
-7. joint and marginal dists
-8. conditional dists, independence, covariance, corr
-9. LIE
-10. correlation and conditional mean
-11. KC 2.3
-12. random sampling and distributions of resulting statistics
+This set of slides covers concepts from Stock and Watson chapter 2.
 
 
 ---
@@ -799,12 +787,71 @@ prop_tab
 
 # Conditional expectation
 
-![](../img/photos/table2-3.png)
+We define
+
+$$E(Y|X = x) = \sum_{i=1}^k y_i \Pr(Y = y_i|X=x)$$
+
+* Notice the $y_i$ there!
+
+* Basically this is expected value of $Y$, but **under the assumption that** $X$ takes on the value $x$.
+
 
 ---
 
-# LIE
+class: inverse
 
+# Task 7: Conditional Expectation
+
+
+![](../img/photos/table2-3.png)
+1. What is the expected value of $M$? Hint: remember the formula for $E(Y)$ from a few slides ago
+
+2. What is the expected value of $M$ *given* $A=0$? Hint: Just replace the $\Pr$ parts in your formula!
+
+3. What is the expected value of $M$ *given* $A=1$? 
+
+
+
+
+---
+
+# Law of Iterated Expectations
+
+* We can decompose the expected value of $Y$ into subgroups, see what fraction of total probability each group makes up, and compute their weighted average.
+
+--
+
+```{r echo = FALSE}
+df = data.frame(name = c("Peter","James", "Mary","John","Amy"), sex = c("M","M","F","M","F"), height = c(1.9,1.75,1.68,1.86,1.59))
+df
+
+```
+* The average height here is `r mean(df$height)`
+
+---
+
+# Law of Iterated Expectations
+
+
+> The average height is `r mean(df$height)`
+
+* What is the average for each group by sex?
+
+```{r,echo = FALSE}
+df %>% group_by(sex) %>% summarise(n = n(), mean_height = mean(height))
+```
+
+--
+
+* Can we recover the unconditional mean from this information? Yes we can!
+
+```{r}
+2/5 * 1.635+ 3/5 * 1.836667
+```
+
+* What did we just do?
+
+$$\Pr(men) \times \text{average height men} + \Pr(women) \times \text{average height women} = 0.43 * 1.86 + (1-0.43) * 1.59 = 1.7091$$
 
 ---
 
