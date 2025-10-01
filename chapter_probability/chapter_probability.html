@@ -26,7 +26,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS </br> 2025-09-17
+### UniTo ESOMAS </br> 2025-10-01
 ]
 
 ---
@@ -43,19 +43,7 @@ layout: true
 
 # Probability
 
-
-1. Probabilities and RVs
-2. PDFs and CDFs of discrete
-3. PDFs and CDFs of cont
-4. E, Var
-5. funcs of RVs
-6. standardizing RVs
-7. joint and marginal dists
-8. conditional dists, independence, covariance, corr
-9. LIE
-10. correlation and conditional mean
-11. KC 2.3
-12. random sampling and distributions of resulting statistics
+This set of slides covers concepts from Stock and Watson chapter 2.
 
 
 ---
@@ -86,7 +74,7 @@ Having a *fair* dice means that
 
 class: inverse
 
-# Probabilities
+# Task 1: Probabilities
 
 Given a fair 6-sided dice 🎲, i.e. an outcome space `\(\Omega = \{1,2,3,4,5,6\}\)`
 and events
@@ -158,6 +146,14 @@ $$
 $$
 Let's calculate that probability on the board!
 
+
+---
+
+class: inverse
+
+# Task 2: 2 Dice
+
+Given two fair 6-sided dice 🎲 🎲, what is the probability of obtaining *at least* once the face "5"?
 
 ---
 
@@ -503,10 +499,14 @@ How do the values in column `Catholic` *vary*?
 
 ---
 
-# Computing Variance by hand
+class: inverse
+
+# Task 3: Computing Variance by hand
 
 1. Compute the variance of our 6-sided dice!
 2. compute the variance of `\(X \sim \text{Bernoulli}(p)\)`!
+    Bonus question: what value of `\(p\)` maximizes this variance?
+
 
 
 ---
@@ -559,14 +559,6 @@ where `\(\Sigma\)` is a *matrix*
 Taking as example the data in this plot, the concepts *covariance* and *correlation* relate to the following type of question:
 
 
-# missing
-
-joint and marginal dists
-8. conditional dists, independence, covariance, corr
-9. LIE
-10. correlation and conditional mean
-
-create/get a table and illustrate
 
 ---
 
@@ -660,47 +652,74 @@ prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margi
 
 ---
 
-# Tabulating Data
+# Joint Distributions
 
-Again the `count` function can get you there as well:
+The probability that `\(X = x\)` and `\(Y=y\)` is
 
+`$$\Pr(X=x,Y=y)$$`
+
+
+```
+##                     Rain (X=0) No Rain (X=1)
+## Long Commute (Y=0)        0.15          0.07
+## Short Commute (Y=1)       0.15          0.63
+```
+
+for instance,
+
+* `\(\Pr(Y = 1, X = 0) = 0.15\)`
+---
+
+# Marginal Distributions
+
+`$$\Pr(Y = y) = \sum_{i=1}^k \Pr(X=x_i, Y = y)$$`
+
+
+```
+##                     Rain (X=0) No Rain (X=1)
+## Long Commute (Y=0)        0.15          0.07
+## Short Commute (Y=1)       0.15          0.63
+```
+
+* Probability of long commute, *irrespective of rain*, is 0.15 + 0.07 = 0.22
+
+* Probability of rain, *irrespective of length of commute*, is 0.15 + 0.15 = 0.3
+
+
+---
+
+class: inverse
+
+# Task 4 : Computing Marginal Distributions
+
+<div class="countdown" id="timer_506058c6" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+.pull-left[
 
 ``` r
-gapminder_new %&gt;%
-  count(continent, fertility_above_2)
+r
 ```
 
 ```
-##    continent fertility_above_2  n
-## 1     Africa             FALSE  2
-## 2     Africa              TRUE 49
-## 3   Americas             FALSE 15
-## 4   Americas              TRUE 20
-## 5   Americas                NA  1
-## 6       Asia             FALSE 20
-## 7       Asia              TRUE 27
-## 8     Europe             FALSE 39
-## 9    Oceania             FALSE  4
-## 10   Oceania              TRUE  8
+##                     Rain (X=0) No Rain (X=1)
+## Long Commute (Y=0)        0.15          0.07
+## Short Commute (Y=1)       0.15          0.63
 ```
+]
 
-Note that `count` will display `NA`s only if there are any.
-
-
-``` r
-gapminder_new %&gt;% filter(is.na(fertility)) %&gt;% select(country)
-```
-
-```
-##     country
-## 1 Greenland
-```
+.pull-right[
+1. Compute the marginal distribution of `\(X\)`
+1. Compute the marginal distribution of `\(Y\)`
+]
 
 
 
 ---
 
-# Joint Distributions
+# More Joint Distributions
 
 
 
@@ -743,17 +762,50 @@ What *fraction* of countries is in each bin?
 * `\(\Pr(X,Y)\)` where X = `continent` and Y = `fertility_above_2`
 ]
 
---
+---
 
-👉 The *conditional distribution* is `\(\Pr(X=x|Y=y) = \frac{\Pr(X=x,Y=y)}{\Pr(Y=y)}\)`
+# Conditional distributions
+
+
+* Conditional distribution is `\(\Pr(X=x|Y=y) = \frac{\Pr(X=x,Y=y)}{\Pr(Y=y)}\)`
+
+* We **fix** the value of one variable, and look at the resulting distribution of the other variable.
+
+* Notice, the result must be a *valid* probability distribution, i.e., it must sum to 1.
+
+* We compute the probability as before, but restrict attention to where the condition we impose is true.
 
 ---
 
 class: inverse
 
-# Computing Conditional Distributions
+# Task 5: compute conditional distribution
 
-<div class="countdown" id="timer_af3428dd" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_5db9cba7" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">03</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+
+
+Consider 
+
+
+```
+##                     Rain (X=0) No Rain (X=1)
+## Long Commute (Y=0)        0.15          0.07
+## Short Commute (Y=1)       0.15          0.63
+```
+
+* Suppose we know that it does not rain `\(x = 1\)`. What is the distribution of `\(Y\)`, *given* this knowledge, i.e. what is the distribution `\(\Pr(Y|X=1)\)` ?
+
+
+---
+
+class: inverse
+
+# Task 6: Computing More Conditional Distributions
+
+<div class="countdown" id="timer_abc8ac8d" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -782,12 +834,129 @@ prop_tab
 ]
 
 
+---
 
+# Conditional expectation
+
+We define
+
+`$$E(Y|X = x) = \sum_{i=1}^k y_i \Pr(Y = y_i|X=x)$$`
+
+* Notice the `\(y_i\)` there!
+
+* Basically this is expected value of `\(Y\)`, but **under the assumption that** `\(X\)` takes on the value `\(x\)`.
+
+
+---
+
+class: inverse
+
+# Task 7: Conditional Expectation
+
+
+![](../img/photos/table2-3.png)
+1. What is the expected value of `\(M\)`? Hint: remember the formula for `\(E(Y)\)` from a few slides ago
+
+2. What is the expected value of `\(M\)` *given* `\(A=0\)`? Hint: Just replace the `\(\Pr\)` parts in your formula!
+
+3. What is the expected value of `\(M\)` *given* `\(A=1\)`? 
 
 
 
 
 ---
+
+# Law of Iterated Expectations
+
+* We can decompose the expected value of `\(Y\)` into subgroups, see what fraction of total probability each group makes up, and compute their weighted average.
+
+--
+
+
+```
+##    name sex height
+## 1 Peter   M   1.90
+## 2 James   M   1.75
+## 3  Mary   F   1.68
+## 4  John   M   1.86
+## 5   Amy   F   1.59
+```
+* The average height here is 1.756
+
+---
+
+# Law of Iterated Expectations
+
+
+&gt; The average height is 1.756
+
+* What is the average for each group by sex?
+
+
+```
+## # A tibble: 2 × 3
+##   sex       n mean_height
+##   &lt;chr&gt; &lt;int&gt;       &lt;dbl&gt;
+## 1 F         2        1.64
+## 2 M         3        1.84
+```
+
+--
+
+* Can we recover the unconditional mean from this information? Yes we can!
+
+
+``` r
+2/5 * 1.635+ 3/5 * 1.836667
+```
+
+```
+## [1] 1.756
+```
+
+* What did we just do?
+
+`$$\Pr(men) \times \text{average height men} + \Pr(women) \times \text{average height women} = 0.43 * 1.86 + (1-0.43) * 1.59 = 1.7091$$`
+
+---
+
+# Independence
+
+
+---
+
+# Covariance
+
+
+---
+
+# Correlation
+
+
+---
+
+# Correlation and Conditional Mean
+
+
+---
+
+# Random Sampling
+
+* KC 2.5
+
+* i.i.d
+
+* 
+
+
+---
+
+# Sampling Distribution of Sample Average
+
+
+---
+
+# Mean and Variance of Sample Average
 
 # How are x and y related? Covariance and Correlation
 
@@ -841,13 +1010,7 @@ cor(gapminder_new$fertility,gapminder_new$infant_mortality, use = "complete.obs"
 
 * **Correlation is always between -1 and 1!**
 
---
-
-
-
-.footnote[
-*Source: [mathisfun](https://www.mathsisfun.com/data/correlation.html)*
-]
+[mathisfun](https://www.mathsisfun.com/data/correlation.html)*
 
 ---
 
@@ -855,7 +1018,7 @@ class: inverse
 
 # Task 4: Summarising data
 
-<div class="countdown" id="timer_0af20f1a" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_12562788" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
