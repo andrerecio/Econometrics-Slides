@@ -596,12 +596,10 @@ Taking as example the data in this plot, the concepts *covariance* and *correlat
 
 # Tabulating Data
 
-```{r, echo = FALSE, eval = TRUE}
-gapminder <- dslabs::gapminder
-```
-
 `table(x)` is a useful function that counts the occurence of each unique value in `x`:
 ```{r}
+# install.packages("dslabs") in order to use this command
+data("gapminder",package = "dslabs")
 table(gapminder$continent)
 ```
 
@@ -803,12 +801,10 @@ class: inverse
 # Task 7: Conditional Expectation
 
 
-![](../img/photos/table2-3.png)
-1. What is the expected value of $M$? Hint: remember the formula for $E(Y)$ from a few slides ago
+![:scale 80%](../img/photos/table2-3.png)
+1. Compute $E(M)$
 
-2. What is the expected value of $M$ *given* $A=0$? Hint: Just replace the $\Pr$ parts in your formula!
-
-3. What is the expected value of $M$ *given* $A=1$? 
+2. Compute $E(M|A = 0)$
 
 
 
@@ -826,16 +822,16 @@ df = data.frame(name = c("Peter","James", "Mary","John","Amy"), sex = c("M","M",
 df
 
 ```
-* The average height here is `r mean(df$height)`
+* The average height here is $(1.9 + 1.75 + 1.68 + 1.86 + 1.59) / 5 = `r mean(df$height)`$: 
 
 ---
 
 # Law of Iterated Expectations
 
 
-> The average height is `r mean(df$height)`
+> The average height here is `r mean(df$height)`
 
-* What is the average for each group by sex?
+* What is the average for each **group** by sex?
 
 ```{r,echo = FALSE}
 df %>% group_by(sex) %>% summarise(n = n(), mean_height = mean(height))
@@ -845,23 +841,87 @@ df %>% group_by(sex) %>% summarise(n = n(), mean_height = mean(height))
 
 * Can we recover the unconditional mean from this information? Yes we can!
 
+* We need again *weights* and *values*, like for the standard $E(Y)$
+
 ```{r}
-2/5 * 1.635+ 3/5 * 1.836667
+weights = c(2/5, 3/5)
+values = c(1.635, 1.836667)
+sum(weights * values) # 2/5 * 1.635 + 3/5 * 1.836667
+
 ```
+
+---
+
+# Law of Iterated Expectations
+
 
 * What did we just do?
 
-$$\Pr(men) \times \text{average height men} + \Pr(women) \times \text{average height women} = 0.43 * 1.86 + (1-0.43) * 1.59 = 1.7091$$
+* We established that we can get the unconditional mean of $Y$ from the *conditional* one, if we know the *weights* we have to give to each subgroup. More precisely:
+
+.pull-left[
+1. We know $E(Y|X)$:
+    1. $E(Y|\text{male})= 1.836667$
+    2. $E(Y|\text{female})= 1.635$
+    
+2. We know the proportion of both groups:
+    1. $\Pr(\text{male})= 3/5$
+    2. $\Pr(\text{female})= 2/5$
+
+]
+    
+.pull-right[
+
+Therefore, we can recompose $E(Y)$:
+
+$$\begin{align}
+E(Y) &= \sum_{i=1}^k E(Y|X = x_i) \Pr(X = x_i)\\
+     &= E_X\left[  E(Y|X) \right]
+\end{align}$$
+
+]
+
+---
+
+# Law of Iterated Expectations
+
+* One particular version of this comes up often in econometrics:
+
+$$E[Y|X] = 0 \Rightarrow E[Y] = 0$$
+
+* Why? Well, now you know that $E[Y|X] = 0$ for all possible $X$ is zero.
+
+* Compute $E(Y) = \sum_{i=1}^k 0 \times \Pr(X = x_i)$!
 
 ---
 
 # Independence
+
+* We call 2 RVs *independent* if knowing the value of one of them is not informative about the value of the other.
+
+
+* The precise definition of this statement is $$\Pr(X=x | Y = y) = \Pr(X=x) \Pr(Y=y)$$ 
+
+--
+
+
+* or: $$\Pr(X=x , Y = y) = \Pr(X=x) \Pr(Y=y)$$ 
 
 
 ---
 
 # Covariance
 
+* Covariance tells us how two RVs co-vary. 
+
+$$\begin{align}
+cov(X,Y) = \sigma_{XY} &= E\left[ (X - \mu_X) (Y- \mu_Y) \right] \\
+                       &= \sum_{i=1}^k \sum_{j=1}^m (x_i - \mu_X) (y_j- \mu_Y) \Pr(X = x_i, Y = y_j)
+\end{align}$$
+
+* Notice how this object tells us how large deviations of $X$ from its mean *jointly* occur with such deviations of $Y$.
+
+* This confounds the scale of $X$ and $Y$, however, so not easy to interpret
 
 ---
 
