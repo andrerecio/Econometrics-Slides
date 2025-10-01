@@ -61,7 +61,7 @@ which together would make 12 elements, but we must not count "(5,5)" twice. Ther
 
 $$\Pr(\text{At least once "5"}) = \frac{11}{36}$$
 
-# Task: Computing Variance by hand
+# Task 3: Computing Variance by hand
 
 1. Compute the variance of one 6-sided dice!
 
@@ -83,6 +83,8 @@ $E(X^2) = p 1^2 + (1-p) 0^2 = p$. this gives us
 $$Var(X) = E(X^2) - \mu_x^2 = p - p^2 = p(1-p)$$
 Bonus question: what value of $p$ maximizes this variance?
 
+# Task 4
+
 ```{r,echo = FALSE}
 x = seq(0,1,length.out = 100)
 y = x * (1-x)
@@ -90,4 +92,74 @@ y = x * (1-x)
 plot(x,y,type = "l")
 ```
 
+.pull-left[
+```{r}
+r = data.frame(x0 = c(0.15,0.15),x1 = c(0.07,0.63))
+names(r) <- c("Rain (X=0)", "No Rain (X=1)")
+rownames(r) <- c("Long Commute (Y=0)", "Short Commute (Y=1)")
+r
+```
+]
 
+.pull-right[
+1. Compute the marginal distribution of $X$
+1. Compute the marginal distribution of $Y$
+]
+
+$$\Pr(Y = 0) = \Pr(Y=0, X = 0) + \Pr(Y=0, X = 1) = 0.22$$
+$$\Pr(Y = 1) = \Pr(Y=1, X = 0) + \Pr(Y=1, X = 1) = 0.78$$
+In general, just sum across rows (or columns):
+
+```{r,echo = TRUE}
+(PrY = rowSums(r))
+(PrX = colSums(r))
+```
+
+
+# Task 5: compute conditional distribution
+
+Consider 
+
+```{r,echo = FALSE}
+r
+```
+
+* Suppose we know that it does not rain $x = 1$. What is the distribution of $Y$, *given* this knowledge, i.e. what is the distribution $\Pr(Y|X=1)$ ?
+
+## answer
+
+first, we can just grab the column of data where our imposed condition is true:
+
+```{r}
+r[ , 2]
+```
+
+however, we clearly see that this is not a valid probability distribution (it does not sum to 1). We must **reweight** the distribution, such that it accounts for the fact that within the sample space "No rain", there is a total of 0.07 + 0.63 = 0.8 probability mass. In other words, the 0.07 here does not mean that, given "no rain", Y=0 occurs with 7%. As with normal probabilities, we compute the probability by counting the number of successful events divded by the number of total events, in terms of probabilities,
+
+$$\frac{\text{number of times }Y=0}{\text{number of times no rain}} = \frac{0.07}{0.07 + 0.63}= 0.0875$$
+
+# Task 6: More conditional dists
+
+```{r,echo = TRUE}
+library(gapminder)
+gapminder_new <- gapminder %>%
+  filter(year == 2015) %>%
+  mutate(fertility_above_2 = (fertility > 2.1)) # dummy variable for fertility rate above replacement rate
+gn = gapminder_new %>% filter(country != "Greenland")
+abs_tab = table(gn$continent, gn$fertility_above_2)
+prop_tab = round(prop.table(abs_tab),2)
+```
+
+```{r,echo = TRUE}
+r1 = prop_tab[,1] / sum(prop_tab[,1])
+```
+
+```{r,echo = TRUE}
+r2 = prop_tab[3,] / sum(prop_tab[3,])
+```
+
+```{r,echo = TRUE}
+r3 = colSums(prop_tab)
+```
+
+---
