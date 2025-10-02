@@ -26,7 +26,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS </br> 2025-10-01
+### UniTo ESOMAS </br> 2025-10-02
 ]
 
 ---
@@ -435,7 +435,7 @@ median(x)
 
 ---
 
-## Variance
+# Variance and Standard Deviation
 
 * A measure of *spread* of a distribution.
 * The definition of *variance* is
@@ -445,6 +445,28 @@ median(x)
 if `\(Y\)` is discrete,
 
 `$$var(Y) = \sum_{i=1}^N (y_i-\mu_Y)^2 \times p_i.$$`
+
+--
+
+* There is an issue with scaling: we *square* deviations.
+
+* The standard deviation scales back to units of the data:
+
+`$$\sigma_Y = \sqrt{var(Y)}$$`
+
+
+???
+
+* why squared?
+* because deviations of same magnitude but opposite sign cancel out
+* mean([5,15])
+
+also because want to "exaggerate" larger deviations
+
+* could also take absolute value of deviations no?
+
+
+
 ---
 
 ## Variance
@@ -608,7 +630,7 @@ gapminder_new &lt;- gapminder %&gt;%
   mutate(fertility_above_2 = (fertility &gt; 2.1)) # dummy variable for fertility rate above replacement rate
 ```
 
-.pull-left[
+
 
 ``` r
 table(gapminder_new$fertility_above_2)
@@ -619,6 +641,106 @@ table(gapminder_new$fertility_above_2)
 ## FALSE  TRUE 
 ##    80   104
 ```
+
+
+``` r
+table(gapminder_new$continent,gapminder_new$fertility_above_2)
+```
+
+```
+##           
+##            FALSE TRUE
+##   Africa       2   49
+##   Americas    15   20
+##   Asia        20   27
+##   Europe      39    0
+##   Oceania      4    8
+```
+
+
+---
+
+# Cross-Tabulating Data: A joint distribution!
+
+The probability that `\(X = x\)` and `\(Y=y\)` is
+
+`$$\Pr(X=x,Y=y)$$`
+.pull-left[
+
+``` r
+# table with absolute numbers
+abstab = table(gapminder_new$continent,
+               gapminder_new$fertility_above_2)
+(jd &lt;- round(prop.table(abstab),2))  # proportions in each cell
+```
+
+```
+##           
+##            FALSE TRUE
+##   Africa    0.01 0.27
+##   Americas  0.08 0.11
+##   Asia      0.11 0.15
+##   Europe    0.21 0.00
+##   Oceania   0.02 0.04
+```
+
+
+* check: proper probability distribution?
+
+
+``` r
+sum(jd)  # sums up all elements
+```
+
+```
+## [1] 1
+```
+]
+
+--
+
+.pull-right[
+
+* for instance
+`$$\Pr(\text{Asia},\text{TRUE}) = 0.14673$$`
+
+* You can see 👀 that this is just the **share** of cases in each bin! 
+
+]
+
+---
+
+# Tabulating Data: marginal distributions!
+
+
+.pull-left[
+
+``` r
+# proportions by row
+(m1 = prop.table(abstab, margin = 1))
+```
+
+```
+##           
+##                 FALSE       TRUE
+##   Africa   0.03921569 0.96078431
+##   Americas 0.42857143 0.57142857
+##   Asia     0.42553191 0.57446809
+##   Europe   1.00000000 0.00000000
+##   Oceania  0.33333333 0.66666667
+```
+
+check?
+
+
+``` r
+rowSums(m1)
+```
+
+```
+##   Africa Americas     Asia   Europe  Oceania 
+##        1        1        1        1        1
+```
 ]
 
 --
@@ -626,29 +748,32 @@ table(gapminder_new$fertility_above_2)
 .pull-right[
 
 ``` r
-table(gapminder_new$fertility_above_2,gapminder_new$continent)
+# proportions by column
+(m2 = prop.table(abstab, margin = 2))
 ```
 
 ```
-##        
-##         Africa Americas Asia Europe Oceania
-##   FALSE      2       15   20     39       4
-##   TRUE      49       20   27      0       8
+##           
+##                 FALSE       TRUE
+##   Africa   0.02500000 0.47115385
+##   Americas 0.18750000 0.19230769
+##   Asia     0.25000000 0.25961538
+##   Europe   0.48750000 0.00000000
+##   Oceania  0.05000000 0.07692308
 ```
-]
 
---
+check?
 
-With `prop.table`, we can get proportions:
 
 ``` r
-# proportions by row
-prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margin = 1)
-# proportions by column
-prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margin = 2) 
+colSums(m2)
 ```
 
-* ⚠️ To obtain `table`s or `crosstable`s with `NA`s, use the `useNA = "always"` or `useNA = "ifany"`
+```
+## FALSE  TRUE 
+##     1     1
+```
+]
 
 ---
 
@@ -692,7 +817,7 @@ class: inverse
 
 # Task 4 : Computing Marginal Distributions
 
-<div class="countdown" id="timer_699c3999" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_b3ab1805" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -719,51 +844,6 @@ r
 
 ---
 
-# More Joint Distributions
-
-
-
-.pull-left[
-
-``` r
-abs_tab
-```
-
-```
-##           
-##            FALSE TRUE
-##   Africa       2   49
-##   Americas    15   20
-##   Asia        20   27
-##   Europe      39    0
-##   Oceania      4    8
-```
-There are 184 countries.
-]
-
-.pull-right[
-
-``` r
-prop_tab
-```
-
-```
-##           
-##            FALSE TRUE
-##   Africa    0.01 0.27
-##   Americas  0.08 0.11
-##   Asia      0.11 0.15
-##   Europe    0.21 0.00
-##   Oceania   0.02 0.04
-```
-What *fraction* of countries is in each bin?
-
-* 👉The *joint distribution*.
-* `\(\Pr(X,Y)\)` where X = `continent` and Y = `fertility_above_2`
-]
-
----
-
 # Conditional distributions
 
 
@@ -781,7 +861,7 @@ class: inverse
 
 # Task 5: compute conditional distribution
 
-<div class="countdown" id="timer_5e26b7c4" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_865b103e" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">03</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -805,7 +885,7 @@ class: inverse
 
 # Task 6: Computing More Conditional Distributions
 
-<div class="countdown" id="timer_7c4e34a5" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_a50b8263" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -813,7 +893,7 @@ class: inverse
 .pull-left[
 
 ``` r
-prop_tab
+jd
 ```
 
 ```
@@ -836,7 +916,7 @@ prop_tab
 
 ---
 
-# Conditional expectation
+# Conditional Expectation
 
 We define
 
@@ -845,6 +925,8 @@ We define
 * Notice the `\(y_i\)` there!
 
 * Basically this is expected value of `\(Y\)`, but **under the assumption that** `\(X\)` takes on the value `\(x\)`.
+
+* We *fix* the joint distribution of `\((Y,X)\)` at a certain value `\(X=x\)`.
 
 
 ---
@@ -1079,7 +1161,7 @@ class: inverse
 
 # Task 4: Summarising data
 
-<div class="countdown" id="timer_f9151b4e" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_a0e4e913" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
