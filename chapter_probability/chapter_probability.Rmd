@@ -450,7 +450,7 @@ median(x)
 
 ---
 
-## Variance
+# Variance and Standard Deviation
 
 * A measure of *spread* of a distribution.
 * The definition of *variance* is
@@ -460,6 +460,28 @@ $$var(Y) = E[(Y-\mu_Y)^2]$$
 if $Y$ is discrete,
 
 $$var(Y) = \sum_{i=1}^N (y_i-\mu_Y)^2 \times p_i.$$
+
+--
+
+* There is an issue with scaling: we *square* deviations.
+
+* The standard deviation scales back to units of the data:
+
+$$\sigma_Y = \sqrt{var(Y)}$$
+
+
+???
+
+* why squared?
+* because deviations of same magnitude but opposite sign cancel out
+* mean([5,15])
+
+also because want to "exaggerate" larger deviations
+
+* could also take absolute value of deviations no?
+
+
+
 ---
 
 ## Variance
@@ -561,7 +583,7 @@ ndat = data.frame(rmvnorm(n=300,sigma = sig))
 x = ndat$X1
 y = ndat$X2
 par(pty="s")
-plot(x ~ y, xlab="x",ylab="y")
+plot(x ~ y, xlab="x",ylab="y",cex = 2, pch = 21, bg = "red",col = "black")
 ```
 ]
 
@@ -622,9 +644,65 @@ gapminder_new <- gapminder %>%
   mutate(fertility_above_2 = (fertility > 2.1)) # dummy variable for fertility rate above replacement rate
 ```
 
-.pull-left[
+
 ```{r}
 table(gapminder_new$fertility_above_2)
+```
+
+```{r}
+table(gapminder_new$continent,gapminder_new$fertility_above_2)
+```
+
+
+---
+
+# Cross-Tabulating Data: A joint distribution!
+
+The probability that $X = x$ and $Y=y$ is
+
+$$\Pr(X=x,Y=y)$$
+.pull-left[
+```{r}
+# table with absolute numbers
+abstab = table(gapminder_new$continent,
+               gapminder_new$fertility_above_2)
+(jd <- round(prop.table(abstab),2))  # proportions in each cell
+```
+
+
+* check: proper probability distribution?
+
+```{r}
+sum(jd)  # sums up all elements
+```
+]
+
+--
+
+.pull-right[
+
+* for instance
+$$\Pr(\text{Asia},\text{TRUE}) = 0.14673$$
+
+* You can see 👀 that this is just the **share** of cases in each bin! 
+
+]
+
+---
+
+# Tabulating Data: marginal distributions!
+
+
+.pull-left[
+```{r}
+# proportions by row
+(m1 = prop.table(abstab, margin = 1))
+```
+
+check?
+
+```{r}
+rowSums(m1)
 ```
 ]
 
@@ -632,21 +710,16 @@ table(gapminder_new$fertility_above_2)
 
 .pull-right[
 ```{r}
-table(gapminder_new$fertility_above_2,gapminder_new$continent)
+# proportions by column
+(m2 = prop.table(abstab, margin = 2))
+```
+
+check?
+
+```{r}
+colSums(m2)
 ```
 ]
-
---
-
-With `prop.table`, we can get proportions:
-```{r,eval=FALSE}
-# proportions by row
-prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margin = 1)
-# proportions by column
-prop.table(table(gapminder_new$fertility_above_2,gapminder_new$continent), margin = 2) 
-```
-
-* ⚠️ To obtain `table`s or `crosstable`s with `NA`s, use the `useNA = "always"` or `useNA = "ifany"`
 
 ---
 
@@ -704,33 +777,6 @@ r
 
 ---
 
-# More Joint Distributions
-
-```{r,echo = FALSE}
-gn = gapminder_new %>% filter(country != "Greenland")
-abs_tab = table(gn$continent, gn$fertility_above_2)
-prop_tab = round(prop.table(abs_tab),2)
-```
-
-.pull-left[
-```{r}
-abs_tab
-```
-There are `r sum(abs_tab)` countries.
-]
-
-.pull-right[
-```{r}
-prop_tab
-```
-What *fraction* of countries is in each bin?
-
-* 👉The *joint distribution*.
-* $\Pr(X,Y)$ where X = `continent` and Y = `fertility_above_2`
-]
-
----
-
 # Conditional distributions
 
 
@@ -770,7 +816,7 @@ class: inverse
 
 .pull-left[
 ```{r}
-prop_tab
+jd
 ```
 ]
 
@@ -783,7 +829,7 @@ prop_tab
 
 ---
 
-# Conditional expectation
+# Conditional Expectation
 
 We define
 
@@ -792,6 +838,8 @@ $$E(Y|X = x) = \sum_{i=1}^k y_i \Pr(Y = y_i|X=x)$$
 * Notice the $y_i$ there!
 
 * Basically this is expected value of $Y$, but **under the assumption that** $X$ takes on the value $x$.
+
+* We *fix* the joint distribution of $(Y,X)$ at a certain value $X=x$.
 
 
 ---

@@ -66,7 +66,16 @@ $$\Pr(\text{At least once "5"}) = \frac{11}{36}$$
 
 1. Compute the variance of one 6-sided dice!
 
-$$Var(X) = E(X^2) - \mu_x^2$$
+First a trick. Oftentimes it's easier to work with the following formulation of variance:
+
+$$\begin{align}
+Var(X) &= E[(Y-\mu_Y)^2] \\
+       &= E[Y^2 -2 Y \mu_Y + \mu_Y^2] \\
+       &= E(X^2) - E(2 Y \mu_Y) +  E(\mu_x^2) \\
+       &= E(X^2) - 2 \mu_Y E(Y) +  \mu_x^2 \\
+       &= E(X^2) - 2 \mu_Y^2 +  \mu_x^2 \\
+       &= E(X^2) -  \mu_Y^2 \\
+\end{align}$$
 
 we know that $\mu_x = 3.5 = \frac{7}{2}$ from before, so just need the first part.
 
@@ -84,8 +93,6 @@ $E(X^2) = p 1^2 + (1-p) 0^2 = p$. this gives us
 $$Var(X) = E(X^2) - \mu_x^2 = p - p^2 = p(1-p)$$
 Bonus question: what value of $p$ maximizes this variance?
 
-# Task 4
-
 ```{r,echo = FALSE}
 x = seq(0,1,length.out = 100)
 y = x * (1-x)
@@ -93,19 +100,25 @@ y = x * (1-x)
 plot(x,y,type = "l")
 ```
 
-.pull-left[
+
+
+# Task 4
+
+
+
+
 ```{r}
 r = data.frame(x0 = c(0.15,0.15),x1 = c(0.07,0.63))
 names(r) <- c("Rain (X=0)", "No Rain (X=1)")
 rownames(r) <- c("Long Commute (Y=0)", "Short Commute (Y=1)")
 r
 ```
-]
 
-.pull-right[
+
+
 1. Compute the marginal distribution of $X$
 1. Compute the marginal distribution of $Y$
-]
+
 
 $$\Pr(Y = 0) = \Pr(Y=0, X = 0) + \Pr(Y=0, X = 1) = 0.22$$
 $$\Pr(Y = 1) = \Pr(Y=1, X = 0) + \Pr(Y=1, X = 1) = 0.78$$
@@ -152,15 +165,15 @@ prop_tab = round(prop.table(abs_tab),2)
 ```
 
 ```{r,echo = TRUE}
-r1 = prop_tab[,1] / sum(prop_tab[,1])
+prop_tab[,1] / sum(prop_tab[,1])
 ```
 
 ```{r,echo = TRUE}
-r2 = prop_tab[3,] / sum(prop_tab[3,])
+prop_tab[3,] / sum(prop_tab[3,])
 ```
 
 ```{r,echo = TRUE}
-r3 = colSums(prop_tab)
+colSums(prop_tab)
 ```
 
 
