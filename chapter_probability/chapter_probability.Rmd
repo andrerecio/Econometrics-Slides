@@ -943,6 +943,20 @@ $$E[Y|X] = 0 \Rightarrow E[Y] = 0$$
 
 ---
 
+# Conditional Expectation and Prediction Errors
+
+* We said that the the squared error makes sense (talking about variance)
+
+* Suppose we want to design a **predictor** $g(X)$ which can **predict** $Y$ reasonably well. One criterion for that might be the *average squared error of prediction*.
+
+--
+
+* In other words, what is the solution to this problem?
+
+$$\min_m E\left[ (Y - m)^2 \right]$$
+
+---
+
 # Independence
 
 * We call 2 RVs *independent* if knowing the value of one of them is not informative about the value of the other.
@@ -975,77 +989,117 @@ cov(X,Y) = \sigma_{XY} &= E\left[ (X - \mu_X) (Y- \mu_Y) \right] \\
 
 # Correlation
 
+* Correlation fixes this issue.
+
+$$corr(X,Y) = \frac{cov(X,Y)}{\sqrt{var(X)var(Y)}} = \frac{\sigma_{XY}}{\sigma_X \sigma_Y}$$
+
+* Correlation is always between -1 and 1. 
+
+* $corr(X,Y) = 0$ means they are *uncorrelated*.
 
 ---
 
 # Correlation and Conditional Mean
 
+* If the conditional mean of $Y$ does **not** depend on $X$, then they must be uncorrelated.
+
+* That is, if
+
+$$E(Y|X) = \mu_Y \Rightarrow  cov(X,Y) = 0 \text{ and } corr(X,Y) = 0$$
+---
+
+class: inverse
+
+# Task 8 : Show Correlation and Conditional Mean
+
+Show this result!
+
+
+$$E(Y|X) = \mu_Y \Rightarrow  cov(X,Y) = 0 \text{ and } corr(X,Y) = 0$$
+
 
 ---
 
-# Random Sampling
+# Random Sampling (SW KC 2.5)
 
-* KC 2.5
+* Suppose we **randomly** select $n$ objects from a large population.
 
-* i.i.d
+* $Y_i$ is the value of $i$-th object chosen.
 
-* 
+* Each object $i$ has the same chance of getting drawn, which means that the *distribution of the $Y$s is the same*, and object $i$ being drawn does not depend on object $j$ being drawn.
+
+* **Same** means **identical**. So, the $Y$s are ***identically and independently*** distributed.
+
 
 
 ---
 
 # Sampling Distribution of Sample Average
 
+* We already defined the **sample average**:
 
----
-
-# Mean and Variance of Sample Average
-
-# How are x and y related? Covariance and Correlation
-
----
-
-# Covariance
-
-* The covariance is a measure of __joint variability__ of two variables.
-    $$Cov(x,y) = \frac{1}{N} \sum_{i=1}^N(x_i-\bar{x})(y_i-\bar{y})$$
+$$\bar{y} = \frac{1}{n}(y_1 + y_2 + \dots + y_n) = \frac{1}{n}\sum_{i=1}^n y_i$$
 
 --
 
-* The `cov` function computes the covariance:
+* A core concept is to realize that the value of $\bar{y}$ is itself ***random***. Just imagine drawing a second sample of $y$'s
 
-```{r}
-cov(gapminder_new$fertility,gapminder_new$infant_mortality, use = "complete.obs")
+--
+
+* Because $\bar{y}$ varies with each sample, the object $\bar{y}$ has a **sampling distribution**.
+
+* Every well-defined distribution has a **mean** and a **variance**.
+
+---
+
+# Mean of the Sample Average
+
+* The mean of the sample average (*the mean of the mean!*) is just
+
+$$E(\bar{y}) = E[\frac{1}{n}\sum_{i=1}^n y_i] = \frac{1}{n}\sum_{i=1}^n E[y_i] = \frac{1}{n} n \mu_Y$$
+
+--
+
+* So that's good news. The expected value is equal to the population mean. 
+
+* This means that $\bar{y}$ is an ***unbiased estimator*** for $E(y)$.
+
+---
+
+class: inverse
+
+# Task 9: Variance of the Sample Average
+
+* Similarly, 
+
+$$var(\bar{y}) = var\left( \frac{1}{n}\sum_{i=1}^n y_i \right) = \frac{\sigma_Y^2}{n}$$
+
+* Show this result!
+
+---
+
+# Sampling from a Normal Distribution
+
+
+---
+
+# **NOT** Sampling from a Normal Distribution
+
+
+---
+
+# The Law of Large Numbers
+
+
+---
+
+# The Central Limit Theorem
+
+```{r, eval = FALSE}
+library(CLT)
+CLT()
+
 ```
-
---
-
-* Difficult to interpret because sensitive to the variables' dispersions from the mean
-
----
-
-# Correlation
-
-* The correlation is a measure of the strength of the __linear association__ between two variables.
-    $$Cor(x,y) = \frac{Cov(x,y)}{\sqrt{Var(x)}\sqrt{Var(y)}}$$
-
---
-
-* The `cor` function computes the correlation:
-
-```{r}
-cor(gapminder_new$fertility,gapminder_new$infant_mortality, use = "complete.obs")
-```
-
----
-
-# Correlation
-
-* **Correlation is always between -1 and 1!**
-
-[mathisfun](https://www.mathsisfun.com/data/correlation.html)*
-
----
 
 class: inverse
 
