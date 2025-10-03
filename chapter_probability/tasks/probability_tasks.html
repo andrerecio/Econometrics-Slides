@@ -11,7 +11,7 @@
 
 <meta name="author" content="Florian Oswald" />
 
-<meta name="date" content="2025-10-02" />
+<meta name="date" content="2025-10-03" />
 
 <title>Probability - Tasks</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">Probability - Tasks</h1>
 <h4 class="author">Florian Oswald</h4>
-<h4 class="date">2025-10-02</h4>
+<h4 class="date">2025-10-03</h4>
 
 </div>
 
@@ -550,6 +550,108 @@ sum(pr_a1)</code></pre>
 <pre class="r"><code>pr_a1 %*% 0:4</code></pre>
 <pre><code>##      [,1]
 ## [1,] 0.14</code></pre>
+</div>
+<div id="task-8-show-correlation-and-conditional-mean" class="section level1">
+<h1>Task 8 : Show Correlation and Conditional Mean</h1>
+<p>Show this result!</p>
+<p><span class="math display">\[E(Y|X) = \mu_Y \Rightarrow  cov(X,Y) = 0
+\text{ and } corr(X,Y) = 0\]</span></p>
+<ul>
+<li>Let’s assume that both <span class="math inline">\(X,Y\)</span> have
+a mean of zero (if they don’t, it’s easy to transform them first)</li>
+<li>In that case, the covariance simplifies:</li>
+</ul>
+<p><span class="math display">\[\begin{align}
+E\left[ (X - \mu_X) (Y- \mu_Y) \right] &amp;= \\
+E\left[ (XY - X \mu_Y - \mu_X Y + \mu_X\mu_Y) \right] &amp;=\\
+E\left[ XY  \right]
+\end{align}\]</span></p>
+<ul>
+<li>Ok, use the LIE</li>
+</ul>
+<p><span class="math display">\[\begin{align}
+E\left[ XY \right] &amp;= \\
+E\left[ E(YX | X) \right] &amp;= \\
+E\left[ E(Y | X) X\right] &amp;= 0
+\end{align}\]</span></p>
+<p>because we were told that <span class="math inline">\(E(Y|X) =
+0\)</span> (first part of statement!)</p>
+<ul>
+<li>So, if <span class="math inline">\(E\left[ XY  \right] =0\)</span>,
+and if that is our expression for covariance, well that means that
+covariance is zero.</li>
+<li>Covariance zero implies correlation zero.</li>
+</ul>
+</div>
+<div id="task-9-variance-of-the-sample-average" class="section level1">
+<h1>Task 9: Variance of the Sample Average</h1>
+<ul>
+<li>Similarly,</li>
+</ul>
+<p><span class="math display">\[var(\bar{y}) = var\left(
+\frac{1}{n}\sum_{i=1}^n y_i \right) = \frac{\sigma_Y^2}{n}\]</span></p>
+<ul>
+<li>Show this result!</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li><p>First, we need to know that <span class="math inline">\(var(x +
+y) = var(x) + var(y) + 2 cov(x,y)\)</span>. You can try to show that
+yourself (or ask Kacper!)</p></li>
+<li><p>Then, we need to know that <span class="math inline">\(var(a
+X)\)</span> where <span class="math inline">\(a\)</span> is a constant
+is equal to <span class="math inline">\(a^2 var(x)\)</span></p></li>
+</ol>
+<p><span class="math display">\[\begin{align}
+var(a X) &amp;= E\left[ (aX)^2\right] - E\left[ (aX)\right]^2\\
+         &amp;= E\left[ (aX)^2\right] - a^2 \mu_X^2\\
+         &amp;= a^2 E\left[ X^2\right] - a^2 \mu_X^2\\
+         &amp;= a^2 \left( E\left[ X^2\right] - \mu_X^2 \right) \\
+         &amp;= a^2 var(x)
+\end{align}\]</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Great. Now we can tackle this expression head on:</li>
+</ol>
+<p><span class="math display">\[\begin{align}
+var(\bar{y}) &amp;= var\left( \frac{1}{n}\sum_{i=1}^n y_i \right)\\
+         &amp;= \frac{1}{n^2}var\left( \sum_{i=1}^n y_i \right)
+\end{align}\]</span></p>
+<ol start="4" style="list-style-type: decimal">
+<li>So far so good. Let’s us prove the rest by induction. That is, we
+first show that this works for <span class="math inline">\(n=2\)</span>,
+then for <span class="math inline">\(n=3\)</span>, and so on until we
+think it’s a general result:</li>
+</ol>
+<ul>
+<li>If <span class="math inline">\(n=2\)</span>, and given that the
+<span class="math inline">\(y_i\)</span>s are i.i.d., we have that (by
+result 1 above)</li>
+</ul>
+<p><span class="math display">\[var(y_1 + y_2) = var(y_1) + var(y_2) + 2
+cov(y_1, y_2)\]</span></p>
+<p>the last term being equal to zero courtesy of i.i.d. So, that means
+that this is actually just</p>
+<p><span class="math display">\[var(y_1 + y_2) = var(y_1) + var(y_2)  =
+2 \sigma^2\]</span></p>
+<ul>
+<li>What about <span class="math inline">\(n=3\)</span>?</li>
+</ul>
+<p><span class="math display">\[var(y_1 + y_2 + y_3) = var(y_1) +
+var(y_2) + var(y_3) + 2 cov(y_1, y_2) + 2 cov(y_1, y_3) + 2 cov(y_2,
+y_3)\]</span></p>
+<p>So, that’s <span class="math display">\[var(y_1 + y_2 + y_3) =
+3\sigma^2\]</span></p>
+<ul>
+<li>So, we conclude that for <span class="math inline">\(n\)</span> we
+have <span class="math display">\[var\left( \sum_{i=1}^n y_i \right) = n
+\sigma^2\]</span>.</li>
+</ul>
+<p>This means that we end up with</p>
+<p><span class="math display">\[\begin{align}
+var(\bar{y}) &amp;= var\left( \frac{1}{n}\sum_{i=1}^n y_i \right)\\
+         &amp;= \frac{1}{n^2}var\left( \sum_{i=1}^n y_i \right)\\
+         &amp;= \frac{1}{n^2}n \sigma_Y^2\\
+         &amp;= \frac{1}{n}\sigma_Y^2\\
+\end{align}\]</span></p>
 </div>
 
 
