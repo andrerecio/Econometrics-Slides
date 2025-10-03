@@ -219,3 +219,33 @@ sum(pr_a1)
 ```{r}
 pr_a1 %*% 0:4
 ```
+
+
+# Task 8 : Show Correlation and Conditional Mean
+
+Show this result!
+
+
+$$E(Y|X) = \mu_Y \Rightarrow  cov(X,Y) = 0 \text{ and } corr(X,Y) = 0$$
+
+* Let's assume that both $X,Y$ have a mean of zero (if they don't, it's easy to transform them first)
+* In that case, the covariance simplifies:
+
+$$\begin{align}
+E\left[ (X - \mu_X) (Y- \mu_Y) \right] &= \\
+E\left[ (XY - X \mu_Y - \mu_X Y + \mu_X\mu_Y) \right] &=\\
+E\left[ XY  \right] 
+\end{align}$$
+
+* Ok, use the LIE
+
+$$\begin{align}
+E\left[ XY \right] &= \\
+E\left[ E(YX | X) \right] &= \\
+E\left[ E(Y | X) X\right] &= 0
+\end{align}$$
+
+because we were told that $E(Y|X) = 0$ (first part of statement!)
+
+* So, if $E\left[ XY  \right] =0$, and if that is our expression for covariance, well that means that covariance is zero.
+* Covariance zero implies correlation zero.
