@@ -1078,6 +1078,26 @@ $$var(\bar{y}) = var\left( \frac{1}{n}\sum_{i=1}^n y_i \right) = \frac{\sigma_Y^
 
 ---
 
+# Properties of the Sample Mean
+
+The following facts **always** hold for the sample mean:
+
+1. $E(\bar{y}) = \mu_Y$
+
+2. $var(\bar{y}) = frac{\sigma_Y^2}{n}$
+
+3. $std.dev(\bar{y}) = frac{\sigma_Y}{\sqrt{n}}$
+
+
+--
+
+Those are true ***whenever $y$ is i.i.d***. In particular, we do **not** need the $y$ to be normally distributed!
+
+
+---
+
+
+
 # Sampling from a Normal Distribution
 
 

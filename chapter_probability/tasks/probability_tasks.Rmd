@@ -249,3 +249,59 @@ because we were told that $E(Y|X) = 0$ (first part of statement!)
 
 * So, if $E\left[ XY  \right] =0$, and if that is our expression for covariance, well that means that covariance is zero.
 * Covariance zero implies correlation zero.
+
+
+# Task 9: Variance of the Sample Average
+
+* Similarly, 
+
+$$var(\bar{y}) = var\left( \frac{1}{n}\sum_{i=1}^n y_i \right) = \frac{\sigma_Y^2}{n}$$
+
+* Show this result!
+
+1. First, we need to know that $var(x + y) = var(x) + var(y) + 2 cov(x,y)$. You can try to show that yourself (or ask Kacper!)
+
+2. Then, we need to know that $var(a X)$ where $a$ is a constant is equal to $a^2 var(x)$
+
+$$\begin{align}
+var(a X) &= E\left[ (aX)^2\right] - E\left[ (aX)\right]^2\\
+         &= E\left[ (aX)^2\right] - a^2 \mu_X^2\\
+         &= a^2 E\left[ X^2\right] - a^2 \mu_X^2\\
+         &= a^2 \left( E\left[ X^2\right] - \mu_X^2 \right) \\
+         &= a^2 var(x)
+\end{align}$$
+
+3. Great. Now we can tackle this expression head on:
+
+$$\begin{align}
+var(\bar{y}) &= var\left( \frac{1}{n}\sum_{i=1}^n y_i \right)\\
+         &= \frac{1}{n^2}var\left( \sum_{i=1}^n y_i \right)
+\end{align}$$
+
+4. So far so good. Let's us prove the rest by induction. That is, we first show that this works for $n=2$, then for $n=3$, and so on until we think it's a general result:
+
+* If $n=2$, and given that the $y_i$s are i.i.d., we have that (by result 1 above)
+
+$$var(y_1 + y_2) = var(y_1) + var(y_2) + 2 cov(y_1, y_2)$$
+
+the last term being equal to zero courtesy of i.i.d. So, that means that this is actually just
+
+$$var(y_1 + y_2) = var(y_1) + var(y_2)  = 2 \sigma^2$$
+
+* What about $n=3$?
+
+$$var(y_1 + y_2 + y_3) = var(y_1) + var(y_2) + var(y_3) + 2 cov(y_1, y_2) + 2 cov(y_1, y_3) + 2 cov(y_2, y_3)$$
+
+So, that's $$var(y_1 + y_2 + y_3) = 3\sigma^2$$
+
+* So, we conclude that for $n$ we have $$var\left( \sum_{i=1}^n y_i \right) = n \sigma^2$$.
+
+This means that we end up with
+
+$$\begin{align}
+var(\bar{y}) &= var\left( \frac{1}{n}\sum_{i=1}^n y_i \right)\\
+         &= \frac{1}{n^2}var\left( \sum_{i=1}^n y_i \right)\\
+         &= \frac{1}{n^2}n \sigma_Y^2\\
+         &= \frac{1}{n}\sigma_Y^2\\
+\end{align}$$
+
