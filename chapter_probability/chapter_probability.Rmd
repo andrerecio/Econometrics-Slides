@@ -962,7 +962,7 @@ $$\min_m E\left[ (Y - m)^2 \right]$$
 * We call 2 RVs *independent* if knowing the value of one of them is not informative about the value of the other.
 
 
-* The precise definition of this statement is $$\Pr(X=x | Y = y) = \Pr(X=x)$$ 
+* The precise definition of this statement is $$\Pr(X=x | Y = y) = \Pr(X=x) \Pr(Y=y)$$ 
 
 --
 
