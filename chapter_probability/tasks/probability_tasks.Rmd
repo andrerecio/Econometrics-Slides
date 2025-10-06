@@ -148,9 +148,9 @@ first, we can just grab the column of data where our imposed condition is true:
 r[ , 2]
 ```
 
-however, we clearly see that this is not a valid probability distribution (it does not sum to 1). We must **reweight** the distribution, such that it accounts for the fact that within the sample space "No rain", there is a total of 0.07 + 0.63 = 0.8 probability mass. In other words, the 0.07 here does not mean that, given "no rain", Y=0 occurs with 7%. As with normal probabilities, we compute the probability by counting the number of successful events divded by the number of total events, in terms of probabilities,
+however, we clearly see that this is not a valid probability distribution (it does not sum to 1). We must **reweight** the distribution, such that it accounts for the fact that within the sample space "No rain", there is a total of 0.07 + 0.63 = 0.7 probability mass. In other words, the 0.07 here does not mean that, given "no rain", Y=0 occurs with 7%. As with normal probabilities, we compute the probability by counting the number of successful events divded by the number of total events, in terms of probabilities,
 
-$$\frac{\text{number of times }Y=0}{\text{number of times no rain}} = \frac{0.07}{0.07 + 0.63}= 0.0875$$
+$$\frac{\text{number of times }Y=0}{\text{number of times no rain}} = \frac{0.07}{0.07 + 0.63}= 0.01$$
 
 # Task 6: More conditional dists
 
@@ -253,7 +253,7 @@ because we were told that $E(Y|X) = 0$ (first part of statement!)
 
 # Task 9: Variance of the Sample Average
 
-* Similarly, 
+* Similarly to the *mean* of the sample average, here we just plug in the expression for $\bar{y}$ into the variance formula:
 
 $$var(\bar{y}) = var\left( \frac{1}{n}\sum_{i=1}^n y_i \right) = \frac{\sigma_Y^2}{n}$$
 
@@ -304,4 +304,86 @@ var(\bar{y}) &= var\left( \frac{1}{n}\sum_{i=1}^n y_i \right)\\
          &= \frac{1}{n^2}n \sigma_Y^2\\
          &= \frac{1}{n}\sigma_Y^2\\
 \end{align}$$
+
+# Task 9: Show That $E$ is a linear operator
+
+Remember the definition of expected value. Expected value is a probability-weighted sum. When you add two random variables, you're adding their outcomes in each state of the world, then taking the probability-weighted average. Because multiplication distributes over addition, you can either:
+
+1. Add the outcomes first, then weight by probabilities, OR
+2. Weight each variable separately, then add together.
+
+Both give the same answer.
+
+Here, we want to establish that
+
+$$E(X+Y) = E(X) + E(Y)$$
+
+but that 
+
+$$E(g(X)) \neq g\left( E(X) \right)$$
+
+for some non-linear function $g(x)$.
+
+## Example with linear operation
+
+**Setup:** You're taking two classes. Your grade is uncertain.
+
+**Class A (X):**
+
+- 1/4 chance you get 80
+- 3/4 chance you get 60
+
+**Class B (Y):**
+
+- 1/3 chance you get 90
+- 2/3 chance you get 60
+
+Assume independence between X and Y.
+
+### Method 1: E(X + Y) directly
+
+All possible outcomes for X + Y:
+
+| X | Y | X + Y | Probability |
+|:---:|:---:|:-------:|:-------------|
+| 80 | 90 | 170 | (1/4)(1/3) = 1/12 |
+| 80 | 60 | 140 | (1/4)(2/3) = 2/12 |
+| 60 | 90 | 150 | (3/4)(1/3) = 3/12 |
+| 60 | 60 | 120 | (3/4)(2/3) = 6/12 |
+
+$$E(X + Y) = 170 \cdot \frac{1}{12} + 140 \cdot \frac{2}{12} + 150 \cdot \frac{3}{12} + 120 \cdot \frac{6}{12}$$
+
+$$= \frac{170 + 280 + 450 + 720}{12} = \frac{1620}{12} = 135$$
+
+### Method 2: E(X) + E(Y)
+
+**Calculate E(X):**
+$$E(X) = 80 \cdot \frac{1}{4} + 60 \cdot \frac{3}{4} = \frac{80 + 180}{4} = \frac{260}{4} = 65$$
+
+**Calculate E(Y):**
+$$E(Y) = 90 \cdot \frac{1}{3} + 60 \cdot \frac{2}{3} = \frac{90 + 120}{3} = \frac{210}{3} = 70$$
+
+**Sum:**
+$$E(X) + E(Y) = 65 + 70 = 135$$
+
+✓ **Same answer!**
+
+
+## Weights do Not distribute equally over nonlinear functions
+
+If we transform the values nonlinearly (i.e. we don't add/substract the same amount to each value but instead we scale them unequally in some way), we **distort** the average.
+
+Just take the dice $X \in \{1,2,3,4,5,6\}$ each with $p=1/6$. Let's take 
+
+$$g(x) = x^2$$ as a simple example.
+
+We know that $E(X) = 3.5$. So, the first part is simply
+
+$$g\left( E(X) \right) = 3.5^2 = 12.25$$
+
+But the second part is 
+$$E(g(X)) = E(X^2) = \frac{1}{6}(1^2 + 2^2 + \dots + 6^2) = \frac{1}{6}91 = 15.17$$
+
+So, the two results are clearly different.
+
 
