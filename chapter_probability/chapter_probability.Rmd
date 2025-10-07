@@ -1164,9 +1164,62 @@ The Law of Large Numbers says that *if* $Y_i$ are i.i.d. with $E(Y)=\mu_Y$, then
 
 $$\bar{y} \overset{p}{\to} \mu_Y$$
 
+* This property ($\bar{y} \overset{p}{\to} \mu_Y$) is called ***consistency***: $\bar{y}$ is **consistent** for $\mu_Y$.
+
+
+---
+
+# Demo
+
+```{r}
+set.seed(45)
+n = 2
+p = 0.78
+s = sample(c(0,1), size = n, prob = c(1-p, p), replace = TRUE)
+print(s)
+mean(s) # ybar
+```
+
+```{r}
+n = 10
+s = sample(c(0,1), size = n, prob = c(1-p, p), replace = TRUE)
+print(s)
+mean(s) # ybar
+```
+---
+
+![](../img/bernoulli_grid.png)
+
+---
+
+
+
 
 
 # The Central Limit Theorem
+
+* This important theorem says that under relavitely mild conditions, the distibution of $\bar{y}$ is **normal** when $n$ is large.
+
+* We already knew from above that the mean and variance of $\bar{y}$ are $\mu_Y$ and $\frac{\sigma_Y^2}{n}$ - *whatever* the underlying distribution of $y$ was.
+
+-- 
+
+* But that $\bar{y}$ would converge to a normal if $n$ large, that is new!
+
+--
+
+* This holds for ***any*** distribution that $Y$ might have!
+
+
+---
+
+# Demo
+
+```{r,eval = FALSE}
+library(shinyCLT)
+CLT()
+```
+
 
 
 
