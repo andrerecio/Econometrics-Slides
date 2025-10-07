@@ -817,7 +817,7 @@ class: inverse
 
 # Task 4 : Computing Marginal Distributions
 
-<div class="countdown" id="timer_4d9f3aa0" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_6de9181b" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -861,7 +861,7 @@ class: inverse
 
 # Task 5: compute conditional distribution
 
-<div class="countdown" id="timer_aeab0668" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_8583c60c" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">03</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -885,7 +885,7 @@ class: inverse
 
 # Task 6: Computing More Conditional Distributions
 
-<div class="countdown" id="timer_c3099260" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_8695d372" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -1264,9 +1264,87 @@ The Law of Large Numbers says that *if* `\(Y_i\)` are i.i.d. with `\(E(Y)=\mu_Y\
 
 `$$\bar{y} \overset{p}{\to} \mu_Y$$`
 
+* This property (`\(\bar{y} \overset{p}{\to} \mu_Y\)`) is called ***consistency***: `\(\bar{y}\)` is **consistent** for `\(\mu_Y\)`.
+
+
+---
+
+# Demo
+
+
+``` r
+set.seed(45)
+n = 2
+p = 0.78
+s = sample(c(0,1), size = n, prob = c(1-p, p), replace = TRUE)
+print(s)
+```
+
+```
+## [1] 1 1
+```
+
+``` r
+mean(s) # ybar
+```
+
+```
+## [1] 1
+```
+
+
+``` r
+n = 10
+s = sample(c(0,1), size = n, prob = c(1-p, p), replace = TRUE)
+print(s)
+```
+
+```
+##  [1] 1 1 1 1 1 1 1 1 1 0
+```
+
+``` r
+mean(s) # ybar
+```
+
+```
+## [1] 0.9
+```
+---
+
+![](../img/bernoulli_grid.png)
+
+---
+
+
+
 
 
 # The Central Limit Theorem
+
+* This important theorem says that under relavitely mild conditions, the distibution of `\(\bar{y}\)` is **normal** when `\(n\)` is large.
+
+* We already knew from above that the mean and variance of `\(\bar{y}\)` are `\(\mu_Y\)` and `\(\frac{\sigma_Y^2}{n}\)` - *whatever* the underlying distribution of `\(y\)` was.
+
+-- 
+
+* But that `\(\bar{y}\)` would converge to a normal if `\(n\)` large, that is new!
+
+--
+
+* This holds for ***any*** distribution that `\(Y\)` might have!
+
+
+---
+
+# Demo
+
+
+``` r
+library(shinyCLT)
+CLT()
+```
+
 
 
 
@@ -1282,7 +1360,7 @@ class: inverse
 
 # Task 4: Summarising data
 
-<div class="countdown" id="timer_61f9aede" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_f936210a" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
