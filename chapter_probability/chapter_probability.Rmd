@@ -962,7 +962,7 @@ $$\min_m E\left[ (Y - m)^2 \right]$$
 * We call 2 RVs *independent* if knowing the value of one of them is not informative about the value of the other.
 
 
-* The precise definition of this statement is $$\Pr(X=x | Y = y) = \Pr(X=x) \Pr(Y=y)$$ 
+* The precise definition of this statement is $$\Pr(X=x | Y = y) = \Pr(X=x)$$ 
 
 --
 
@@ -1048,7 +1048,7 @@ $$\bar{y} = \frac{1}{n}(y_1 + y_2 + \dots + y_n) = \frac{1}{n}\sum_{i=1}^n y_i$$
 
 * Because $\bar{y}$ varies with each sample, the object $\bar{y}$ has a **sampling distribution**.
 
-* Every well-defined distribution has a **mean** and a **variance**.
+* Every well-defined distribution has a **mean** and a **variance** - same for this sampling distribution. Let's figure it out!
 
 ---
 
@@ -1056,13 +1056,13 @@ $$\bar{y} = \frac{1}{n}(y_1 + y_2 + \dots + y_n) = \frac{1}{n}\sum_{i=1}^n y_i$$
 
 * The mean of the sample average (*the mean of the mean!*) is just
 
-$$E(\bar{y}) = E[\frac{1}{n}\sum_{i=1}^n y_i] = \frac{1}{n}\sum_{i=1}^n E[y_i] = \frac{1}{n} n \mu_Y$$
+$$E(\bar{y}) = E\left[\frac{1}{n}\sum_{i=1}^n y_i\right] = \frac{1}{n}\sum_{i=1}^n E[y_i] = \frac{1}{n} n \mu_Y$$
 
 --
 
 * So that's good news. The expected value is equal to the population mean. 
 
-* This means that $\bar{y}$ is an ***unbiased estimator*** for $E(y)$.
+* This statement is important. We say that $\bar{y}$ is an ***unbiased estimator*** for $E(y)$.
 
 ---
 
@@ -1084,9 +1084,9 @@ The following facts **always** hold for the sample mean:
 
 1. $E(\bar{y}) = \mu_Y$
 
-2. $var(\bar{y}) = frac{\sigma_Y^2}{n}$
+2. $var(\bar{y}) = \frac{\sigma_Y^2}{n}$
 
-3. $std.dev(\bar{y}) = frac{\sigma_Y}{\sqrt{n}}$
+3. $std.dev(\bar{y}) = \frac{\sigma_Y}{\sqrt{n}}$
 
 
 --
@@ -1100,20 +1100,77 @@ Those are true ***whenever $y$ is i.i.d***. In particular, we do **not** need th
 
 # Sampling from a Normal Distribution
 
+1. The sum of normally distributed RVs is itself normally distributed.
+
+--
+
+2. Suppose we draw $Y_i$ i.i.d from a normal distribution.
+
+--
+
+3. We already know the mean and variance of the sample mean $\bar{y}$ in this case (previous slide.)
+
+--
+
+4. In this **special case** we actually ***know*** the full distribution of $\bar{y}$, which has to be *normal* itself (see point 1). That is
+
+$$\bar{y} \sim \mathcal{N}\left(\mu_y, \frac{\sigma_Y^2}{n} \right)$$
+
+--
+
+What if we **don't know** the distribution of our $Y_i$?
 
 ---
 
 # **NOT** Sampling from a Normal Distribution
+
+* This is clearly the empirically relevant case. We almost **never** know the precise distribution of our data.
+
+* Let us repeat that:
+
+> The following facts **always** hold for the sample mean:
+
+> 1. $E(\bar{y}) = \mu_Y$
+
+> 2. $var(\bar{y}) = \frac{\sigma_Y^2}{n}$
+
+> 3. $std.dev(\bar{y}) = \frac{\sigma_Y}{\sqrt{n}}$
+
+> Those are true ***whenever $y$ is i.i.d***. In particular, we do **not** need the $y$ to be normally distributed!
+
+
+---
+
+# Asymptotic Distributions
+
+* If we don't know the *exact* distribution of the data, we can still derive an **approximate** distribution.
+
+* The approximation requires that we have a lot of data, i.e. $n$ is large.
+
+* We are using 2 key tools for this: The Law of Large Numbers and the Central Limit Theorem.
 
 
 ---
 
 # The Law of Large Numbers
 
+* We say that a sequence of RVs $z_n$ **converges in probability** to the constant $a$ if the probability that $z_n$ comes to lie in the interval $\left[a - c, a + c\right]$ goes to 1 as n goes to infinity. 
 
----
+* We would write that as $$z_n \overset{p}{\to} a$$
+
+--
+
+The Law of Large Numbers says that *if* $Y_i$ are i.i.d. with $E(Y)=\mu_Y$, then - if large outliers are very unlikely (if $var((Y) \sigma_Y^2 < \infty$)) -  the sample mean converges in probability to the population mean, i.e.
+
+$$\bar{y} \overset{p}{\to} \mu_Y$$
+
+
 
 # The Central Limit Theorem
+
+
+
+---
 
 ```{r, eval = FALSE}
 library(CLT)
