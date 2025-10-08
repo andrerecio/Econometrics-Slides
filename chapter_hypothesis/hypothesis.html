@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS 2025-09-17
+### UniTo ESOMAS 2025-10-08
 ]
 
 ---
@@ -41,6 +41,77 @@ layout: true
 layout: true
 
 &lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+---
+
+# Estimators
+
+* An *estimator* is a function of a sample of data. Given the sample is random, so is the estimator. 
+
+* An *estimate* is the numerical result **produced** by an estimator. It's a number, not a random variable.
+
+--
+
+* Let us focus on estimating the population mean `\(E(Y)=\mu_Y\)`.
+
+* Given a set of sample data, how could we estimate this quantity?
+
+---
+
+# Estimators for `\(E(Y)\)`
+
+* We already met `\(\bar{y}\)` as a good estimator for `\(E(Y)\)`.
+
+* not the only option: could also have used the average of the largest two values, like `\(\tilde{y} = \frac{max(y) - min(y)}{2}\)`, no? Or what about the *last* value in the dataset, `\(y_n\)`?
+
+* generically, we call an estimator for population quantity `\(x\)` often `\(\hat{x}\)`.
+
+--
+
+### What do we care about when choosing an estimator?
+
+1. Unbiasedness
+
+2. Consistency
+
+3. Efficiency
+
+---
+
+# Unbiasedness
+
+* We have already heard that being unbiased means simply that
+
+`$$E(\hat{x}) = x,$$`
+
+for example we saw
+
+`$$E(\bar{y}) = \mu_Y.$$`
+
+* Is last value `\(y_n\)` an unbiased estimator for `\(\mu_Y\)`?
+
+---
+
+# Consistency
+
+* We also heard already that we like estimators where some form of *law of large numbers* applies.
+
+--
+
+.right-wide[
+![](../img/bernoulli_grid.png)
+]
+.left-thin[
+* `\(\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i\)` depends on `\(n\)`
+
+* We wrote `\(\bar{y} \overset{p}{\to} \mu_Y\)`
+
+* Is this true? `\(y_n\overset{p}{\to} \mu_Y\)`? Why or Why not?
+
+
+]
+
+
 
 ---
 
@@ -439,20 +510,20 @@ null_distribution
 ```
 ## Response: decision (factor)
 ## Explanatory: gender (factor)
-## Null Hyp...
+## Null Hypothesis: ind...
 ## # A tibble: 1,000 × 2
 ##    replicate    stat
 ##        &lt;int&gt;   &lt;dbl&gt;
 ##  1         1 -0.0417
-##  2         2  0.0417
-##  3         3 -0.125 
-##  4         4 -0.208 
-##  5         5 -0.208 
-##  6         6 -0.125 
-##  7         7 -0.208 
-##  8         8 -0.125 
-##  9         9  0.208 
-## 10        10  0.0417
+##  2         2 -0.0417
+##  3         3  0.125 
+##  4         4 -0.125 
+##  5         5  0.0417
+##  6         6  0.292 
+##  7         7  0.125 
+##  8         8  0.0417
+##  9         9 -0.208 
+## 10        10 -0.125 
 ## # ℹ 990 more rows
 ```
 ]
@@ -556,10 +627,10 @@ visualize(null_distribution, bins = 10) +
     ## # A tibble: 1 × 1
     ##   p_value
     ##     &lt;dbl&gt;
-    ## 1   0.025
+    ## 1   0.033
     ```
     
-* So, the probability of observing a 29% difference in a world with no discrimination is only 2.5%. That probability is due to sampling variation.
+* So, the probability of observing a 29% difference in a world with no discrimination is only 3.3%. That probability is due to sampling variation.
 ]
 
 --
@@ -568,7 +639,7 @@ visualize(null_distribution, bins = 10) +
 * Suppose we had set `\(\alpha = 0.001 = 0.1\%\)`
 
 * Given that the p-value is *greater* than `\(\alpha\)`, 
-    * i.e. 2.5% &gt; 0.1%,
+    * i.e. 3.3% &gt; 0.1%,
     * we would **fail to reject** the null `\(H_0:p_m - p_f = 0\)`. 
 
 * The p-value was not sufficiently small to convince us in this case.

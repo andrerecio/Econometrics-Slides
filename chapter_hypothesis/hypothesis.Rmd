@@ -49,6 +49,77 @@ layout: true
 
 ---
 
+# Estimators
+
+* An *estimator* is a function of a sample of data. Given the sample is random, so is the estimator. 
+
+* An *estimate* is the numerical result **produced** by an estimator. It's a number, not a random variable.
+
+--
+
+* Let us focus on estimating the population mean $E(Y)=\mu_Y$.
+
+* Given a set of sample data, how could we estimate this quantity?
+
+---
+
+# Estimators for $E(Y)$
+
+* We already met $\bar{y}$ as a good estimator for $E(Y)$.
+
+* not the only option: could also have used the average of the largest two values, like $\tilde{y} = \frac{max(y) - min(y)}{2}$, no? Or what about the *last* value in the dataset, $y_n$?
+
+* generically, we call an estimator for population quantity $x$ often $\hat{x}$.
+
+--
+
+### What do we care about when choosing an estimator?
+
+1. Unbiasedness
+
+2. Consistency
+
+3. Efficiency
+
+---
+
+# Unbiasedness
+
+* We have already heard that being unbiased means simply that
+
+$$E(\hat{x}) = x,$$
+
+for example we saw
+
+$$E(\bar{y}) = \mu_Y.$$
+
+* Is last value $y_n$ an unbiased estimator for $\mu_Y$?
+
+---
+
+# Consistency
+
+* We also heard already that we like estimators where some form of *law of large numbers* applies.
+
+--
+
+.right-wide[
+![](../img/bernoulli_grid.png)
+]
+.left-thin[
+* $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ depends on $n$
+
+* We wrote $\bar{y} \overset{p}{\to} \mu_Y$
+
+* Is this true? $y_n\overset{p}{\to} \mu_Y$? Why or Why not?
+
+
+]
+
+
+
+---
+
 # Packages used in this set of slides
 
 ```{r}
@@ -342,7 +413,7 @@ ggplot(shuffled_data_tidy,aes(x=stat)) + geom_histogram(binwidth=0.1,color = "wh
 # P-Value and Significance Level $\alpha$
 
 .pull-left[
-* The **p-value** is the probability of observing a test statistic *more extreme* than the one we obtained, assuming $H_0$ is true. `r emo::ji("thinking")`
+* The **p-value** is the probability of observing a test statistic *more extreme* than the one we obtained, assuming $H_0$ is true. 🤔
 
 * How *strong* a piece of evidence is it to observe $\hat{p}_m - \hat{p}_f=29\%$ in a world where $p_m - p_f=0$ is assumed true? Very strong? Not so strong?
 
