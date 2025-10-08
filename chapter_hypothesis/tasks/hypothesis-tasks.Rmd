@@ -8,22 +8,21 @@ date: "2025-10-08"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Task: what about this estimator?
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Define
 
-```{r cars}
-summary(cars)
-```
+$$\tilde{y} = \frac{1}{n}\left(\frac{1}{2} y_1 + \frac{3}{2} y_2 + + \frac{1}{2} y_3 + \dots + \frac{3}{2} y_n  \right)$$
 
-## Including Plots
+and assume $n$ is an even number.
 
-You can also embed plots, for example:
+1. Show that this is unbiased.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+2. Show that this is consistent.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+3. Show that the sample average is more efficient that this.
+
+## Answer
+
+

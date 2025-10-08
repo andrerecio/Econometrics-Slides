@@ -95,6 +95,7 @@ $$E(\bar{y}) = \mu_Y.$$
 
 * Is last value $y_n$ an unbiased estimator for $\mu_Y$?
 
+
 ---
 
 # Consistency
@@ -102,6 +103,25 @@ $$E(\bar{y}) = \mu_Y.$$
 * We also heard already that we like estimators where some form of *law of large numbers* applies.
 
 --
+
+* This is because we acknowledge that there is randomness in **any** estimate we could come up with. 
+
+* But ***at least*** we want to use the power of a lot of information (large $n$) to make sure that this randomness could be made arbitrarily small.
+
+
+
+]
+
+
+
+
+---
+
+# Consistency
+
+* We also heard already that we like estimators where some form of *law of large numbers* applies.
+
+
 
 .right-wide[
 ![](../img/bernoulli_grid.png)
@@ -116,9 +136,102 @@ $$E(\bar{y}) = \mu_Y.$$
 
 ]
 
+---
+
+# Efficiency
+
+* If two estimators $\hat{x}_1$ and $\hat{x}_2$, both unbiased, have variances such that 
+
+$$var(\hat{x}_1) > var(\hat{x}_2)$$
+
+then we say that $\hat{x}_2$ is *more efficient* than $\hat{x}_1$ - because uses the same amount of data in a more efficient way. 
+
+--
+
+* Both $\bar{y}$ and $y_n$ are unbiased. Which is more efficient?
+
+---
+
+class: inverse
+
+# Task: what about this estimator?
+
+Define
+
+$$\tilde{y} = \frac{1}{n}\left(\frac{1}{2} y_1 + \frac{3}{2} y_2 + + \frac{1}{2} y_3 + \dots + \frac{3}{2} y_n  \right)$$
+
+and assume $n$ is an even number.
+
+1. Show that this is unbiased.
+
+2. Show that this is consistent.
+
+3. Show that the sample average is more efficient that this.
+
+---
+
+
+# BLUE
+
+* The estimator on the previous slide is very similar to the sample mean - just differently weighting the observations.
+
+* We have seen that the main problem of tilde was that it has a large variance.
+
+* So, among all unbiased estimators which are weighted averages of the Y's, the sample mean is the most efficient. 
+
+* We say ybar is the Best Linear Unbiased Estimator (BLUE).
+
+---
+
+# Sample Variance and Standard Error
+
+* We often don't know the variance of the population either - so we need to estimate it.
+
+* We call $s_Y^2$ the *sample variance*, and it's an estimator for the population variance $\sigma_Y^2$
+
+$$s_Y^2 = \frac{1}{n-1}\sum_{i=1}^n\left(y_i - \bar{y} \right)^2$$
+
+* this is quite similar to the population variance. What's different?
+
+---
+
+# Degrees of Freedom 
+
+* We are dividing by $n-1$ instead of $n$ and we substract $\bar{y}$ instead of $\mu_Y$
+
+--
+
+* Well, we use $\bar{y}$ because we don't know $\mu_Y$
+
+--
+
+* Let's show what happens
+
 
 
 ---
+
+# Hypothesis Tests About Population Mean
+
+
+
+---
+
+# The P-value
+
+* calculating when known
+
+
+
+
+
+
+
+
+
+
+---
+
 
 # Packages used in this set of slides
 
