@@ -73,7 +73,7 @@ background-size: 450px
 
 * Also, we obviously don't know the true population parameter, that's what we are interested in!
 
-* So what on earth was all of this good for? Fun only?! `r emo::ji("anguished")`
+* So what on earth was all of this good for? Fun only?! 
 
 ]
 
@@ -145,7 +145,7 @@ In practice, you ***don't*** need to compute your confidence intervals using *bo
 
 --
 
-* How could we study the effect of sampling variation with a single sample? `r emo::ji("point_right")` ***bootstrap resampling with replacement***!
+* How could we study the effect of sampling variation with a single sample?  ***bootstrap resampling with replacement***!
 
 --
 
@@ -1054,17 +1054,17 @@ In hypothesis testing, there are ***two types of errors***:
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it!
+ How to manage data? Read it, tidy it, visualise it!
 
-`r emo::ji("white heavy check mark")`  How to summarise relationships between variables? Simple and multiple linear regression, non-linear regressions, interactions...
+  How to summarise relationships between variables? Simple and multiple linear regression, non-linear regressions, interactions...
 
-`r emo::ji("white heavy check mark")` What is causality?
+ What is causality?
 
-`r emo::ji("white heavy check mark")` What if we don't observe an entire population? Sampling!
+ What if we don't observe an entire population? Sampling!
 
-`r emo::ji("construction")`  **Are our findings just due to randomness?** Confidence intervals and hypothesis testing...
+  **Are our findings just due to randomness?** Confidence intervals and hypothesis testing...
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+ How to find exogeneity in practice?
 
 ---
 
