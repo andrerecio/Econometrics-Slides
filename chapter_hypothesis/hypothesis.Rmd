@@ -1,6 +1,6 @@
 ---
 title: "Econometrics"
-subtitle: "Hypothesis Testing"
+subtitle: "Estimation<br> Confidence Intervals <br> Hypothesis Testing"
 author: "Florian Oswald"
 date: "UniTo ESOMAS `r Sys.Date()`"
 output:
