@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS 2025-10-08
+### UniTo ESOMAS 2025-10-09
 ]
 
 ---
@@ -44,7 +44,7 @@ layout: true
 
 ---
 
-# Estimators
+# Estimators (based on SW chapter 3)
 
 * An *estimator* is a function of a sample of data. Given the sample is random, so is the estimator. 
 
@@ -62,9 +62,9 @@ layout: true
 
 * We already met `\(\bar{y}\)` as a good estimator for `\(E(Y)\)`.
 
-* not the only option: could also have used the average of the largest two values, like `\(\tilde{y} = \frac{max(y) - min(y)}{2}\)`, no? Or what about the *last* value in the dataset, `\(y_n\)`?
+* But it's not the only option: We could also have used the average of the largest two extremes, like `\(\tilde{y} = \frac{max(y) - min(y)}{2}\)`, no? Or what about the *last* value in our i.i.d. sample of data `\(\{y_i\}_{i=1}^n\)`, `\(y_n\)`?
 
-* generically, we call an estimator for population quantity `\(x\)` often `\(\hat{x}\)`.
+* generically, we write an estimator for population quantity `\(x\)` often `\(\hat{x}\)`.
 
 --
 
@@ -90,6 +90,7 @@ for example we saw
 
 * Is last value `\(y_n\)` an unbiased estimator for `\(\mu_Y\)`?
 
+
 ---
 
 # Consistency
@@ -98,10 +99,25 @@ for example we saw
 
 --
 
+* This is because we acknowledge that there is randomness in **any** estimate we could come up with. 
+
+* But ***at least*** we want to use the power of a lot of information (large `\(n\)`) to make sure that this randomness could be made arbitrarily small.
+
+
+---
+
+# Consistency
+
+* We also heard already that we like estimators where some form of *law of large numbers* applies.
+
+
+
 .right-wide[
 ![](../img/bernoulli_grid.png)
 ]
 .left-thin[
+&lt;br&gt;
+
 * `\(\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i\)` depends on `\(n\)`
 
 * We wrote `\(\bar{y} \overset{p}{\to} \mu_Y\)`
@@ -111,264 +127,234 @@ for example we saw
 
 ]
 
-
-
 ---
 
-# Packages used in this set of slides
+# Efficiency
 
+* If two estimators `\(\hat{x}_1\)` and `\(\hat{x}_2\)`, both unbiased, have variances such that 
 
-``` r
-library(tidyverse)
-library(infer)
-library(moderndive)
-```
+`$$var(\hat{x}_1) &gt; var(\hat{x}_2)$$`
 
----
-
-# Is There Gender Discrimination In Promotions?
-
-&lt;!-- also: https://www.ncbi.nlm.nih.gov/pubmed/12083361 --&gt;
-
-.pull-left[
-* Article published in the *Journal of Applied Psychology* in 1970 investigates whether female employees at Banks are discriminated against.
-
-* 48 supervisors were given *identical* candidate CVs - identical up to the first name, which was male or female.
-
-* Many similar experiments have been conducted with other groups. Arabic Names, Black names, Jewish names or other groups that can be identified from typical name choice.
-]
+then we say that `\(\hat{x}_2\)` is *more efficient* than `\(\hat{x}_1\)` - because it uses the same amount of data in a more efficient way. 
 
 --
 
-.pull-right[
-
-
-``` r
-library(moderndive)
-promotions
-```
-
-```
-## # A tibble: 48 × 3
-##       id decision gender
-##    &lt;int&gt; &lt;fct&gt;    &lt;fct&gt; 
-##  1     1 promoted male  
-##  2     2 promoted male  
-##  3     3 promoted male  
-##  4     4 promoted male  
-##  5     5 promoted male  
-##  6     6 promoted male  
-##  7     7 promoted male  
-##  8     8 promoted male  
-##  9     9 promoted male  
-## 10    10 promoted male  
-## # ℹ 38 more rows
-```
-]
+* Both `\(\bar{y}\)` and `\(y_n\)` are unbiased. Which is more efficient?
 
 ---
 
-# Looking At Promotions
+class: inverse
 
-.pull-left[
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
-]
+# Task: what about this estimator?
 
-.pull-right[
+Define
 
-``` r
-promotions %&gt;% 
-  group_by(gender, decision) %&gt;% 
-  summarize(n = n()) %&gt;%
-  mutate(proportion = n / sum(n))
-```
+`$$\tilde{y} = \frac{1}{n}\left(\frac{1}{2} y_1 + \frac{3}{2} y_2 + + \frac{1}{2} y_3 + \dots + \frac{3}{2} y_n  \right)$$`
 
-```
-## # A tibble: 4 × 4
-## # Groups:   gender [2]
-##   gender decision     n proportion
-##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
-## 1 male   not          3      0.125
-## 2 male   promoted    21      0.875
-## 3 female not         10      0.417
-## 4 female promoted    14      0.583
-```
+and assume `\(n\)` is an even number.
 
-* 87.5% of "men" were promoted.
-* 58.3% of "women" were promoted.
-* That's a difference of 87.55 - 58.3% = 29.2%.
-* Is the 29% advantage for men in this sample **conclusive evidence**?
-* In a *hyopthetical world* **without gender discrimination**, could we have observed a 29% difference *by chance*?
+1. Show that this is unbiased.
 
-]
+2. Show that this is consistent.
 
+3. Show that the sample average is more efficient that this.
 
 ---
 
-# Imposing A Hypothetical World: No Gender Discriminiation
 
-.pull-left[
-* Suppose we lived in a world without gender discrimination.
+# BLUE
 
-* The label `gender` in our dataframe would be meaningless.
+* The estimator on the previous slide is very similar to the sample mean - just differently weighting the observations.
 
-* Let's randomly reassign `gender` to each row and see how this affects the result.
+* We have seen that the main problem of tilde was that it has a large variance.
 
-* Suppose we have 48 playing cards: 24 red (female) and 24 (black)
+* So, among all unbiased estimators which are weighted averages of the Y's, the sample mean is the most efficient. 
 
-* Shuffle the cards, and lay down the cards in a row, record `f` if **red**.
-]
+* We say ybar is the Best Linear Unbiased Estimator (BLUE).
+
+---
+
+# Sample Variance and Standard Error
+
+* We often don't know the variance of the population either - so we need to estimate it.
+
+* We call `\(s_Y^2\)` the *sample variance*, and it's an estimator for the population variance `\(\sigma_Y^2\)`
+
+`$$s_Y^2 = \frac{1}{n-1}\sum_{i=1}^n\left(y_i - \bar{y} \right)^2$$`
+
+* this is quite similar to the population variance. What's different?
+
+---
+
+# Degrees of Freedom 
+
+* We are dividing by `\(n-1\)` instead of `\(n\)` and we substract `\(\bar{y}\)` instead of `\(\mu_Y\)`
 
 --
 
-.pull-right[
-
-``` r
-bind_cols(promotions, promotions_shuffled)
-```
-
-```
-## # A tibble: 48 × 6
-##    id...1 decision...2 gender...3 id...4 decision...5 gender...6
-##     &lt;int&gt; &lt;fct&gt;        &lt;fct&gt;       &lt;int&gt; &lt;fct&gt;        &lt;fct&gt;     
-##  1      1 promoted     male            1 promoted     female    
-##  2      2 promoted     male            2 promoted     female    
-##  3      3 promoted     male            3 promoted     male      
-##  4      4 promoted     male            4 promoted     female    
-##  5      5 promoted     male            5 promoted     male      
-##  6      6 promoted     male            6 promoted     male      
-##  7      7 promoted     male            7 promoted     male      
-##  8      8 promoted     male            8 promoted     female    
-##  9      9 promoted     male            9 promoted     male      
-## 10     10 promoted     male           10 promoted     female    
-## # ℹ 38 more rows
-```
-
-* Observe how in `promotions_shuffled` we randomly assigned `gender1`.
-
-* The `decision` column is the same!
-
-* What does this now look like?
-]
-
----
-
-# Reshuffled Promotions
-
-.pull-left[
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-6-1.svg" style="display: block; margin: auto;" /&gt;
-
-]
-
-.pull-right[
-
-``` r
-promotions %&gt;% 
-  group_by(gender, decision) %&gt;% 
-  summarize(n = n()) %&gt;%
-  mutate(proportion = n / sum(n))
-```
-
-```
-## # A tibble: 4 × 4
-## # Groups:   gender [2]
-##   gender decision     n proportion
-##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
-## 1 male   not          3      0.125
-## 2 male   promoted    21      0.875
-## 3 female not         10      0.417
-## 4 female promoted    14      0.583
-```
-
-
-``` r
-promotions_shuffled %&gt;% 
-  group_by(gender, decision) %&gt;% 
-  summarize(n = n()) %&gt;%
-  mutate(proportion = n / sum(n))
-```
-
-```
-## # A tibble: 4 × 4
-## # Groups:   gender [2]
-##   gender decision     n proportion
-##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
-## 1 male   not          6      0.25 
-## 2 male   promoted    18      0.75 
-## 3 female not          7      0.292
-## 4 female promoted    17      0.708
-```
-]
-
-
----
-
-# Sampling Variation?
-
-.pull-left[
-* In the hypothetical world, the difference was only 4.2%.
-
-* But what's the role of *sampling variation*? How representative of that hypothetical world is 4.2%?
-
-* Let's construct the sampling distribution ourselves!
-]
+* Well, we use `\(\bar{y}\)` because we don't know `\(\mu_Y\)`
 
 --
 
-.pull-right[
-1. You need to shuffle a deck of 48 cards, 24 red, 24 black, and lay out card after card in front of you.
+* Let's show where the `\((n-1)\)` thing comes from
 
-2. You do **not** put the cards back into the deck!
-
-3. You could use the function `sample` for example. Look at `?sample` to find out more.
-
-3. fill in your results into [this shared spreadsheet](https://docs.google.com/spreadsheets/d/118NlPUQjd13XodX7IGri8J-oLgkObdCtDEFri65tWmo/edit?usp=sharing)!
-]
 
 ---
 
-# Sampling Variation in Reshuffling
+class: inverse
 
-.pull-left[
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
-]
+# Task: Show where the `\(n-1\)` sample correction comes from
 
-.pull-right[
-* This distribution was created in our **hypothetical** scenario: no discrimination.
+We want to show that this `\(\mathbb{E}\big[(Y_i-\overline{Y})^2\big]\)` is not exactly the same as `\(\mathbb{E}\big[(Y_i-\mu_Y)^2\big]\)`, the latter being the population variance. 
 
-* We see how sampling variation affects the difference in promotion rates.
+In particular, show that there is an `\(n-1\)` too much:
 
-* The red line denotes the *observed difference* in the **real world**.
 
-* Now: How *likely* is it that the red line is part of this **hypothetical** distribution?
-]
+`$$\mathbb{E}\!\left[\sum_{i=1}^n (Y_i-\overline{Y})^2\right]
+= n\sigma^2\left(1 - \frac{1}{n}\right)
+= (n-1)\sigma^2.$$`
+
+* You can see that for small `\(n\)`, 10 say, that makes quite a difference.
 
 ---
 
-# Recap
+# Standard error of `\(\bar{y}\)`
 
-.pull-left[
-* We just did a **permutation test**. We randomly reshuffled and checked if it makes a difference.
+* The estimator for the standard *deviation* of `\(\bar{y}\)` `\(\left( \frac{\sigma_y}{\sqrt{n}}\right)\)` has a special name: we call it the **standard error**.
 
-* Again Resampling: Boostrapping is with replacment, permutation is without.
+* We write `\(SE(\bar{y}) = \hat{\sigma}_{\bar{y}} = \frac{s_Y}{\sqrt{n}}\)`
 
-* Bootstrapping: we put the paper slips **back** after recording them.
+* Again, observe that this is identical to  `\(\left( \frac{\sigma_y}{\sqrt(n)}\right)\)` (the std. deviation of `\(\bar{y}\)`) ***except*** for the fact that we cannot use `\(\sigma_Y\)` - because we often don't know it. 
 
-* Permutation: We took card after card from our deck (*without* putting it back!)
-]
+* `\(s_Y\)` is the estimator we derived on the previous slide!
 
---
+---
 
-.pull-right[
+# Confidence Intervals
 
-* We observed the estimate `\(\hat{p}_m - \hat{p}_f = 29\%\)` in the real world.
+* A *Confidence Interval* (CI) for a given population parameter `\(\theta\)` is a *random* interval whose endpoints are statistics (they are random variables)
 
-* We *tested* whether in a hypothetical universe with no discrimination, 29% *likely* to occur.
+* A CI contains `\(\theta\)` with a preassigned probability.
 
-* We concluded *rather not*. We tended to **reject** that hypothesis.
+* For example, a 95% confidence interval for `\(\theta\)` is an interval in which `\(\theta\)` lies 95% of the time.
 
-* The real question was: is 29% **really** different from zero? What is the role of sampling variation? 
-]
+* The CI is called an **interval estimate** (as opposed to a *point* estimate - which is what the sample mean is).
+
+---
+
+# Confidence Intervals for the Population Mean
+
+* Consider an i.i.d. sample `\({Y_i}\)` with unknown mean `\(\mu_Y\)` and **known** variance `\(\sigma_Y^2\)`.
+
+* Standardizing any random variable `\(X\)` means  
+
+`$$Z = \frac{X - E(X)}{sd(X)}, \qquad E(Z) = 0, \quad Var(Z) = 1$$`  
+
+This guarantees mean 0 and variance 1, but does not imply that `\(Z\)` is normally distributed unless `\(X\)` itself is normal.
+
+* For the sample mean, by the Central Limit Theorem (CLT), for large `\(n\)` we have  
+
+`$$\frac{\bar{Y} - \mu_Y}{\sigma_Y / \sqrt{n}} \approx \mathcal{N}(0,1)$$`  
+
+and if the `\({Y_i}\)` are normally distributed, this relationship holds **exactly** for any `\(n\)`.
+
+---
+
+# Confidence Intervals for the Population Mean
+
+
+* Thus, the standardized sample mean is approximately standard normal when `\(\sigma_Y\)` is known (exactly so if `\({Y_i}\)` are normal).  
+
+
+* If `\(\sigma_Y\)` is **unknown**, we replace it with the sample standard deviation `\(s_Y\)` and obtain  
+
+`$$T = \frac{\bar{Y} - \mu_Y}{s_Y / \sqrt{n}} \sim t_{n-1}$$`  
+which converges to `\(\mathcal{N}(0,1)\)` as `\(n \to \infty\)`.
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+* We want to find two numbers `\(c_L,c_H\)` to form an interval `\(\left[c_L,c_H\right]\)` around `\(\mu\)` with confidence `\(1-\alpha\)`:
+
+`$$\Pr\left( c_L \leq \mu \leq c_H \right) = 1- \alpha,$$`
+or
+
+`$$\Pr\left( \frac{\bar{y} - c_H}{s} \leq \frac{\bar{y} - \mu}{s} \leq \frac{\bar{y} - c_L}{s} \right) = 1- \alpha,$$`
+
+
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+* We said `\(\frac{\bar{y} - E(Y)}{s} \approx \mathcal{N}(0,1)\)` is approximately standard normal. *large sample* means we will assume it **is** normal.
+
+* Also, we want this interval to be symmetric, so that
+
+`$$\bar{y} - c_H = -\left(\bar{y} - c_L\right)$$`
+* So, to compute this
+
+`$$\Pr\left( \frac{\bar{y} - c_H}{s} \leq \frac{\bar{y} - \mu}{s} \leq \frac{\bar{y} - c_L}{s} \right) = 1- \alpha,$$`
+we do
+
+`$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - \Phi\left(-\frac{\bar{y} - c_L}{s}  \right) = 1 - \alpha$$`
+
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+Finally, using the symmetry of `\(\Phi\)`,
+
+`$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - \Phi\left(-\frac{\bar{y} - c_L}{s}  \right) = 1 - \alpha$$`
+becomes
+
+`$$2\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - 1 = 1 - \alpha$$`
+or
+
+`$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) = 1 - \frac{\alpha}{2}$$`
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+* we choose a value for `\(\alpha\)`. Say `\(\alpha = 0.05\)`
+
+`$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) = 1 - \frac{0.05}{2} = 0.975$$`
+* We need find the value for `\(c_L\)`! Easy - just invert the `\(\Phi\)` function (or look up in your probability table for standard normal)
+
+`$$\frac{\bar{y} - c_L}{s} = \Phi^{-1}\left(0.975\right)$$` 
+
+( `qnorm(0.975) = 1.959964` `\(\approx 1.96\)`)
+
+which we can easily solve for `\(c_L\)` now and get
+
+`$$c_L = \bar{y} - 1.96 s,  \quad c_H = \bar{y} + 1.96 s$$`
+---
+
+# What if `\(\sigma^2\)` is not known?!
+
+* Then we just use a consistent estimator for it, i.e. we use `\(SE(\bar{y})\)`!
+
+* Remember that this standard error depends on `\(n\)`, and so will our test statistic:
+
+`$$\frac{\bar{Y} - c_L}{S / \sqrt{n}} \sim t_{n-1}$$`
+* for small `\(n\)` this is now `\(t\)` distributed - have to work with t-dist table instead of `\(\Phi\)` as above.
+
+* For any `\(n&gt;30\)`, can use the normal again.
+
+
+---
+
+# Demo
+
+
+``` r
+library(shinyCLT)
+CLT()
+```
+
 
 
 ---
@@ -409,20 +395,6 @@ layout: true
 * The **null distribution** is the sampling distribution of our test statistic, assuming the Null hypothesis is **true**. That's our hypothetical world without discrimination.
 
 * We have seen such a null distribution just above:
-]
-
----
-
-# Null Distribution
-
-.left-wide[
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
-]
-
-.right-thin[
-* This **is** the sampling distribution of `\(\hat{p}_m - \hat{p}_f\)`, assuming `\(H_0\)` is true.
-
-* The red line is the *observed* test statistic.
 ]
 
 ---
@@ -514,16 +486,16 @@ null_distribution
 ## # A tibble: 1,000 × 2
 ##    replicate    stat
 ##        &lt;int&gt;   &lt;dbl&gt;
-##  1         1 -0.0417
-##  2         2 -0.0417
-##  3         3  0.125 
-##  4         4 -0.125 
+##  1         1  0.0417
+##  2         2  0.208 
+##  3         3 -0.0417
+##  4         4 -0.0417
 ##  5         5  0.0417
-##  6         6  0.292 
-##  7         7  0.125 
-##  8         8  0.0417
-##  9         9 -0.208 
-## 10        10 -0.125 
+##  6         6  0.208 
+##  7         7  0.0417
+##  8         8 -0.0417
+##  9         9 -0.0417
+## 10        10  0.208 
 ## # ℹ 990 more rows
 ```
 ]
@@ -572,7 +544,7 @@ obs_diff_prop
 visualize(null_distribution, bins = 10)
 ```
 
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-13-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 .right-thin[
@@ -593,7 +565,7 @@ visualize(null_distribution, bins = 10) +
                 direction = "right")
 ```
 
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
@@ -627,10 +599,10 @@ visualize(null_distribution, bins = 10) +
     ## # A tibble: 1 × 1
     ##   p_value
     ##     &lt;dbl&gt;
-    ## 1   0.033
+    ## 1    0.02
     ```
     
-* So, the probability of observing a 29% difference in a world with no discrimination is only 3.3%. That probability is due to sampling variation.
+* So, the probability of observing a 29% difference in a world with no discrimination is only 2%. That probability is due to sampling variation.
 ]
 
 --
@@ -639,7 +611,7 @@ visualize(null_distribution, bins = 10) +
 * Suppose we had set `\(\alpha = 0.001 = 0.1\%\)`
 
 * Given that the p-value is *greater* than `\(\alpha\)`, 
-    * i.e. 3.3% &gt; 0.1%,
+    * i.e. 2% &gt; 0.1%,
     * we would **fail to reject** the null `\(H_0:p_m - p_f = 0\)`. 
 
 * The p-value was not sufficiently small to convince us in this case.
@@ -720,13 +692,6 @@ visualize(null_distribution, bins = 10) +
 
 
 
----
-
-class: title-slide-final, middle
-
-# THANKS
-
-To the amazing [moderndive](https://moderndive.com/) team!
 
 ---
 

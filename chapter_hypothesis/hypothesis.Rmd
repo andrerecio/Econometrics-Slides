@@ -40,6 +40,10 @@ om = par("mar")
 lowtop = c(om[1],om[2],0.1,om[4])
 
 overwrite = FALSE
+library(purrr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 
 ```
 
@@ -49,7 +53,7 @@ layout: true
 
 ---
 
-# Estimators
+# Estimators (based on SW chapter 3)
 
 * An *estimator* is a function of a sample of data. Given the sample is random, so is the estimator. 
 
@@ -67,9 +71,9 @@ layout: true
 
 * We already met $\bar{y}$ as a good estimator for $E(Y)$.
 
-* not the only option: could also have used the average of the largest two values, like $\tilde{y} = \frac{max(y) - min(y)}{2}$, no? Or what about the *last* value in the dataset, $y_n$?
+* But it's not the only option: We could also have used the average of the largest two extremes, like $\tilde{y} = \frac{max(y) - min(y)}{2}$, no? Or what about the *last* value in our i.i.d. sample of data $\{y_i\}_{i=1}^n$, $y_n$?
 
-* generically, we call an estimator for population quantity $x$ often $\hat{x}$.
+* generically, we write an estimator for population quantity $x$ often $\hat{x}$.
 
 --
 
@@ -109,12 +113,6 @@ $$E(\bar{y}) = \mu_Y.$$
 * But ***at least*** we want to use the power of a lot of information (large $n$) to make sure that this randomness could be made arbitrarily small.
 
 
-
-]
-
-
-
-
 ---
 
 # Consistency
@@ -127,6 +125,8 @@ $$E(\bar{y}) = \mu_Y.$$
 ![](../img/bernoulli_grid.png)
 ]
 .left-thin[
+<br>
+
 * $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ depends on $n$
 
 * We wrote $\bar{y} \overset{p}{\to} \mu_Y$
@@ -144,7 +144,7 @@ $$E(\bar{y}) = \mu_Y.$$
 
 $$var(\hat{x}_1) > var(\hat{x}_2)$$
 
-then we say that $\hat{x}_2$ is *more efficient* than $\hat{x}_1$ - because uses the same amount of data in a more efficient way. 
+then we say that $\hat{x}_2$ is *more efficient* than $\hat{x}_1$ - because it uses the same amount of data in a more efficient way. 
 
 --
 
@@ -205,29 +205,163 @@ $$s_Y^2 = \frac{1}{n-1}\sum_{i=1}^n\left(y_i - \bar{y} \right)^2$$
 
 --
 
-* Let's show what happens
+* Let's show where the $(n-1)$ thing comes from
+
+
+---
+
+class: inverse
+
+# Task: Show where the $n-1$ sample correction comes from
+
+We want to show that this $\mathbb{E}\big[(Y_i-\overline{Y})^2\big]$ is not exactly the same as $\mathbb{E}\big[(Y_i-\mu_Y)^2\big]$, the latter being the population variance. 
+
+In particular, show that there is an $n-1$ too much:
+
+
+$$\mathbb{E}\!\left[\sum_{i=1}^n (Y_i-\overline{Y})^2\right]
+= n\sigma^2\left(1 - \frac{1}{n}\right)
+= (n-1)\sigma^2.$$
+
+* You can see that for small $n$, 10 say, that makes quite a difference.
+
+---
+
+# Standard error of $\bar{y}$
+
+* The estimator for the standard *deviation* of $\bar{y}$ $\left( \frac{\sigma_y}{\sqrt{n}}\right)$ has a special name: we call it the **standard error**.
+
+* We write $SE(\bar{y}) = \hat{\sigma}_{\bar{y}} = \frac{s_Y}{\sqrt{n}}$
+
+* Again, observe that this is identical to  $\left( \frac{\sigma_y}{\sqrt(n)}\right)$ (the std. deviation of $\bar{y}$) ***except*** for the fact that we cannot use $\sigma_Y$ - because we often don't know it. 
+
+* $s_Y$ is the estimator we derived on the previous slide!
+
+---
+
+# Confidence Intervals
+
+* A *Confidence Interval* (CI) for a given population parameter $\theta$ is a *random* interval whose endpoints are statistics (they are random variables)
+
+* A CI contains $\theta$ with a preassigned probability.
+
+* For example, a 95% confidence interval for $\theta$ is an interval in which $\theta$ lies 95% of the time.
+
+* The CI is called an **interval estimate** (as opposed to a *point* estimate - which is what the sample mean is).
+
+---
+
+# Confidence Intervals for the Population Mean
+
+* Consider an i.i.d. sample ${Y_i}$ with unknown mean $\mu_Y$ and **known** variance $\sigma_Y^2$.
+
+* Standardizing any random variable $X$ means  
+
+$$Z = \frac{X - E(X)}{sd(X)}, \qquad E(Z) = 0, \quad Var(Z) = 1$$  
+
+This guarantees mean 0 and variance 1, but does not imply that $Z$ is normally distributed unless $X$ itself is normal.
+
+* For the sample mean, by the Central Limit Theorem (CLT), for large $n$ we have  
+
+$$\frac{\bar{Y} - \mu_Y}{\sigma_Y / \sqrt{n}} \approx \mathcal{N}(0,1)$$  
+
+and if the ${Y_i}$ are normally distributed, this relationship holds **exactly** for any $n$.
+
+---
+
+# Confidence Intervals for the Population Mean
+
+
+* Thus, the standardized sample mean is approximately standard normal when $\sigma_Y$ is known (exactly so if ${Y_i}$ are normal).  
+
+
+* If $\sigma_Y$ is **unknown**, we replace it with the sample standard deviation $s_Y$ and obtain  
+
+$$T = \frac{\bar{Y} - \mu_Y}{s_Y / \sqrt{n}} \sim t_{n-1}$$  
+which converges to $\mathcal{N}(0,1)$ as $n \to \infty$.
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+* We want to find two numbers $c_L,c_H$ to form an interval $\left[c_L,c_H\right]$ around $\mu$ with confidence $1-\alpha$:
+
+$$\Pr\left( c_L \leq \mu \leq c_H \right) = 1- \alpha,$$
+or
+
+$$\Pr\left( \frac{\bar{y} - c_H}{s} \leq \frac{\bar{y} - \mu}{s} \leq \frac{\bar{y} - c_L}{s} \right) = 1- \alpha,$$
 
 
 
 ---
 
-# Hypothesis Tests About Population Mean
+# Confidence Intervals for the population mean in large samples
 
+* We said $\frac{\bar{y} - E(Y)}{s} \approx \mathcal{N}(0,1)$ is approximately standard normal. *large sample* means we will assume it **is** normal.
+
+* Also, we want this interval to be symmetric, so that
+
+$$\bar{y} - c_H = -\left(\bar{y} - c_L\right)$$
+* So, to compute this
+
+$$\Pr\left( \frac{\bar{y} - c_H}{s} \leq \frac{\bar{y} - \mu}{s} \leq \frac{\bar{y} - c_L}{s} \right) = 1- \alpha,$$
+we do
+
+$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - \Phi\left(-\frac{\bar{y} - c_L}{s}  \right) = 1 - \alpha$$
 
 
 ---
 
-# The P-value
+# Confidence Intervals for the population mean in large samples
 
-* calculating when known
+Finally, using the symmetry of $\Phi$,
+
+$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - \Phi\left(-\frac{\bar{y} - c_L}{s}  \right) = 1 - \alpha$$
+becomes
+
+$$2\Phi\left(\frac{\bar{y} - c_L}{s}  \right) - 1 = 1 - \alpha$$
+or
+
+$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) = 1 - \frac{\alpha}{2}$$
+
+---
+
+# Confidence Intervals for the population mean in large samples
+
+* we choose a value for $\alpha$. Say $\alpha = 0.05$
+
+$$\Phi\left(\frac{\bar{y} - c_L}{s}  \right) = 1 - \frac{0.05}{2} = 0.975$$
+* We need find the value for $c_L$! Easy - just invert the $\Phi$ function (or look up in your probability table for standard normal)
+
+$$\frac{\bar{y} - c_L}{s} = \Phi^{-1}\left(0.975\right)$$ 
+
+( `qnorm(0.975) = 1.959964` $\approx 1.96$)
+
+which we can easily solve for $c_L$ now and get
+
+$$c_L = \bar{y} - 1.96 s,  \quad c_H = \bar{y} + 1.96 s$$
+---
+
+# What if $\sigma^2$ is not known?!
+
+* Then we just use a consistent estimator for it, i.e. we use $SE(\bar{y})$!
+
+* Remember that this standard error depends on $n$, and so will our test statistic:
+
+$$\frac{\bar{Y} - c_L}{S / \sqrt{n}} \sim t_{n-1}$$
+* for small $n$ this is now $t$ distributed - have to work with t-dist table instead of $\Phi$ as above.
+
+* For any $n>30$, can use the normal again.
 
 
+---
 
+# Demo
 
-
-
-
-
+```{r,eval = FALSE}
+library(shinyCLT)
+CLT()
+```
 
 
 ---
@@ -463,6 +597,7 @@ ggplot(shuffled_data_tidy,aes(x=stat)) + geom_histogram(binwidth=0.1,color = "wh
 
 * The real question was: is 29% **really** different from zero? What is the role of sampling variation? 
 ]
+
 
 
 ---
@@ -768,6 +903,8 @@ visualize(null_distribution, bins = 10) +
 
 * This example is fully worked out [here](https://scpoecon.github.io/Econometrics/images/hypothesis.pdf)
 ]
+
+
 
 
 
