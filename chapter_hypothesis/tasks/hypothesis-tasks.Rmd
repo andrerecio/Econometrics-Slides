@@ -26,3 +26,88 @@ and assume $n$ is an even number.
 ## Answer
 
 
+# Task: Show where the $n-1$ sample correction comes from
+
+The sample variance is 
+
+$$S^2 = \frac{1}{n-1}\sum_{i=1}^n (Y_i-\overline{Y})^2,$$
+
+and we want to work out the unbiasedness of this object. That is, we want to take the $\mathbb{E}$ operator over it. We will move the $\mathbb{E}$ inside the sum (because it's linear). So, let's start with analysing one of the summands first:
+
+$$\mathbb{E}\big[(Y_i-\overline{Y})^2\big]$$
+
+Notice that this looks similar, but is *not* the same as
+
+$$\mathbb{E}\big[(Y_i-\mu_Y)^2\big]$$
+
+
+which is of course the population variance. 
+
+Let's start with the following claim. I claim that this expression falls into that:
+
+$$\mathbb{E}\big[(Y_i-\overline{Y})^2\big] 
+= \operatorname{Var}(Y_i) 
++ \operatorname{Var}(\overline{Y}) 
+- 2\,\operatorname{Cov}(Y_i,\overline{Y}).$$
+
+Why? Well, look at that. Remove the square and resolve the expectation:
+
+$$\mathbb{E}[Y_i - \overline{Y}] = \mathbb{E}[Y_i] - \mathbb{E}[\overline{Y}] = \mu_Y - \mu_Y = 0.$$
+
+That's interesting, because it means that
+
+$$\mathbb{E}\big[(Y_i-\overline{Y})^2\big]
+= \operatorname{Var}(Y_i - \overline{Y}).$$
+
+why? you know why, that's simply because
+
+$$\operatorname{Var}(X) = E(X^2) - [E(X)]^2$$
+(fill in $(Y_i-\overline{Y}$ for $X$ ).
+
+Ok, next. We know this identity
+
+$$\operatorname{Var}(A - B)
+= \operatorname{Var}(A) + \operatorname{Var}(B) - 2\,\operatorname{Cov}(A,B).$$
+
+let's substitute for A and B
+
+$$ \mathbb{E}\big[(Y_i-\overline{Y})^2\big]
+= \operatorname{Var}(Y_i - \overline{Y})= \operatorname{Var}(Y_i)
++ \operatorname{Var}(\overline{Y})
+- 2\,\operatorname{Cov}(Y_i,\overline{Y}).$$
+
+Next, compute the individual terms, using the iid assumption:
+
+$$\operatorname{Var}(Y_i) = \sigma^2, \qquad
+\operatorname{Var}(\overline{Y}) = \frac{\sigma^2}{n}.$$
+
+What's left is the covariance:
+
+$$\operatorname{Cov}(Y_i, \overline{Y})
+= \operatorname{Cov}\!\left(Y_i, \frac{1}{n}\sum_{j=1}^n Y_j\right)
+= \frac{1}{n}\operatorname{Cov}(Y_i, Y_i)
++ \frac{1}{n}\sum_{j\ne i}\operatorname{Cov}(Y_i, Y_j)
+= \frac{\sigma^2}{n}.$$
+
+Put it all back together
+
+$$\mathbb{E}\big[(Y_i-\overline{Y})^2\big]
+= \sigma^2 + \frac{\sigma^2}{n} - 2\cdot\frac{\sigma^2}{n}
+= \sigma^2\left(1 - \frac{1}{n}\right).$$
+
+
+## Getting the Sample Variance
+
+Summing over indices $i=1,\dots,n$ as required in our initial expression, we get
+
+$$\mathbb{E}\!\left[\sum_{i=1}^n (Y_i-\overline{Y})^2\right]
+= n\sigma^2\left(1 - \frac{1}{n}\right)
+= (n-1)\sigma^2.$$
+
+and therefore we need to get rid of the $(n-1)$ there. How? Just divide through!
+
+$$S^2 = \frac{1}{n-1}\sum_{i=1}^n (Y_i-\overline{Y})^2,$$
+
+and we have the unbiased estimator 
+
+$$\mathbb{E}[S^2] = \sigma^2$$
