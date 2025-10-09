@@ -139,7 +139,7 @@ There are two main "methods":
   
 ---
 
-# The (natural) log Function: A Primer `r emo::ji("winking_face")`
+# The (natural) log Function: A Primer 😉
 
 ```{r, echo = FALSE, fig.height = 5, fig.width = 10}
 data <- data.frame(x = seq(0, 10000, .1))
@@ -152,7 +152,7 @@ data %>%
 
 ---
 
-# The (natural) log Function: A Primer `r emo::ji("winking_face")`
+# The (natural) log Function: A Primer 😉
 
 The [natural log function](https://en.wikipedia.org/wiki/Natural_logarithm) is the inverse function of the exponential function. , i.e. $\log(\exp(x))=x$
 
@@ -162,11 +162,11 @@ $\rightarrow$ since for all $x$, $\exp(x)>0 \implies$ natural log function is on
 
 --
 
-`r emo::ji("warning")` You can only log your variables if they don't take 0 or negative values! Always think about this when taking the log of your dependent or independent variable(s)
+⚠️ You can only log your variables if they don't take 0 or negative values! Always think about this when taking the log of your dependent or independent variable(s)
 
 ---
 
-# The (natural) log Function: A Primer `r emo::ji("winking_face")`
+# The (natural) log Function: A Primer 😉
 
 If you have very ***skewed distributions*** taking the log will render it more ***normally distributed***
 
@@ -214,7 +214,7 @@ data %>%
 
 --
 
-* `r emo::ji("warning")` these interpretations are only true for ***small*** changes in $x$ and small/or $b_1$. What happens if we want to know the change in $y$ for big changes in $x$ or when $b_1$ is large?
+* ⚠️ these interpretations are only true for ***small*** changes in $x$ and small/or $b_1$. What happens if we want to know the change in $y$ for big changes in $x$ or when $b_1$ is large?
 
 ---
 name: gen_log
@@ -346,7 +346,7 @@ $\rightarrow$ ***polynomial*** regressions: just take a polynomial function of t
 
 ---
 
-# Polynomial Wut? `r emo::ji("worried_face")`
+# Polynomial Wut? 😮
 
 .pull-left[
 ```{r, echo = FALSE, fig.height=6}
@@ -927,17 +927,17 @@ reg_full$coefficients
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it!
+✅ How to manage data? Read it, tidy it, visualise it...
 
-`r emo::ji("white heavy check mark")`  **How to summarise relationships between variables?** Simple and multiple linear regression, non-linear regressions, interactions...
+✅  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
 
-`r emo::ji("white heavy check mark")` What is causality?
+✅ What is causality?
 
-`r emo::ji("cross mark")` What if we don't observe an entire population?
+❌ What if we don't observe an entire population?
 
-`r emo::ji("cross mark")`  Are our findings just due to randomness?
+❌  Are our findings just due to randomness?
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+❌ How to find exogeneity in practice?
 
 
 ---

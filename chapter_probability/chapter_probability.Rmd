@@ -1264,7 +1264,7 @@ background-position: 9% 19%
 | :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
 | <a href="https://github.com/floswald/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
 | <a href="https://floswald.github.io">.ScPored[<i class="fa fa-link fa-fw"></i>] | My Homepage |
-| <a href="https://scpoecon.github.io/ScPoEconometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
+| <a href="https://scpoecon.github.io/Econometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
 
 ```{r makepdf, echo=FALSE,eval=FALSE}
 system("decktape chapter1.html chapter1.pdf --chrome-arg=--disable-web-security")

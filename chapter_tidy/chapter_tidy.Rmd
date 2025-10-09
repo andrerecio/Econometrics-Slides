@@ -163,7 +163,7 @@ polls_us_election_2016 <- as_tibble(polls_us_election_2016) # convert to a tibbl
 head(polls_us_election_2016[,1:6]) # show first 6 lines of first 6 variables
 ```
 
-`r emo::ji("rotating_light")` This is a `tibble` (more informative than `data.frame`)
+🚨 This is a `tibble` (more informative than `data.frame`)
 
 ---
 
@@ -670,7 +670,7 @@ layout: true
 
 <div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
 
-# Chaining `r emo::ji("link")` Commands Together
+# Chaining ⛓️ Commands Together
 
 ---
 
@@ -817,7 +817,7 @@ polls_us_election_2016 %>% count()
 ```
 ]
 
-#### (only for `r emo::ji("nerd")`  nerds:)
+#### (only for 🤓  nerds:)
 
 * The `%>%` pipe is part of the `magrittr` package. `R v4.1.0` adds a *native pipe* via `|>`. you could use it like
 
@@ -1567,7 +1567,7 @@ background-position: 9% 19%
 | :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
 | <a href="https://github.com/floswald/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
 | <a href="https://floswald.github.io">.ScPored[<i class="fa fa-link fa-fw"></i>] | My Homepage |
-| <a href="https://scpoecon.github.io/ScPoEconometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
+| <a href="https://scpoecon.github.io/Econometrics/">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | Book                       |
 
 ```{r makepdf, echo=FALSE,eval=FALSE}
 system("decktape chapter1.html chapter1.pdf --chrome-arg=--disable-web-security")

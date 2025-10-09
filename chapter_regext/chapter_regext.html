@@ -26,7 +26,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS 2025-09-17
+### UniTo ESOMAS 2025-10-09
 ]
 
 ---
@@ -249,7 +249,7 @@ What if the relationship between `\(x\)` and `\(y\)` is not exponential/log?
 
 ---
 
-# Polynomial Wut? 😟
+# Polynomial Wut? 😮
 
 .pull-left[
 &lt;img src="chapter_regext_files/figure-html/unnamed-chunk-8-1.svg" style="display: block; margin: auto;" /&gt;
@@ -323,7 +323,7 @@ class:inverse
 
 # Task 1: Non-linear relationships
 
-<div class="countdown" id="timer_06fd70cf" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_556b3b1a" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -514,7 +514,7 @@ class:inverse
 
 # Task 2: Wages, education and gender in 1985
 
-<div class="countdown" id="timer_8e560b62" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_077f8a0c" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -614,7 +614,7 @@ class:inverse
 
 # Task 3: Standardized regression
 
-<div class="countdown" id="timer_3541f9ed" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_e58e96a6" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">07</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -623,10 +623,10 @@ Let's go back our [grades](https://www.dropbox.com/s/wwp2cs9f0dubmhr/grade5.dta?
 
 
 ```
-##       (Intercept)          classize     disadvantaged 
-##      78.560725298       0.003320773      -0.389333008 
-## school_enrollment            female         religious 
-##       0.000758258       0.923710499       2.876146701
+##       (Intercept)          classize     disadvantaged school_enrollment 
+##      78.560725298       0.003320773      -0.389333008       0.000758258 
+##            female         religious 
+##       0.923710499       2.876146701
 ```
 
 1. Create a new variable `avgmath_stand` equal to the standardized math score. You can use the `scale()` function (combined with `mutate`) or do it by hand with base `R`.
@@ -663,9 +663,9 @@ Let's go back our [grades](https://www.dropbox.com/s/wwp2cs9f0dubmhr/grade5.dta?
 
 # On the way to causality
 
-✅ How to manage data? Read it, tidy it, visualise it!
+✅ How to manage data? Read it, tidy it, visualise it...
 
-✅  **How to summarise relationships between variables?** Simple and multiple linear regression, non-linear regressions, interactions...
+✅  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
 
 ✅ What is causality?
 

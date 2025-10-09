@@ -44,7 +44,6 @@ overwrite = FALSE
 
 library(tidyverse)
 library(ggplot2)
-library(emo)
 library(dplyr)
 library(png)
 library(grid)
@@ -91,7 +90,7 @@ layout: true
 
 --
 
-- Ok, that's enough preaching `r emo::ji("sweat_smile")`
+- Ok, that's enough preaching 😅
 
 
 ---
@@ -113,11 +112,11 @@ __Causality__: what are we talking about?
 --
 
 - The key point here is the ***without changing anything else***, often referred as the **ceteris paribus (*all else equal*) assumption**.   
-(*latin* makes things seem more complicated `r emo::ji("nerd_face")`)
+(*latin* makes things seem more complicated 🤓)
 
 --
 
-- `r emo::ji("warning")` It does **NOT** mean that `X` is the only factor that causes `Y`.
+- ⚠️ It does **NOT** mean that `X` is the only factor that causes `Y`.
 
 ---
 
@@ -430,7 +429,7 @@ $$
 
 $\rightarrow$ the ***average*** causal effect of being in small relative to large class on GPA is 0.7 points.
 
-`r emo::ji("warning")` not all students benefited equally from the treatment!
+⚠️ not all students benefited equally from the treatment!
 
 ]
 
@@ -525,7 +524,7 @@ $$
 
 * Such a difference **will (almost always) fail to capture the causal treatment effect**
 
-* Notice that this kind "naive" comparison is often done by journalists, politicians, badly trained scientists (but not you now! `r emo::ji("wink")`)
+* Notice that this kind "naive" comparison is often done by journalists, politicians, badly trained scientists (but not you now! 😉)
 ]
 
 ---
@@ -627,7 +626,7 @@ toy_data_random <- toy_data_random %>%
 
 $$ SDO = \mathop{\mathbb{E}}(Y_i^1|D_i=1) - \mathop{\mathbb{E}}(Y_i^0|D_i=0) = ATE$$ 
 
-`r emo::ji("point_right")` We can directly estimate the ATE from the data!
+👉 We can directly estimate the ATE from the data!
 
 ---
 
@@ -1004,7 +1003,7 @@ $\begin{align} ATE &= \mathbb{E}[\textrm{math score} | \text{small}_i = 1] - \ma
 
 --
 
-We knew this already but we now understand why this is true `r emo::ji("v")`
+We knew this already but we now understand why this is true ✌️
 
 ---
 
@@ -1073,17 +1072,17 @@ However, they have some shortcomings:
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it...
+✅ How to manage data? Read it, tidy it, visualise it...
 
-`r emo::ji("construction")`  How to summarise relationships between variables? Simple linear regression... to be continued
+🚧  How to summarise relationships between variables? Simple linear regression... to be continued
 
-`r emo::ji("white heavy check mark")` **What is causality?**
+✅  **What is causality?**
 
-`r emo::ji("cross mark")` What if we don't observe an entire population?
+❌ What if we don't observe an entire population?
 
-`r emo::ji("cross mark")`  Are our findings just due to randomness?
+❌   Are our findings just due to randomness?
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+❌  How to find exogeneity in practice?
 
 
 ---
