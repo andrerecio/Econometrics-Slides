@@ -89,7 +89,7 @@ $$Y_{it} = \alpha + \beta TREAT_i + \gamma POST_t + \delta(TREAT_i \times POST_t
 
 --
 
-* Starting point: subjects are ***not*** randomly allocated to treatment `r emo::ji("warning")`
+* Starting point: subjects are ***not*** randomly allocated to treatment ⚠️
 
 --
 
@@ -181,7 +181,7 @@ Causal intuition:
 
 --
 
-* `r emo::ji("point_right")` ***Regression discontinuity design*** exploits this allocation to treatment!
+* 👉 ***Regression discontinuity design*** exploits this allocation to treatment!
 
 ---
 

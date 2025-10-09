@@ -1,7 +1,7 @@
 ---
 title: "Econometrics"
 subtitle: "Multiple Regression Model"
-author: "Florian Oswald, Gustave Kenedi, Mylène Feuillade and Junnan He"
+author: "Florian Oswald"
 date: "UniTo ESOMAS `r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -198,7 +198,7 @@ ggplot(grades, aes(x = disadvantaged, y = classize)) +
   geom_smooth(se = FALSE, method = "lm", colour = "#d90502")
 ```
 
-`r emo::ji("point_right")` On average, there is a greater % of disadvantaged students in smaller classes.
+👉 On average, there is a greater % of disadvantaged students in smaller classes.
 ]
 
 --
@@ -219,7 +219,7 @@ ggplot(grades, aes(x = disadvantaged, y = avgmath)) +
   geom_smooth(se = FALSE, method = "lm", colour = "#d90502")
 ```
 
-`r emo::ji("point_right")` On average, the greater the % of students coming from a disadvantaged background, the lower the average math score.
+👉 On average, the greater the % of students coming from a disadvantaged background, the lower the average math score.
 
 ]
 
@@ -264,7 +264,7 @@ where $y_i$ is the ***dependent variable*** and $x_i$ is the ***independent vari
 
 --
 
-`r emo::ji("warning")` Unless all other factors affecting $y_i$ are uncorrelated with $x_i$, $b_1$ **cannot be interpreted as a causal effect**.
+⚠️ Unless all other factors affecting $y_i$ are uncorrelated with $x_i$, $b_1$ **cannot be interpreted as a causal effect**.
 
 --
 
@@ -762,7 +762,7 @@ $\rightarrow$ `R` automatically detects perfect collinearity between variables a
 
 --
 
-`r emo::ji("warning")` you have to pay attention to the ***omitted/reference category***: the "baseline" category from which the coefficients are interpreted. Remember:
+⚠️ you have to pay attention to the ***omitted/reference category***: the "baseline" category from which the coefficients are interpreted. Remember:
 
 \begin{multline}
 \color{#027D83}{b_2} = \mathbb{E}(\text{average math score} | \color{#027D83}{\text{religious} = 1} \text{ & } \text{class size} \in \mathbb{N}) - \\ \mathbb{E}(\text{average math score} | \color{#027D83}{\text{religious} =0} \text{ & } \text{class size} \in \mathbb{N})
@@ -925,17 +925,17 @@ Let's use the *STAR* data (used in the previous task) to review the main concept
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it...
+✅ How to manage data? Read it, tidy it, visualise it...
 
-`r emo::ji("construction")`  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
+🚧  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
 
-`r emo::ji("white heavy check mark")` What is causality?
+✅ What is causality?
 
-`r emo::ji("cross mark")` What if we don't observe an entire population?
+❌ What if we don't observe an entire population?
 
-`r emo::ji("cross mark")`  Are our findings just due to randomness?
+❌  Are our findings just due to randomness?
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+❌ How to find exogeneity in practice?
 ---
 
 <br>

@@ -57,7 +57,7 @@ countdown(
 ```
 
 
-# Today - Real 'metrics finally `r emo::ji("v")`
+# Today - Real 'metrics finally ✌️
 
 * Introduction to the ***Simple Linear Regression Model*** and ***Ordinary Least Squares (OLS)*** *estimation*.
 
@@ -218,7 +218,7 @@ g_math_cs +
 
 * A *line*! Great. But **which** line? This one?
 
-* That's a *flat* line. But average mathematics score is somewhat *increasing* with class size `r emo::ji("weary")`
+* That's a *flat* line. But average mathematics score is somewhat *increasing* with class size 😩
 
 ]
 
@@ -242,7 +242,7 @@ g_math_cs +
 
 * **That** one?
 
-* Slightly better! Has a **slope** and an **intercept** `r emo::ji("neutral_face")`
+* Slightly better! Has a **slope** and an **intercept** 😐
 
 * We need a rule to decide! 
 
@@ -582,7 +582,7 @@ For now assume both the dependent variable $(y)$ and the independent variable $(
 
 --
 
-* `r emo::ji("warning")` Note that we use the term *associated*, **clearly avoiding interpreting $b_1$ as the causal impact of $x$ on $y$**. To make such a claim, we need some specific conditions to be met. (Next week!)
+* ⚠️ Note that we use the term *associated*, **clearly avoiding interpreting $b_1$ as the causal impact of $x$ on $y$**. To make such a claim, we need some specific conditions to be met. (Next week!)
 
 --
  
@@ -845,11 +845,11 @@ $$
 
 --
     
-* `r emo::ji("warning")` Low $R^2$ does __NOT__ mean it's a useless model! Remember that econometrics is interested in causal mechanisms, not prediction!
+* ⚠️ Low $R^2$ does __NOT__ mean it's a useless model! Remember that econometrics is interested in causal mechanisms, not prediction!
 
 --
     
-* `r emo::ji("warning")` The $R^2$ is __NOT__ an indicator of whether a relationship is causal!
+* ⚠️ The $R^2$ is __NOT__ an indicator of whether a relationship is causal!
 
 ---
 
@@ -873,17 +873,17 @@ class: inverse
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it...
+✅ How to manage data? Read it, tidy it, visualise it...
 
-`r emo::ji("construction")`  **How to summarise relationships between variables?** Simple linear regression... to be continued
+🚧  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
 
-`r emo::ji("cross mark")` What is causality?
+❌ What is causality?
 
-`r emo::ji("cross mark")` What if we don't observe an entire population?
+❌ What if we don't observe an entire population?
 
-`r emo::ji("cross mark")`  Are our findings just due to randomness?
+❌  Are our findings just due to randomness?
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+❌ How to find exogeneity in practice?
 
 
 ---

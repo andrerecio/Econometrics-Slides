@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Econometrics</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Florian Oswald" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/5235085b15.js"></script>
+    <link rel="stylesheet" href="../css/scpo.css" type="text/css" />
+    <link rel="stylesheet" href="../css/scpo-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Econometrics
+]
+.subtitle[
+## Instrumental Variables - Applications
+]
+.author[
+### Florian Oswald
+]
+.date[
+### UniTo ESOMAS 2025-10-09
+]
+
+---
+
+
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+---
+
+
+
+# Status
+
+.pull-left[
+
+## What Did we Do Last Week?
+
+* We learned about John Snow's grand experiment in London 1850.
+
+* We used his story to motivate the IV estimator.
+
+* You took a quiz about some IV aspects.
+
+]
+
+
+--
+
+.pull-right[
+
+## Today
+
+* We'll look at further IV applications.
+
+* We introduce an extension called *Two Stage Least Squares*.
+
+* We will use `R` to compute the estimates.
+
+* Finally we'll talk about *weak* instruments.
+
+]
+
+
+
+---
+
+layout: false
+class: separator, middle
+
+# Prologue
+
+## One cool `R` package a day, keeps the doctor away...
+
+---
+layout: false
+
+# [`Rayshader`](https://www.rayshader.com)
+
+* Can *raytrace* all kinds of elevation data.
+* Can *also* make most `ggplot`s come to 3D-life!
+
+&lt;video width="100%" height="50%" controls id="my_video"&gt;
+    &lt;source src="https://www.tylermw.com/wp-content/uploads/2019/05/deathappended2.mp4" type="video/mp4"&gt;
+&lt;/video&gt;
+
+---
+
+# [`Rayshader`](https://www.rayshader.com)
+
+* This is all it takes:
+
+
+``` r
+library(ggplot2)
+library(rayshader)
+#Data from Social Security administration
+death = read_csv("https://www.tylermw.com/data/death.csv", skip = 1)
+meltdeath = reshape2::melt(death, id.vars = "Year")
+
+meltdeath$age = as.numeric(meltdeath$variable)
+
+# make a ggplot
+deathgg = ggplot(meltdeath) +
+  geom_raster(aes(x=Year,y=age,fill=value)) +
+  scale_x_continuous("Year",expand=c(0,0),breaks=seq(1900,2010,10)) +
+  scale_y_continuous("Age",expand=c(0,0),breaks=seq(0,100,10),limits=c(0,100)) +
+  scale_fill_viridis("Death\nProbability\nPer Year",
+       trans = "log10",breaks=c(1,0.1,0.01,0.001,0.0001), 
+       labels = c("1","1/10","1/100","1/1000","1/10000")) +
+  ggtitle("Death Probability vs Age and Year for the USA") +
+  labs(caption = "Data Source: US Dept. of Social Security")
+
+# give it to rayshader
+plot_gg(deathgg, multicore=TRUE,height=5,width=6,scale=500)
+```
+
+* Amazing, right? 🎉 🎊
+
+---
+
+layout: false
+class: separator, middle
+
+# Back to school!
+
+---
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+---
+
+# Returns To Schooling
+
+.pull-left[
+* What's the causal impact of schooling on earnings?
+
+* [Jacob Mincer](https://en.wikipedia.org/wiki/Jacob_Mincer) was interested in this important question.
+
+* Here's his model:
+
+$$
+\log Y_i = \alpha + \rho S_i + \beta_1 X_i + \beta_2 X_i^2 + e_i
+$$
+]
+
+
+.pull-right[
+&lt;img src="IV2_files/figure-html/mincer-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Returns To Schooling
+
+.pull-left[
+$$
+\log Y_i = \alpha + \rho S_i + \beta_1 X_i + \beta_2 X_i^2 + e_i
+$$
+
+* He found an estimate for `\(\rho\)` of about 0.11, 
+
+* 11% earnings advantage for each additional year of education
+
+* Look at the DAG. Is that a good model? Well, why would it not be? 
+]
+
+
+.pull-right[
+&lt;img src="IV2_files/figure-html/mincer2-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Ability Bias
+
+.pull-left[
+* We compare earnings of men with certain schooling and work experience
+
+* Is all else equal, after controlling for those?
+
+* Given `\(X\)`, 
+    * Can we find differently diligent workers out there? 
+    * Can we find differently able workers?
+    * Do family connections of workers vary?
+]
+
+--
+
+.pull-right[
+* Yes, of course. So, *all else* is not equal at all.
+
+* That's an issue, because for OLS consistency we require the orthogonality assumption 
+`$$E[e_i | S_i, X_i] \neq 0$$`
+
+* Let's introduce **ability** `\(A_i\)` explicitly.
+]
+
+
+---
+
+# Mincer with Unobserved Ability
+
+.pull-left[
+* In fact we have *two* unobservables: `\(e\)` and `\(A\)`.
+
+* Of course we can't tell them apart.
+
+* So we defined a new unobservable factor 
+`$$u_i = e_i + A_i$$`
+
+]
+
+--
+
+.pull-right[
+
+&lt;img src="IV2_files/figure-html/mincer3-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Mincer with Unobserved Ability
+
+.pull-left[
+* In terms of an equation:
+`$$\log Y_i = \alpha + \rho S_i + \beta_1 X_i + \beta_2 X_i^2 + \underbrace{u_i}_{A_i + e_i}$$`
+
+* Sometimes, this does not matter, and the OLS bias is small.
+
+* But sometimes it does and we get it totally wrong! Example.
+
+]
+
+
+.pull-right[
+
+&lt;img src="IV2_files/figure-html/mincer4-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Angrist and Krueger (1991): Birthdate is as good as Random
+
+
+.pull-left[
+* Angrist and Krueger (AK91) is an influental study addressing ability bias.
+
+* Idea: 
+    1. construct an IV that encodes *birth date of student*.
+    1. Child born just after cutoff date will start school later!
+    
+* Suppose all children who reach the age of 6 by 31st of december 2021 are required to enroll in the first grade of school in september of that year (2021).
+]
+
+--
+
+.pull-right[
+* If born on 31/12/2015, they will be 5 years and 3/4 by the time they start school.
+
+* If born on 01/01/2016 they will be also and 3/4 years when *they* enter school (just one year later).
+
+* However, people can drop out of school legally on their 16-th birthday! 
+
+* So, out of people who drop out, some got more schooling than others.
+
+* AK91 construct IV *quarter of birth* dummy: affects schooling, but not related to `\(A\)`!
+]
+
+---
+
+# Birthdate Setup
+
+Let's set up 2 children:
+
+
+``` r
+library(lubridate)
+born1 = as.Date("2015-12-31")
+born2 = as.Date("2016-01-01")
+school1 = as.Date("2021-09-01")
+school2 = as.Date("2022-09-01")
+```
+
+How much days of school if they drop out on their 16-th birthday?
+
+
+
+---
+
+# Birthdate Setup
+
+Let's set up 2 children:
+
+
+``` r
+library(lubridate)
+born1 = as.Date("2015-12-31")
+born2 = as.Date("2016-01-01")
+school1 = as.Date("2021-09-01")
+school2 = as.Date("2022-09-01")
+```
+
+How much days of school if they drop out on their 16-th birthday?
+
+
+
+``` r
+dropout1 = born1 %m+% years(16)
+dropout2 = born2 %m+% years(16)
+(schooldays1 = dropout1 - school1)
+```
+
+```
+## Time difference of 3773 days
+```
+
+``` r
+(schooldays2 = dropout2 - school2)
+```
+
+```
+## Time difference of 3409 days
+```
+
+---
+
+
+# AK91 IV setup
+
+.pull-left[
+* *quarter of birth* dummy `\(z\)`: affects schooling, but not related to `\(A\)`!
+
+* In particular: whether born in 4-th quarter or not.
+
+]
+
+.pull-right[
+
+&lt;img src="IV2_files/figure-html/ak-mod-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# AK91 Estimation: Two Stage Least Squares (2SLS)
+
+AK91 allow us to introduce a widely used variation of our simple IV estimator: **2SLS**
+
+1. We estimate a **first stage model** which uses only exogenous variables (like `\(z\)`) to explain our endgenous regressor `\(s\)`.
+
+2. We then use the first stage model to *predict* values of `\(s\)` in what is called the **second stage** or the **reduced form** model. Performing this procedure is supposed to take out any impact of `\(A\)` in the correlation we observe in our data between `\(s\)` and `\(y\)`.
+
+`\begin{align}
+\text{1. Stage: }s_i &amp;= \alpha_0 + \alpha_1 z_i + \eta_i \\ 
+\text{2. Stage: }y_i &amp;= \beta_0 + \beta_1 \hat{s}_i + u_i 
+\end{align}`
+
+**Conditions:**
+
+1. Relevance of the IV: `\(\alpha_1 \neq 0\)`
+1. Independence (IV assignment as good as random): `\(E[\eta | z] = 0\)`
+1. Exogeneity (our exclusion restriction): `\(E[u | z] = 0\)`
+
+
+---
+layout: false
+class: separator, middle
+
+# Let's do Angrist and Krueger (1991)! 
+
+---
+layout: true
+
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+---
+
+# Data on birth quarter and wages
+
+Let's load the data and look at a quick summary
+
+
+``` r
+data("ak91", package = "masteringmetrics")
+# from the modelsummary package
+datasummary_skim(data.frame(ak91),histogram = TRUE)
+```
+
+```{=html}
+&lt;!-- preamble start --&gt;
+
+    &lt;script&gt;
+
+      function styleCell_ynjgbqkjamgeebgl0llz(i, j, css_id) {
+          var table = document.getElementById("tinytable_ynjgbqkjamgeebgl0llz");
+          var cell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function spanCell_ynjgbqkjamgeebgl0llz(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_ynjgbqkjamgeebgl0llz");
+        const targetCell = table.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+        if (!targetCell) {
+          console.warn(`Cell at (${i}, ${j}) not found.`);
+        }
+
+        // Get all cells that need to be removed
+        const cellsToRemove = [];
+        for (let r = 0; r &lt; rowspan; r++) {
+          for (let c = 0; c &lt; colspan; c++) {
+            if (r === 0 &amp;&amp; c === 0) continue; // Skip the target cell
+            const cell = table.querySelector(`[data-row="${i + r}"][data-col="${j + c}"]`);
+            if (cell) {
+              cellsToRemove.push(cell);
+            }
+          }
+        }
+
+        // Remove all cells
+        cellsToRemove.forEach(cell =&gt; cell.remove());
+
+        // Set rowspan and colspan of the target cell if it exists
+        if (targetCell) {
+          targetCell.rowSpan = rowspan;
+          targetCell.colSpan = colspan;
+        }
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '6', j: 5 }, { i: '6', j: 7 }, { i: '6', j: 1 }, { i: '6', j: 3 }, { i: '6', j: 0 }, { i: '6', j: 2 }, { i: '6', j: 4 }, { i: '6', j: 6 }, { i: '6', j: 8 },  ], css_id: 'tinytable_css_63cvw9nbd0tix4vcqmjy',}, 
+          { positions: [ { i: '5', j: 0 }, { i: '5', j: 2 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '5', j: 3 }, { i: '1', j: 0 }, { i: '2', j: 0 }, { i: '3', j: 0 }, { i: '4', j: 0 }, { i: '4', j: 2 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '3', j: 4 }, { i: '3', j: 6 }, { i: '4', j: 6 }, { i: '5', j: 6 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '3', j: 7 }, { i: '4', j: 7 }, { i: '5', j: 7 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '2', j: 6 }, { i: '2', j: 8 }, { i: '3', j: 8 }, { i: '4', j: 8 }, { i: '5', j: 8 }, { i: '1', j: 5 }, { i: '1', j: 7 }, { i: '2', j: 7 }, { i: '1', j: 6 }, { i: '1', j: 8 },  ], css_id: 'tinytable_css_jhu676gimczxdmp27dti',}, 
+          { positions: [ { i: '0', j: 0 }, { i: '0', j: 2 }, { i: '0', j: 4 }, { i: '0', j: 6 }, { i: '0', j: 8 }, { i: '0', j: 5 }, { i: '0', j: 7 }, { i: '0', j: 1 }, { i: '0', j: 3 },  ], css_id: 'tinytable_css_xprpkgj23lzxdvtar2rx',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_ynjgbqkjamgeebgl0llz(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    &lt;/script&gt;
+
+    &lt;style&gt;
+      /* tinytable css entries after */
+      .table td.tinytable_css_63cvw9nbd0tix4vcqmjy, .table th.tinytable_css_63cvw9nbd0tix4vcqmjy { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_jhu676gimczxdmp27dti, .table th.tinytable_css_jhu676gimczxdmp27dti { text-align: left; }
+      .table td.tinytable_css_xprpkgj23lzxdvtar2rx, .table th.tinytable_css_xprpkgj23lzxdvtar2rx { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    &lt;/style&gt;
+    &lt;div class="container"&gt;
+      &lt;table class="table table-borderless" id="tinytable_ynjgbqkjamgeebgl0llz" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing='true'&gt;
+        &lt;thead&gt;
+        
+              &lt;tr&gt;
+                &lt;th scope="col" data-row="0" data-col="0"&gt; &lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="1"&gt;Unique&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="2"&gt;Missing Pct.&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="3"&gt;Mean&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="4"&gt;SD&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="5"&gt;Min&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="6"&gt;Median&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="7"&gt;Max&lt;/th&gt;
+                &lt;th scope="col" data-row="0" data-col="8"&gt;Histogram&lt;/th&gt;
+              &lt;/tr&gt;
+        &lt;/thead&gt;
+        
+        &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="1" data-col="0"&gt;lnw&lt;/td&gt;
+                  &lt;td data-row="1" data-col="1"&gt;26732&lt;/td&gt;
+                  &lt;td data-row="1" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="1" data-col="3"&gt;5.9&lt;/td&gt;
+                  &lt;td data-row="1" data-col="4"&gt;0.7&lt;/td&gt;
+                  &lt;td data-row="1" data-col="5"&gt;-2.3&lt;/td&gt;
+                  &lt;td data-row="1" data-col="6"&gt;6.0&lt;/td&gt;
+                  &lt;td data-row="1" data-col="7"&gt;10.5&lt;/td&gt;
+                  &lt;td data-row="1" data-col="8"&gt;&lt;img src="./tinytable_assets/idnfnfm8iqrtow6ztc7tjx.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="2" data-col="0"&gt;s&lt;/td&gt;
+                  &lt;td data-row="2" data-col="1"&gt;21&lt;/td&gt;
+                  &lt;td data-row="2" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="2" data-col="3"&gt;12.8&lt;/td&gt;
+                  &lt;td data-row="2" data-col="4"&gt;3.3&lt;/td&gt;
+                  &lt;td data-row="2" data-col="5"&gt;0.0&lt;/td&gt;
+                  &lt;td data-row="2" data-col="6"&gt;12.0&lt;/td&gt;
+                  &lt;td data-row="2" data-col="7"&gt;20.0&lt;/td&gt;
+                  &lt;td data-row="2" data-col="8"&gt;&lt;img src="./tinytable_assets/idgtjj5tch8od1afl96qzo.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="3" data-col="0"&gt;yob&lt;/td&gt;
+                  &lt;td data-row="3" data-col="1"&gt;10&lt;/td&gt;
+                  &lt;td data-row="3" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="3" data-col="3"&gt;1934.6&lt;/td&gt;
+                  &lt;td data-row="3" data-col="4"&gt;2.9&lt;/td&gt;
+                  &lt;td data-row="3" data-col="5"&gt;1930.0&lt;/td&gt;
+                  &lt;td data-row="3" data-col="6"&gt;1935.0&lt;/td&gt;
+                  &lt;td data-row="3" data-col="7"&gt;1939.0&lt;/td&gt;
+                  &lt;td data-row="3" data-col="8"&gt;&lt;img src="./tinytable_assets/id9jpfx4eexagaodqmgsyy.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="4" data-col="0"&gt;qob&lt;/td&gt;
+                  &lt;td data-row="4" data-col="1"&gt;4&lt;/td&gt;
+                  &lt;td data-row="4" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="4" data-col="3"&gt;2.5&lt;/td&gt;
+                  &lt;td data-row="4" data-col="4"&gt;1.1&lt;/td&gt;
+                  &lt;td data-row="4" data-col="5"&gt;1.0&lt;/td&gt;
+                  &lt;td data-row="4" data-col="6"&gt;3.0&lt;/td&gt;
+                  &lt;td data-row="4" data-col="7"&gt;4.0&lt;/td&gt;
+                  &lt;td data-row="4" data-col="8"&gt;&lt;img src="./tinytable_assets/id3dryqj9j9oxsn6jqmic0.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="5" data-col="0"&gt;sob&lt;/td&gt;
+                  &lt;td data-row="5" data-col="1"&gt;51&lt;/td&gt;
+                  &lt;td data-row="5" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="5" data-col="3"&gt;30.7&lt;/td&gt;
+                  &lt;td data-row="5" data-col="4"&gt;14.2&lt;/td&gt;
+                  &lt;td data-row="5" data-col="5"&gt;1.0&lt;/td&gt;
+                  &lt;td data-row="5" data-col="6"&gt;34.0&lt;/td&gt;
+                  &lt;td data-row="5" data-col="7"&gt;56.0&lt;/td&gt;
+                  &lt;td data-row="5" data-col="8"&gt;&lt;img src="./tinytable_assets/idtf2hdfcs3g56wvnpp8pd.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                  &lt;td data-row="6" data-col="0"&gt;age&lt;/td&gt;
+                  &lt;td data-row="6" data-col="1"&gt;40&lt;/td&gt;
+                  &lt;td data-row="6" data-col="2"&gt;0&lt;/td&gt;
+                  &lt;td data-row="6" data-col="3"&gt;45.0&lt;/td&gt;
+                  &lt;td data-row="6" data-col="4"&gt;2.9&lt;/td&gt;
+                  &lt;td data-row="6" data-col="5"&gt;40.2&lt;/td&gt;
+                  &lt;td data-row="6" data-col="6"&gt;45.0&lt;/td&gt;
+                  &lt;td data-row="6" data-col="7"&gt;50.0&lt;/td&gt;
+                  &lt;td data-row="6" data-col="8"&gt;&lt;img src="./tinytable_assets/idksa7gg74mg6s1jqs933y.png" style="height: 1em;"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+&lt;!-- hack to avoid NA insertion in last line --&gt;
+```
+
+---
+
+# AK91 Data Transformations
+
+* We want to create the `q4` dummy which is `TRUE` if you are born in the 4th quarter.
+
+* create `factor` versions of quarter and year of birth.
+
+
+``` r
+ak91 &lt;- mutate(ak91,
+               qob_fct = factor(qob),
+               q4 = as.integer(qob == "4"),
+               yob_fct = factor(yob))
+# get mean wage by year/quarter
+ak91_age &lt;- ak91 %&gt;%
+  group_by(qob, yob) %&gt;%
+  summarise(lnw = mean(lnw), s = mean(s)) %&gt;%
+  mutate(q4 = (qob == 4))
+```
+
+---
+
+# AK91 Figure 1: First Stage!
+
+Let's reproduce AK91's first figure now on education as a function of quarter of birth!
+
+
+``` r
+ggplot(ak91_age, aes(x = yob + (qob - 1) / 4, y = s )) +
+  geom_line() + 
+  geom_label(mapping = aes(label = qob, color = q4)) +
+  guides(label = FALSE, color = FALSE) +
+  scale_x_continuous("Year of birth", breaks = 1930:1940) +
+  scale_y_continuous("Years of Education", breaks = seq(12.2, 13.2, by = 0.2),
+                     limits = c(12.2, 13.2)) +
+  theme_bw()
+```
+
+---
+
+# AK91 Figure 1: First Stage!
+
+.left-thin[
+&lt;br&gt;
+&lt;br&gt;
+1. The numbers label mean education *by* quarter of birth groups.
+
+1. The 4-th quarters **did** get more education in most years!
+
+1. There is a general trend.
+
+]
+
+.right-wide[
+&lt;img src="IV2_files/figure-html/ak91-dummy-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# AK91 Figure 2: Impact of IV on outcome
+
+What about earnings for those groups?
+
+
+
+``` r
+ggplot(ak91_age, aes(x = yob + (qob - 1) / 4, y = lnw)) +
+  geom_line() +
+  geom_label(mapping = aes(label = qob, color = q4)) +
+  scale_x_continuous("Year of birth", breaks = 1930:1940) +
+  scale_y_continuous("Log weekly wages") +
+  guides(label = FALSE, color = FALSE) +  
+  theme_bw()
+```
+
+---
+
+# AK91 Figure 2: Impact of IV on outcome
+
+
+.left-thin[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+1. The 4-th quarters are among the high-earners by birth year.
+
+1. In general, weekly wages seem to decline somewhat over time.
+
+]
+
+.right-wide[
+
+&lt;img src="IV2_files/figure-html/ak91-wage-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Running IV estimation in `R`
+
+&lt;br&gt;
+&lt;br&gt;
+
+.pull-left[
+* Several options (like always with `R`! 😉)
+
+* Will use the [`iv_robust`](https://declaredesign.org/r/estimatr/reference/iv_robust.html) function from the `estimatr` package.
+
+* *Robust*? Computes standard errors which are correcting for heteroskedasticity. [Details here.](https://declaredesign.org/r/estimatr/articles/mathematical-notes.html)
+]
+
+
+.pull-right[
+
+``` r
+library(estimatr)
+# create a list of models
+mod &lt;- list()
+
+# standard (biased!) OLS
+mod$ols &lt;- lm(lnw ~ s, data = ak91)
+
+# IV: born in q4 is TRUE?
+# doing IV manually in 2 stages.
+mod[["1. stage"]] &lt;- lm(s ~ q4, data = ak91)
+ak91$shat         &lt;- predict(mod[["1. stage"]])  
+mod[["2. stage"]] &lt;- lm(lnw ~ shat, data = ak91)
+
+# run 2SLS
+# doing IV all in one go
+# notice the formula!
+# formula = y ~ x | z
+mod$`2SLS`  &lt;- iv_robust(lnw ~ s | q4,
+                                   data = ak91,
+                         diagnostics = TRUE)
+```
+]
+
+---
+count: false
+
+# Running IV estimation in `R`
+
+&lt;br&gt;
+&lt;br&gt;
+
+.pull-left[
+* Several options (like always with `R`! 😉)
+
+* Will use the [`iv_robust`](https://declaredesign.org/r/estimatr/reference/iv_robust.html) function from the `estimatr` package.
+
+* *Robust*? Computes standard errors which are correcting for heteroskedasticity. [Details here.](https://declaredesign.org/r/estimatr/articles/mathematical-notes.html)
+
+* Notice the `predict` to get `\(\hat{s}\)`.
+]
+
+
+.pull-right[
+
+``` r
+library(estimatr)
+# create a list of models
+mod &lt;- list()
+
+# standard (biased!) OLS
+mod$ols &lt;- lm(lnw ~ s, data = ak91)
+
+# IV: born in q4 is TRUE?
+# doing IV manually in 2 stages.
+mod[["1. stage"]] &lt;- lm(s ~ q4, data = ak91)
+*ak91$shat         &lt;- predict(mod[["1. stage"]])
+mod[["2. stage"]] &lt;- lm(lnw ~ shat, data = ak91)
+
+# run 2SLS
+# doing IV all in one go
+# notice the formula!
+# formula = y ~ x | z
+mod$`2SLS`  &lt;- iv_robust(lnw ~ s | q4,
+                         data = ak91,
+                         diagnostics = TRUE)
+```
+]
+
+---
+
+# AK91 Results Table
+
+.left-wide[
+<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;" id="tab:ms1">
+<col><col><col><col><col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;  font-weight: normal;"> </th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;  font-weight: normal;">ols</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;  font-weight: normal;">1. stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;  font-weight: normal;">2. stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;  font-weight: normal;">2SLS</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(Intercept)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">4.995***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">12.747***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">4.955***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">4.955***</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.004)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.007)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.381)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.358)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">s</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.071***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.074**</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.000)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.028)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">q4</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.092***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.013)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">shat</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.074*</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">(0.030)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">R2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.117</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.117</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">RMSE</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">3.28</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.68</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">0.64</td></tr>
+<tr>
+<td class="huxtable-cell" colspan="5" style="border-style: solid solid solid solid; border-width: 0.8pt 0pt 1pt 0pt;    padding: 3.5pt 6pt 3.5pt 6pt;">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr>
+</tbody>
+</table>
+
+]
+
+.right-thin[
+1. OLS likely downward biased (measurement error in schooling)
+
+1. First Stage: IV `q4` is statistically significant, but small effect: born in q4 has 0.092 years of educ. `\(R^2\)` is 0%! But F-stat is large. 😅
+
+1. Second stage has same point estimate as `2SLS` but different std error (2. stage one is wrong)
+
+]
+
+---
+
+# Remember the F-Statistic?
+
+* We encountered this before: it's useful to test restricted vs unrestricted models against each other.
+
+--
+
+* Here, we are interested whether our instruments are *jointly* significant. Of course, with only one IV, that's not more informative than the t-stat of that IV.
+
+--
+
+* This F-Stat compares the predictive power of the first stage with and without the IVs. If they have very similar predictive power, the F-stat will be low, and we will not be able to reject the H0 that our IVs are **jointly insignificant** in the first stage model. 😞
+
+---
+
+# Additional Control Variables
+
+* We saw a clear time trend in education earlier.
+
+* There are also business-cycle fluctuations in earnings
+
+* We should somehow control for different time periods.
+
+* Also, we can use more than one IV! Here is how:
+
+---
+
+# Additional Control Variables
+
+
+
+``` r
+# we keep adding to our `mod` list:
+mod$ols_yr  &lt;- update(mod$ols, . ~ . + yob_fct)  #  previous OLS model
+# add exogenous vars on both sides of the `|` !
+mod[["2SLS_yr"]] &lt;- estimatr::iv_robust(lnw ~ s  + yob_fct | q4 + yob_fct, data = ak91, diagnostics = TRUE )  
+# use all quarters as IVs
+mod[["2SLS_all"]] &lt;- estimatr::iv_robust(lnw ~ s  + yob_fct | qob_fct + yob_fct, data = ak91, diagnostics = TRUE  )
+```
+
+
+<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><col><col><col><col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"> </th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">ols</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">1. stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">2. stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">2SLS</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(Intercept)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.995***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">12.747***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.955***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.955***</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.004)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.007)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.381)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.358)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">s</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.071***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.074**</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.000)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.028)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">q4</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.092***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.013)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">shat</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.074*</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.030)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">R2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.117</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.117</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">RMSE</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">3.28</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.68</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td></tr>
+<tr>
+<td class="huxtable-cell" colspan="5" style="border-style: solid solid solid solid; border-width: 0.8pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr>
+</tbody>
+</table>
+
+
+---
+
+# Additional Control Variables
+
+.left-wide[
+<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><col><col><col><col><col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"> </th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">ols</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">2SLS</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">ols_yr</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">2SLS_yr</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">2SLS_all</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(Intercept)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">5.00***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.96***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">5.02***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.97***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">4.59***</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.00)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.36)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.01)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.35)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.25)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">s</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.07***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.07**</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.07***</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.08**</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.11***</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.00)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.03)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.00)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.03)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">(0.02)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">R2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.117</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.117</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.118</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.117</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0.4pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.091</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">RMSE</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.64</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">0.65</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">Instruments</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">none</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">Q4</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">none</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">Q4</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 4pt 6pt 4pt 6pt;">All Quarters</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">Year of birth</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">no</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">no</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">yes</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">yes</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 4pt 6pt 4pt 6pt;">yes</td></tr>
+<tr>
+<td class="huxtable-cell" colspan="6" style="border-style: solid solid solid solid; border-width: 0.8pt 0pt 1pt 0pt;    padding: 4pt 6pt 4pt 6pt;">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr>
+</tbody>
+</table>
+
+]
+
+.right-thin[
+**Adding year controls**...
+
+* leaves OLS mostly unchanged
+* slight increase in 2SLS estimate
+
+**Using all quarters as IV**...
+
+* Increases precision of 2SLS estimate a lot!
+* Point estimate is 10.5% now!
+
+]
+
+
+---
+
+# AK91: Taking Stock - The Quarter of Birth (QOB) IV
+
+.pull-left[
+
+* This will produce consistent estimates if
+    1. The IV predicts the endogenous regressor well.
+    2. The IV is as good as random / independent of OVs.
+    3. Can only impact outcome through schooling.
+    
+* How does the QOB perform along those lines?
+
+]
+
+--
+
+.pull-right[
+
+1. Plot of first stage and high F-stat offer compelling evidence for **relevance**. ✅
+
+2. Is QOB **independent** of, say, *maternal characteristics*? Birthdays are not really random - there are birth seasons for certain socioeconomic backgrounds. highest maternal schooling give birth in second quarter. (not in 4th! ✅)
+
+3. Exclusion: What if the youngest kids (born in Q4!) are the disadvantaged ones early on, which has long-term negative impacts? That would mean `\(E[u|z] \neq 0\)`! Well, with QOB the youngest ones actually do better (more schooling and higher wage)! ✅
+]
+
+---
+
+layout: false
+class: separator, middle
+
+# Mechanics of IV
+
+## Identification and Inference
+
+
+---
+
+# IV Identification
+
+Let's go back to our simple linear model:
+
+$$
+y = \beta_0 + \beta_1 x + u
+$$
+
+where we fear that `\(Cov(x,u) \neq 0\)`, `\(x\)` is *endogenous*.
+
+## Conditions for IV
+
+1. **first stage** or **relevance**: `\(Cov(z,x) \neq 0\)`
+2. **IV exogeneity**: `\(Cov(z,u) = 0\)`: the IV is exogenous in the outcome equation.
+
+---
+
+# Valid Model (A) vs Invalid Model (B) for IV `z`
+
+&lt;img src="IV2_files/figure-html/IV-dag2-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# IV Identification
+
+.pull-left[
+
+&gt;## Conditions for IV
+
+&gt;1. **first stage** or **relevance**: `\(Cov(z,x) \neq 0\)`
+&gt;2. **IV exogeneity**: `\(Cov(z,u) = 0\)`: the IV is exogenous in the outcome equation.
+
+]
+
+.pull-right[
+
+* How does this *identify* `\(\beta_1\)`?
+
+* (How can we express `\(\beta_1\)` in terms of population moments to pin it's value down?)
+
+]
+
+---
+
+# IV Identification
+
+
+
+`\begin{align}
+Cov(z,y) &amp;= Cov(z, \beta_0 + \beta_1 x + u) \\
+         &amp;= \beta_1 Cov(z,x) + Cov(z,u) 
+\end{align}`
+
+.pull-left[
+Under condition 2. above (**IV exogeneity**), we have `\(Cov(z,u)=0\)`, hence
+
+$$
+Cov(z,y) = \beta_1 Cov(z,x) 
+$$
+]
+
+--
+
+.pull-right[
+and under condition 1. (**relevance**), we have `\(Cov(z,x)\neq0\)`, so that we can divide the equation through to obtain
+
+$$
+\beta_1 =  \frac{Cov(z,y)}{Cov(z,x)}.
+$$
+* `\(\beta_1\)` is *identified* via population moments `\(Cov(z,y)\)` and `\(Cov(z,x)\)`. 
+
+* We can *estimate* those moments via their *sample analogs*
+]
+
+---
+
+# IV Estimator
+
+Just plugging in for the population moments:
+
+`$$\hat{\beta}_1 = \frac{\sum_{i=1}^n (z_i - \bar{z})(y_i - \bar{y})}{\sum_{i=1}^n (z_i - \bar{z})(x_i - \bar{x})}$$`
+
+* The intercept estimate is `\(\hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x}\)` 
+
+--
+
+* Given both assumptions 1. and 2. are satisfied, we say that *the IV estimator is consistent for `\(\beta_1\)`*. We write
+
+$$
+\text{plim}(\hat{\beta}_1) = \beta_1
+$$
+
+in words: the *probability limit* of `\(\hat{\beta}_1\)` is the true `\(\beta_1\)`. 
+
+* If this is true, we say that this estimator is **consistent**.
+
+---
+
+# IV Inference
+
+Assuming `\(E(u^2|z) = \sigma^2\)` the variance of the IV slope estimator is
+
+`$$Var(\hat{\beta}_{1,IV}) = \frac{\sigma^2}{n \sigma_x^2 \rho_{x,z}^2}$$`
+
+* `\(\sigma_x^2\)` is the population variance of `\(x\)`, 
+
+* `\(\sigma^2\)` the one of `\(u\)`, and  
+
+* `\(\rho_{x,z}\)` is the population correlation between `\(x\)` and `\(z\)`.
+
+--
+
+You can see 2 important things here:
+
+1. Without the term `\(\rho_{x,z}^2\)`, this is **like OLS variance**.
+2. As sample size `\(n\)` increases, the **variance decreases**.
+
+---
+
+# IV Variance is Always Larger than OLS Variance
+
+* Replace `\(\rho_{x,z}^2\)` with `\(R_{x,z}^2\)`, i.e. the R-squared of a regression of `\(x\)` on `\(z\)`:
+
+`$$Var(\hat{\beta}_{1,IV}) = \frac{\sigma^2}{n \sigma_x^2 R_{x,z}^2}$$`
+
+1. Given `\(R_{x,z}^2 &lt; 1\)` in most real life situations, we have that `\(Var(\hat{\beta}_{1,IV}) &gt; Var(\hat{\beta}_{1,OLS})\)` almost certainly.
+
+--
+
+1. The higher the correlation between `\(z\)` and `\(x\)`, the closer their `\(R_{x,z}^2\)` is to 1. With `\(R_{x,z}^2 = 1\)` we get back to the OLS variance. This is no surprise, because that implies that in fact `\(z = x\)`.
+
+So, if you have a valid, exogenous regressor `\(x\)`, you should *not* perform IV estimation using `\(z\)` to obtain `\(\hat{\beta}\)`, since your variance will be unnecessarily large.
+
+---
+
+# Returns to Education for Married Women
+
+Consider the following model for married women's wages:
+
+$$
+\log wage = \beta_0 + \beta_1 educ + u
+$$
+Let's run an OLS on this, and then compare it to an IV estimate using *father's education*. Keep in mind that this is a valid IV `\(z\)` if 
+
+1. *fatheduc* and *educ* are correlated
+2. *fatheduc* and `\(u\)` are not correlated.
+
+---
+
+# Returns to Education for Married Women
+
+
+
+``` r
+data(mroz,package = "wooldridge")
+mods = list()
+mods$OLS &lt;- lm(lwage ~ educ, data = mroz)
+mods[['First Stage']] &lt;- lm(educ ~ fatheduc, data = subset(mroz, inlf == 1))
+mods$IV  &lt;- estimatr::iv_robust(lwage ~ educ | fatheduc, data = mroz)
+```
+
+<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><col><col><col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;"> </th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">OLS</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">First Stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">IV</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(Intercept)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">-0.185</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">10.237</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.441</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.185)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.276)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.467)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">educ</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.109</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.059</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.014)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.037)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">fatheduc</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.269</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.029)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">Num.Obs.</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">428</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">428</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">428</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">R2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.118</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.173</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.093</td></tr>
+</tbody>
+</table>
+
+
+---
+
+# IV Standard Errors
+
+&lt;img src="IV2_files/figure-html/se-plot-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# IV with a Weak Instrument
+
+* IV is consistent under given assumptions.
+
+* However, *even if* we have only very small `\(Cor(z,u)\)`, we can get wrong-footed
+
+* Small corrleation between `\(x\)` and `\(z\)` can produce **inconsistent** estimates. 
+
+.pull-left[
+&lt;br&gt;
+&lt;br&gt;
+
+$$
+\text{plim}(\hat{\beta}_{1,IV}) = \beta_1 + \frac{Cor(z,u)}{Cor(z,x)} \cdot \frac{\sigma_u}{\sigma_x}
+$$
+]
+
+--
+
+.pull-right[
+* Take `\(Cor(z,u)\)` is very small,
+* A **weak instrument** is one with only a small absolute value for `\(Cor(z,x)\)` 
+* This will blow up this second term in the probability limit. 
+* Even with a very big sample size `\(n\)`, our estimator would *not* converge to the true population parameter `\(\beta_1\)`, because we are using a weak instrument.
+]
+
+---
+
+# Weak Stuff
+
+To illustrate this point, let's assume we want to look at the impact of number of packs of cigarettes smoked per day by pregnant women (*packs*) on the birthweight of their child (*bwght*):
+
+$$
+\log(bwght) = \beta_0 + \beta_1 packs + u
+$$
+
+We are worried that smoking behavior is correlated with a range of other health-related variables which are in `\(u\)` and which could impact the birthweight of the child. So we look for an IV. Suppose we use the price of cigarettes (*cigprice*), assuming that the price of cigarettes is uncorrelated with factors in `\(u\)`. Let's run the first stage of *cigprice* on *packs* and then let's show the 2SLS estimates:
+
+
+---
+
+# Weak Stuff
+
+
+
+``` r
+data(bwght, package = "wooldridge")
+mods &lt;- list()
+mods[["First Stage"]] &lt;- lm(packs ~ cigprice, data = bwght)
+mods[["IV"]] &lt;- estimatr::iv_robust(log(bwght) ~  packs | cigprice, data = bwght, diagnostics = TRUE)
+```
+
+<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><col><col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;"> </th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">First Stage</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 1pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">IV</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(Intercept)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.067</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 1pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">4.448</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.103)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.940)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">cigprice</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(0.001)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">packs</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;    padding: 5pt 6pt 5pt 6pt;">2.989</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 5pt 6pt 5pt 6pt;">(8.996)</td></tr>
+<tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">R2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">0.000</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0pt 1pt 0pt;    padding: 5pt 6pt 5pt 6pt;">-23.230</td></tr>
+</tbody>
+</table>
+
+
+
+---
+
+# Weak Stuff
+
+.pull-left[
+
+* The first columns shows: very weak first stage. *cigprice* has zero impact on packs it seems!
+
+* `\(R^2\)` is zero.
+
+* What is we use this IV nevertheless?
+]
+
+--
+
+.pull-right[
+
+* in the second column: very large, positive(!) impact of packs smoked on birthweight. 🤔
+
+* Huge Standard Error though.
+
+* An `\(R^2\)` of -23?!
+
+* F-stat of first stage: 0.121. Corresponds to a p-value of 0.728 : we **cannot** reject the H0 of an insignificant first stage here *at all*.
+
+* So: **invalid** approach. ❌
+]
+
+
+
+---
+
+
+class: title-slide-final, middle
+background-image: url(../img/logo/esomas.png)
+background-size: 250px
+background-position: 9% 19%
+
+# END
+
+
+
+
+|                                                                                                            |                                   |
+| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
+| &lt;a href="mailto:florian.oswald@sciencespo.fr"&gt;.ScPored[&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;]               | florian.oswald@sciencespo.fr       |
+| &lt;a href="https://github.com/ScPoEcon/Advanced-Metrics-slides"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Slides |
+| &lt;a href="https://scpoecon.github.io/Econometrics"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Book |
+| &lt;a href="http://twitter.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                         |
+| &lt;a href="http://github.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                       |
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../js/ru_xaringan.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

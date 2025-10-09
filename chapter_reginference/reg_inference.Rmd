@@ -1,7 +1,7 @@
 ---
 title: "Econometrics"
 subtitle: "Regression Inference"
-author: "Florian Oswald, Mylene Feuillade, Gustave Kenedi and Pierre Villedieu"
+author: "Florian Oswald"
 date: "UniTo ESOMAS `r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -72,19 +72,6 @@ layout: true
 
 ---
 
-# Quick "Quiz" on Last Week's Material
-
-1\. From your ***computer*** `r emo::ji("backhand_index_pointing_right")` connect to [***www.wooclap.com/SCPOCIHT***](https://app.wooclap.com/SCPOCIHT)
-
-&nbsp; &nbsp; &nbsp; ***OR***
-
-2\. From your ***phone*** `r emo::ji("backhand_index_pointing_right")` flash QR code below
-
-```{r, echo = F, out.width = "300px"}
-knitr::include_graphics("reg_inference_files/figure-html/qr_code_quiz.png")
-```
-
----
 
 # Today - Statistical inference in the regression framework
 
@@ -968,7 +955,7 @@ The CRM assumption #1 is also know as the (strict) **exogeneity assumption**.
 --
 
 
-`r emo::ji("point_right")` Takeaway: **if assumptions violated, inference is invalid!**
+👉 Takeaway: **if assumptions violated, inference is invalid!**
 
 ---
 
@@ -1109,17 +1096,17 @@ Even better : [`ungeviz`](https://github.com/wilkelab/ungeviz) and `gganimate` b
 
 # On the way to causality
 
-`r emo::ji("white heavy check mark")` How to manage data? Read it, tidy it, visualise it!
+✅ How to manage data? Read it, tidy it, visualise it...
 
-`r emo::ji("white heavy check mark")`  How to summarise relationships between variables? Simple and multiple linear regression, non-linear regressions, interactions...
+🚧  **How to summarise relationships between variables?** Simple and multiple linear regression... to be continued
 
-`r emo::ji("white heavy check mark")` What is causality?
+✅ What is causality?
 
-`r emo::ji("white heavy check mark")` What if we don't observe an entire population? Sampling!
+✅ What if we don't observe an entire population?
 
-`r emo::ji("white heavy check mark")`  **Are our findings just due to randomness?** Confidence intervals and hypothesis testing, regression inference.
+✅  Are our findings just due to randomness?
 
-`r emo::ji("cross mark")` How to find exogeneity in practice?
+❌ How to find exogeneity in practice?
 
 
 ---
@@ -1132,7 +1119,7 @@ class: title-slide-final, middle
 
 To the amazing [moderndive](https://moderndive.com/) team!
 
-Big Thanks `r emo::ji("tada")` to [ungeviz](https://github.com/wilkelab/ungeviz) and `r emo::ji("confetti")` [gganimate](https://github.com/thomasp85/gganimate) for their awesome packages!
+Big Thanks 🙏 to [ungeviz](https://github.com/wilkelab/ungeviz) and 🎉 [gganimate](https://github.com/thomasp85/gganimate) for their awesome packages!
 
 ---
 

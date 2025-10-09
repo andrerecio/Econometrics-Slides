@@ -6,20 +6,20 @@ date: "UniTo ESOMAS `r Sys.Date()`"
 output:
   xaringan::moon_reader:
     lib_dir: libs
-    css: [default, "../../css/scpo.css", "../../css/scpo-fonts.css"]
+    css: [default, "../css/scpo.css", "../css/scpo-fonts.css"]
     nature:
-      beforeInit: ["../../js/ru_xaringan.js"]
+      beforeInit: ["../js/ru_xaringan.js"]
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
       ratio: "16:9"
     includes:
-      in_header: ["../../libs/partials/header.html"]
+      in_header: ["../libs/partials/header.html"]
 ---
 
 layout: true
 
-<div class="my-footer"><img src="../../img/logo/unito-shield.png" style="height: 60px;"/></div> 
+<div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
 
 ---
 
@@ -330,7 +330,7 @@ dagify(CrimeRate ~ ProbArrest,
 ```
 
 ---
-background-image: url(../../img/crime-dag.png)
+background-image: url(../img/crime-dag.png)
 background-size: 400px
 background-position: 93% 10%
 
@@ -654,7 +654,7 @@ lm(deltay ~ deltax, diff_data)
     
     
 ---
-background-image: url(../../img/crime-dag2.png)
+background-image: url(../img/crime-dag2.png)
 background-size: 300px
 background-position: 20% 99%
 
@@ -819,7 +819,7 @@ ht %>%
 .left-wide[
 
 ```{r,echo = FALSE}
-knitr::include_graphics("../../img/gifs/panel.gif")
+knitr::include_graphics("../img/gifs/panel.gif")
 ```
 ]
 
@@ -837,7 +837,7 @@ knitr::include_graphics("../../img/gifs/panel.gif")
 ---
 
 class: title-slide-final, middle
-background-image: url(../../img/logo/esomas.png)
+background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 

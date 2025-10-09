@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>ScPoEconometrics</title>
+    <title>Econometrics</title>
     <meta charset="utf-8" />
     <meta name="author" content="Florian Oswald" />
     <script src="libs/header-attrs/header-attrs.js"></script>
@@ -15,7 +15,7 @@
 class: center, middle, inverse, title-slide
 
 .title[
-# ScPoEconometrics
+# Econometrics
 ]
 .subtitle[
 ## Confidence Intervals and The Bootstrap
@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### SciencesPo Paris </br> 2025-09-17
+### UniTo ESOMAS 2025-10-09
 ]
 
 ---
@@ -32,7 +32,7 @@ class: center, middle, inverse, title-slide
 
 layout: true
 
-&lt;div class="my-footer"&gt;&lt;img src="../img/logo/ScPo-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
 
 ---
 
@@ -80,7 +80,7 @@ background-size: 500px
 
 * If we knew in real life, we wouldn't have to take samples altogether, would we?
 
-* So what on earth was all of this good for? Fun Only?! 😧. 
+* So what on earth was all of this good for? Fun Only?! . 
 ]
 
 ---
@@ -656,7 +656,7 @@ class: title-slide-section-red, middle
 ---
 layout: true
 
-&lt;div class="my-footer"&gt;&lt;img src="../img/logo/ScPo-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
 
 ---
 
@@ -710,7 +710,67 @@ layout: true
 
 * We obtain the CIs as follows:
 
-`$$\begin{align} x \pm 1.96 \cdot SE &amp;= (\bar{x} -  1.96 \cdot SE, \bar{x} +  1.96 \cdot SE)\\ &amp;= (1995.44 -  1.96 \cdot 2.17, 1995.44 +  1.96 \cdot 2.17)\\ &amp;= (1991.1868, 1999.6932) \end{align}$$`
+`$$\begin{align} x \pm 1.96 \cdot SE &amp;= (\bar{x} -  1.96 \cdot SE, \bar{x} +  1.96 \cdot SE)\\ &amp;= (<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">mean_year</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">2e+03</td></tr>
+</tbody>
+</table>
+ -  1.96 \cdot <table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">SE</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">2.17</td></tr>
+</tbody>
+</table>
+, <table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">mean_year</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">2e+03</td></tr>
+</tbody>
+</table>
+ +  1.96 \cdot <table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">SE</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">2.17</td></tr>
+</tbody>
+</table>
+)\\ &amp;= (<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">mean_year</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">1.99e+03</td></tr>
+</tbody>
+</table>
+, <table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
+<col><thead>
+<tr>
+<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;">mean_year</th></tr>
+</thead>
+<tbody>
+<tr>
+<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">2e+03</td></tr>
+</tbody>
+</table>
+) \end{align}$$`
 
 * Only valid, if sampling distribution is **approximately normal**!
 
@@ -1002,7 +1062,7 @@ To the amazing [moderndive](https://moderndive.com/) team!
 ---
 
 class: title-slide-final, middle
-background-image: url(../img/logo/ScPo-econ.png)
+background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 
@@ -1014,8 +1074,8 @@ background-position: 9% 19%
 |                                                                                                            |                                   |
 | :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
 | &lt;a href="mailto:florian.oswald@sciencespo.fr"&gt;.ScPored[&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;]               | florian.oswald@sciencespo.fr       |
-| &lt;a href="https://github.com/ScPoEcon/ScPoEconometrics-Slides"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Slides |
-| &lt;a href="https://scpoecon.github.io/ScPoEconometrics"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Book |
+| &lt;a href="https://github.com/ScPoEcon/Econometrics-Slides"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Slides |
+| &lt;a href="https://scpoecon.github.io/Econometrics"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Book |
 | &lt;a href="http://twitter.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                         |
 | &lt;a href="http://github.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                       |
     </textarea>

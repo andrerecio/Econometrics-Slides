@@ -84,7 +84,7 @@ background-size: 500px
 
 * If we knew in real life, we wouldn't have to take samples altogether, would we?
 
-* So what on earth was all of this good for? Fun Only?! `r emo::ji("anguished")`. 
+* So what on earth was all of this good for? Fun Only?! . 
 ]
 
 ---
@@ -140,7 +140,7 @@ background-size: 700px
 <br>
 <br>
 
-* `r emo::ji("exploding_head")`
+* 🤯
 
 
 ]
@@ -156,13 +156,13 @@ background-size: 700px
 <br>
 <br>
 
-* `r emo::ji("exploding_head")`
+* 🤯
 
 * Ok, let's do a little hands-on activity first.
 
 * You'll be fine. 
 
-* `r emo::ji("sunglasses")`
+* 😎
 ]
 
 ---
@@ -250,7 +250,7 @@ pennies_sample %>%
 
 * That gave rise to a *distribution* of estimates $\hat{p}$.
 
-* We could go back to the bank 1000 times, but `r emo::ji("thinking")`
+* We could go back to the bank 1000 times, but 🤔
 
 * We can also use our *single* sample to learn about the sampling distribution. 
 
@@ -724,7 +724,7 @@ visualize(bootstrap_distribution)
 
 * Just set `type = "se"` for standard error method!
 
-* What's best is the visualization though! `r emo::ji("tada")`
+* What's best is the visualization though! 🎉
 ]
 
 --
