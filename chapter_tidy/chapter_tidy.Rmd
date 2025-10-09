@@ -212,9 +212,6 @@ filter()
 polls_us_election_2016 #<<
 ```
 
-```{r, echo=FALSE}
-polls_us_election_2016 #<<
-```
 ]
 
 ---
@@ -280,9 +277,6 @@ c("S","Po") %in% c("Sciences","Po")  # also strings
 polls_us_election_2016 #<<
 ```
 
-```{r, echo=FALSE}
-polls_us_election_2016 #<<
-```
 ]
 
 ---
@@ -344,9 +338,6 @@ mutate()
 polls_us_election_2016
 ```
 
-```{r, echo=FALSE}
-polls_us_election_2016
-```
 ]
 
 ---
@@ -435,7 +426,7 @@ polls_us_election_2016
 ```
 
 ```{r, echo = FALSE}
-polls_us_election_2016
+head(polls_us_election_2016, n = 10)
 ```
 ]
 
@@ -518,9 +509,6 @@ summarise()
 polls_us_election_2016
 ```
 
-```{r, echo = FALSE}
-polls_us_election_2016
-```
 ]
 
 ---
@@ -584,9 +572,6 @@ group_by()
 polls_us_election_2016
 ```
 
-```{r, echo = FALSE}
-polls_us_election_2016
-```
 ]
 
 ---
@@ -682,10 +667,8 @@ polls_us_election_2016
 ```
 ]
 
-.rigiht-60[
-```{r, echo = FALSE}
-polls_us_election_2016
-```
+.right-60[
+
 ]
 
 
