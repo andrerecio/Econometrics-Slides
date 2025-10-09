@@ -18,7 +18,7 @@ class: center, middle, inverse, title-slide
 # Econometrics
 ]
 .subtitle[
-## Hypothesis Testing
+## Estimation<br> Confidence Intervals <br> Hypothesis Testing
 ]
 .author[
 ### Florian Oswald
@@ -356,6 +356,265 @@ CLT()
 ```
 
 
+---
+
+
+# Packages used in this set of slides
+
+
+``` r
+library(tidyverse)
+library(infer)
+library(moderndive)
+```
+
+---
+
+# Is There Gender Discrimination In Promotions?
+
+&lt;!-- also: https://www.ncbi.nlm.nih.gov/pubmed/12083361 --&gt;
+
+.pull-left[
+* Article published in the *Journal of Applied Psychology* in 1970 investigates whether female employees at Banks are discriminated against.
+
+* 48 supervisors were given *identical* candidate CVs - identical up to the first name, which was male or female.
+
+* Many similar experiments have been conducted with other groups. Arabic Names, Black names, Jewish names or other groups that can be identified from typical name choice.
+]
+
+--
+
+.pull-right[
+
+
+``` r
+library(moderndive)
+promotions
+```
+
+```
+## # A tibble: 48 × 3
+##       id decision gender
+##    &lt;int&gt; &lt;fct&gt;    &lt;fct&gt; 
+##  1     1 promoted male  
+##  2     2 promoted male  
+##  3     3 promoted male  
+##  4     4 promoted male  
+##  5     5 promoted male  
+##  6     6 promoted male  
+##  7     7 promoted male  
+##  8     8 promoted male  
+##  9     9 promoted male  
+## 10    10 promoted male  
+## # ℹ 38 more rows
+```
+]
+
+---
+
+# Looking At Promotions
+
+.pull-left[
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+``` r
+promotions %&gt;% 
+  group_by(gender, decision) %&gt;% 
+  summarize(n = n()) %&gt;%
+  mutate(proportion = n / sum(n))
+```
+
+```
+## # A tibble: 4 × 4
+## # Groups:   gender [2]
+##   gender decision     n proportion
+##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
+## 1 male   not          3      0.125
+## 2 male   promoted    21      0.875
+## 3 female not         10      0.417
+## 4 female promoted    14      0.583
+```
+
+* 87.5% of "men" were promoted.
+* 58.3% of "women" were promoted.
+* That's a difference of 87.55 - 58.3% = 29.2%.
+* Is the 29% advantage for men in this sample **conclusive evidence**?
+* In a *hyopthetical world* **without gender discrimination**, could we have observed a 29% difference *by chance*?
+
+]
+
+
+---
+
+# Imposing A Hypothetical World: No Gender Discriminiation
+
+.pull-left[
+* Suppose we lived in a world without gender discrimination.
+
+* The label `gender` in our dataframe would be meaningless.
+
+* Let's randomly reassign `gender` to each row and see how this affects the result.
+
+* Suppose we have 48 playing cards: 24 red (female) and 24 (black)
+
+* Shuffle the cards, and lay down the cards in a row, record `f` if **red**.
+]
+
+--
+
+.pull-right[
+
+``` r
+bind_cols(promotions, promotions_shuffled)
+```
+
+```
+## # A tibble: 48 × 6
+##    id...1 decision...2 gender...3 id...4 decision...5 gender...6
+##     &lt;int&gt; &lt;fct&gt;        &lt;fct&gt;       &lt;int&gt; &lt;fct&gt;        &lt;fct&gt;     
+##  1      1 promoted     male            1 promoted     female    
+##  2      2 promoted     male            2 promoted     female    
+##  3      3 promoted     male            3 promoted     male      
+##  4      4 promoted     male            4 promoted     female    
+##  5      5 promoted     male            5 promoted     male      
+##  6      6 promoted     male            6 promoted     male      
+##  7      7 promoted     male            7 promoted     male      
+##  8      8 promoted     male            8 promoted     female    
+##  9      9 promoted     male            9 promoted     male      
+## 10     10 promoted     male           10 promoted     female    
+## # ℹ 38 more rows
+```
+
+* Observe how in `promotions_shuffled` we randomly assigned `gender1`.
+
+* The `decision` column is the same!
+
+* What does this now look like?
+]
+
+---
+
+# Reshuffled Promotions
+
+.pull-left[
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+
+]
+
+.pull-right[
+
+``` r
+promotions %&gt;% 
+  group_by(gender, decision) %&gt;% 
+  summarize(n = n()) %&gt;%
+  mutate(proportion = n / sum(n))
+```
+
+```
+## # A tibble: 4 × 4
+## # Groups:   gender [2]
+##   gender decision     n proportion
+##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
+## 1 male   not          3      0.125
+## 2 male   promoted    21      0.875
+## 3 female not         10      0.417
+## 4 female promoted    14      0.583
+```
+
+
+``` r
+promotions_shuffled %&gt;% 
+  group_by(gender, decision) %&gt;% 
+  summarize(n = n()) %&gt;%
+  mutate(proportion = n / sum(n))
+```
+
+```
+## # A tibble: 4 × 4
+## # Groups:   gender [2]
+##   gender decision     n proportion
+##   &lt;fct&gt;  &lt;fct&gt;    &lt;int&gt;      &lt;dbl&gt;
+## 1 male   not          6      0.25 
+## 2 male   promoted    18      0.75 
+## 3 female not          7      0.292
+## 4 female promoted    17      0.708
+```
+]
+
+
+---
+
+# Sampling Variation?
+
+.pull-left[
+* In the hypothetical world, the difference was only 4.2%.
+
+* But what's the role of *sampling variation*? How representative of that hypothetical world is 4.2%?
+
+* Let's construct the sampling distribution ourselves!
+]
+
+--
+
+.pull-right[
+1. You need to shuffle a deck of 48 cards, 24 red, 24 black, and lay out card after card in front of you.
+
+2. You do **not** put the cards back into the deck!
+
+3. You could use the function `sample` for example. Look at `?sample` to find out more.
+
+3. fill in your results into [this shared spreadsheet](https://docs.google.com/spreadsheets/d/118NlPUQjd13XodX7IGri8J-oLgkObdCtDEFri65tWmo/edit?usp=sharing)!
+]
+
+---
+
+# Sampling Variation in Reshuffling
+
+.pull-left[
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-10-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+* This distribution was created in our **hypothetical** scenario: no discrimination.
+
+* We see how sampling variation affects the difference in promotion rates.
+
+* The red line denotes the *observed difference* in the **real world**.
+
+* Now: How *likely* is it that the red line is part of this **hypothetical** distribution?
+]
+
+---
+
+# Recap
+
+.pull-left[
+* We just did a **permutation test**. We randomly reshuffled and checked if it makes a difference.
+
+* Again Resampling: Boostrapping is with replacment, permutation is without.
+
+* Bootstrapping: we put the paper slips **back** after recording them.
+
+* Permutation: We took card after card from our deck (*without* putting it back!)
+]
+
+--
+
+.pull-right[
+
+* We observed the estimate `\(\hat{p}_m - \hat{p}_f = 29\%\)` in the real world.
+
+* We *tested* whether in a hypothetical universe with no discrimination, 29% *likely* to occur.
+
+* We concluded *rather not*. We tended to **reject** that hypothesis.
+
+* The real question was: is 29% **really** different from zero? What is the role of sampling variation? 
+]
+
+
 
 ---
 layout: false
@@ -395,6 +654,20 @@ layout: true
 * The **null distribution** is the sampling distribution of our test statistic, assuming the Null hypothesis is **true**. That's our hypothetical world without discrimination.
 
 * We have seen such a null distribution just above:
+]
+
+---
+
+# Null Distribution
+
+.left-wide[
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-11-1.svg" style="display: block; margin: auto;" /&gt;
+]
+
+.right-thin[
+* This **is** the sampling distribution of `\(\hat{p}_m - \hat{p}_f\)`, assuming `\(H_0\)` is true.
+
+* The red line is the *observed* test statistic.
 ]
 
 ---
@@ -486,16 +759,16 @@ null_distribution
 ## # A tibble: 1,000 × 2
 ##    replicate    stat
 ##        &lt;int&gt;   &lt;dbl&gt;
-##  1         1  0.0417
-##  2         2  0.208 
+##  1         1 -0.0417
+##  2         2  0.125 
 ##  3         3 -0.0417
-##  4         4 -0.0417
-##  5         5  0.0417
-##  6         6  0.208 
-##  7         7  0.0417
-##  8         8 -0.0417
-##  9         9 -0.0417
-## 10        10  0.208 
+##  4         4 -0.125 
+##  5         5  0.208 
+##  6         6 -0.125 
+##  7         7 -0.125 
+##  8         8 -0.208 
+##  9         9  0.208 
+## 10        10 -0.125 
 ## # ℹ 990 more rows
 ```
 ]
@@ -544,7 +817,7 @@ obs_diff_prop
 visualize(null_distribution, bins = 10)
 ```
 
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 .right-thin[
@@ -565,7 +838,7 @@ visualize(null_distribution, bins = 10) +
                 direction = "right")
 ```
 
-&lt;img src="hypothesis_files/figure-html/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="hypothesis_files/figure-html/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 .pull-right[
@@ -599,10 +872,10 @@ visualize(null_distribution, bins = 10) +
     ## # A tibble: 1 × 1
     ##   p_value
     ##     &lt;dbl&gt;
-    ## 1    0.02
+    ## 1   0.034
     ```
     
-* So, the probability of observing a 29% difference in a world with no discrimination is only 2%. That probability is due to sampling variation.
+* So, the probability of observing a 29% difference in a world with no discrimination is only 3.4%. That probability is due to sampling variation.
 ]
 
 --
@@ -611,7 +884,7 @@ visualize(null_distribution, bins = 10) +
 * Suppose we had set `\(\alpha = 0.001 = 0.1\%\)`
 
 * Given that the p-value is *greater* than `\(\alpha\)`, 
-    * i.e. 2% &gt; 0.1%,
+    * i.e. 3.4% &gt; 0.1%,
     * we would **fail to reject** the null `\(H_0:p_m - p_f = 0\)`. 
 
 * The p-value was not sufficiently small to convince us in this case.
@@ -692,6 +965,15 @@ visualize(null_distribution, bins = 10) +
 
 
 
+
+
+---
+
+class: title-slide-final, middle
+
+# THANKS
+
+To the amazing [moderndive](https://moderndive.com/) team!
 
 ---
 
