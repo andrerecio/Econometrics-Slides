@@ -448,7 +448,7 @@ promotions %>%
 
 .pull-right[
 ```{r}
-bind_cols(promotions, promotions_shuffled)
+bind_cols(promotions, dplyr::select(promotions_shuffled, decision_shuffled = decision, gender_shuffled = gender))
 ```
 
 * Observe how in `promotions_shuffled` we randomly assigned `gender1`.
