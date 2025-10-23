@@ -1,0 +1,1449 @@
+---
+title: "Econometrics"
+subtitle: "Simple Linear Regression"
+author: "Mustapha Douch based on <br> Florian Oswald's slides "
+date: "UniTo ESOMAS </br> `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    chakra: "https://cdnjs.cloudflare.com/ajax/libs/remark/0.14.0/remark.min.js"
+    lib_dir: libs
+    css: [default, "../css/scpo.css", "../css/scpo-fonts.css"]
+    nature:
+      beforeInit: ["../js/ru_xaringan.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+    includes:
+      in_header: "../libs/partials/header.html"
+---
+
+layout: true
+
+<div class="my-footer"><img src="../img/logo/unito-shield.png" style="height: 60px;"/></div> 
+
+---
+
+
+```{r setup, include=FALSE,warning=FALSE,message=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  dev = "svg",
+  cache = TRUE,
+  fig.align = "center"
+  #fig.width = 11,
+  #fig.height = 5
+)
+
+library("tidyverse")
+library("kableExtra")
+# library("repmis")
+library("gridExtra")
+library("haven")
+library("ggpubr")
+library("huxtable")
+library(countdown)
+# countdown style
+countdown(
+  color_border              = "#d90502",
+  color_text                = "black",
+  color_running_background  = "#d90502",
+  color_running_text        = "white",
+  color_finished_background = "white",
+  color_finished_text       = "#d90502",
+  color_finished_border     = "#d90502"
+)
+```
+
+
+
+
+## Where We Are Now: Building the Foundation 🏗️
+
+<br>
+
+### Covered Concepts (Stock & Watson Chapters 1–3)
+
+Up until now, we've focused on the core tools of **descriptive statistics** and **probability** that form the language of econometrics:
+
+<br>
+
+- **Descriptive Statistics:**  
+  Summarizing data using the *mean*, *median*, *variance*, and *standard deviation*.
+
+- **Probability Theory:**  
+  Understanding *random variables*, their *distributions* (especially the *normal distribution*), and the concept of *covariance* and *correlation* to measure association.
+
+- **Asymptotics:**  
+  Grasping the crucial role of the *Law of Large Numbers (LLN)* and the *Central Limit Theorem (CLT)* in ensuring our sample estimates are reliable.
+
+---
+
+
+
+
+## Next Steps: From Description to Causation 🚀
+
+This week, we begin our journey into **the Simple Regression Model** —  
+using data to explain **how one variable affects another**.
+
+We’ll build on the descriptive and probabilistic foundations from before to estimate relationships and test hypotheses.
+
+
+--
+
+
+Next week, we move further into **causal inference** with **Difference-in-Differences (DiD)** — comparing before-and-after outcomes
+to identify policy or treatment effects.
+
+
+
+
+
+
+---
+
+# Today - Real 'metrics finally ✌️
+
+* Introduction to the ***Simple Linear Regression Model*** and ***Ordinary Least Squares (OLS)*** *estimation*.
+
+* Empirical application: *class size* and *student performance*
+
+* Keep in mind that we are interested in uncovering **causal** relationships
+
+---
+
+
+
+
+##  How Does One Variable Affect Another? 🎯
+
+> A state implements tough new penalties on drunk drivers — what is the effect on highway fatalities?  
+> A school district cuts the size of its elementary school classes — what is the effect on its students’ standardized test scores?  
+> You successfully complete one more year of college classes — what is the effect on your future earnings?
+
+All three questions are about the **unknown effect of changing one variable**, \( X \), (on penalties, class size, or years of schooling) on another variable, \( Y \), (highway deaths, test scores, or earnings).
+
+This week, we introduce the **linear regression model** relating \( X \) to \( Y \). It postulates a **linear relationship** between \( X \) and \( Y \):  the **slope** represents the effect of a one-unit change in \( X \) on \( Y \).
+
+Just as the **mean of \( Y \)** is an unknown population characteristic, 
+the **slope of the line** relating \( X \) and \( Y \) is an unknown feature of their **joint distribution**.
+
+---
+##  How Does One Variable Affect Another? 🎯
+
+Our econometric task:  
+Estimate this slope — that is, estimate **the effect of a unit change in \( X \) on \( Y \)** —  using a random sample of data.
+
+Finally, we’ll see how this is done using **Ordinary Least Squares (OLS)**,  which allows us to test hypotheses and construct confidence intervals for the slope.
+
+
+
+
+---
+
+# Student performance
+
+* What policies *lead* to improved student learning?
+
+--
+* Class size reduction has been at the heart of policy debates for *decades*.
+
+--
+
+* We will be using data from a famous paper by [Joshua Angrist and Victor Lavy (1999)](https://economics.mit.edu/files/8273), obtained from [Raj Chetty and Greg Bruich's course](https://opportunityinsights.org/course/).
+
+* Consists of test scores and class/school characteristics for fifth graders (10-11 years old) in Jewish public elementary schools in Israel in 1991.
+
+* National tests measured *mathematics* and (Hebrew) *reading* skills. The raw scores were scaled from 1-100.
+
+---
+
+class:: inverse
+
+# Task 1: Getting to know the data
+
+`r countdown(minutes = 7, top = 0)`
+ 
+1. Load the data from [here](https://www.dropbox.com/s/wwp2cs9f0dubmhr/grade5.dta?dl=1) as `grades`. *Hint: Use the `read_dta` from the `haven` library to import the file, which has a format .dta.* (FYI: *.dta* is the extension for data files used in [*Stata*](https://www.stata.com/))
+
+1. Describe the dataset:
+
+  * What is the unit of observations, i.e. what does each row correspond to?
+  * How many observations are there?
+  * View the dataset. What variables do we have? What do the variables `avgmath` and `avgverb` correspond to?
+  * Use the `skim` function from the `skimr` package to obtain common summary statistics for the variables `classize`, `avgmath` and `avgverb`. (*Hint: use `dplyr` to `select` the variables and then simply pipe (`%>%`) `skim()`.*)
+
+1. Do you have any priors about the actual (linear) relationship between class size and student achievement? What would you do to get a first insight?
+
+1. Compute the correlation between class size and math and verbal scores. Is the relationship positive/negative, strong/weak?
+
+```{r, echo=FALSE}
+# import data
+grades = read_dta(file = "https://www.dropbox.com/s/wwp2cs9f0dubmhr/grade5.dta?dl=1")
+```
+
+---
+
+# Class size and student performance: Scatter plot
+
+.pull-left[
+```{r, echo=FALSE,fig.height=5.5}
+g_math = ggplot(grades, aes(x = classize, y = avgmath)) +
+    # No blank line or space that breaks the expression chain
+    geom_point(size = 2, alpha = 0.5) +
+    xlim(0,45) +
+    ylim(0, 100) +
+    labs(
+      x = "Class size",
+      y = "Average score",
+      title = "Mathematics") +
+    theme_bw(base_size = 20)
+g_math
+```
+]
+
+.pull-right[
+```{r, echo=FALSE,fig.height=5.5}
+g_verb = ggplot(grades, aes(x = classize, y = avgverb)) + 
+    geom_point(size = 2, alpha = 0.5) +
+    xlim(0,45) +
+    ylim(0, 100) +
+    labs(x = "Class size",
+         y = "Average score",
+         title = "Reading") +
+    theme_bw(base_size = 20)
+g_verb
+```
+]
+
+--
+
+* Somewhat positive association as suggested by the correlations. Let's compute the average score by class size to see things more clearly!
+
+---
+
+# Class size and student performance: Binned scatter plot 
+
+.pull-left[
+```{r, echo=FALSE,fig.height=5.5}
+grades_avg_cs <- grades %>%
+  group_by(classize) %>%
+  summarise(avgmath_cs = mean(avgmath),
+            avgverb_cs = mean(avgverb))
+
+g_math_cs = ggplot(grades_avg_cs, aes(x = classize, y = avgmath_cs)) + 
+    geom_point(size = 2) +
+    xlim(0,45) +
+    ylim(0, 100) +
+    labs(
+      x = "Class size",
+      y = "Average score",
+      title = "Mathematics") +
+    theme_bw(base_size = 20)
+g_math_cs
+```
+]
+
+.pull-right[
+```{r, echo=FALSE,fig.height=5.5}
+g_verb_cs = ggplot(grades_avg_cs, aes(x = classize, y = avgverb_cs)) + 
+    geom_point(size = 2) +
+    xlim(0,45) +
+    ylim(0, 100) +
+    labs(x = "Class size",
+         y = "Average score",
+         title = "Reading") +
+    theme_bw(base_size = 20)
+g_verb_cs
+```
+]
+
+---
+
+# Class size and student performance: Binned scatter plot
+
+* We'll first focus on the mathematics scores and for visual simplicity we'll zoom in
+
+```{r, echo=FALSE,fig.height=4.75, fig.width = 8}
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14)
+```
+
+---
+
+# Class size and student performance: Regression line
+
+How to visually summarize the relationship: **a line through the scatter plot**
+
+--
+
+.left-wide[
+```{r,echo=FALSE,fig.align='left',fig.height=4,fig.width=7}
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14) +
+  geom_hline(yintercept = 65, col = "#d90502")
+```
+]
+
+--
+
+.right-thin[
+<br>
+
+* A *line*! Great. But **which** line? This one?
+
+* That's a *flat* line. But average mathematics score is somewhat *increasing* with class size 
+
+]
+
+---
+
+# Class size and student performance: Regression line
+
+How to visually summarize the relationship: **a line through the scatter plot**
+
+.left-wide[
+```{r,echo=FALSE,fig.align='left',fig.height=4,fig.width=7}
+g_math_cs +
+  ylim(50, 80) +
+  theme_bw(base_size = 14) +
+  geom_abline(intercept = 55,slope = 0.6, col = "#d90502")
+```
+]
+
+.right-thin[
+<br>
+
+* **That** one?
+
+* Slightly better! Has a **slope** and an **intercept** 😐
+
+* We need a rule to decide! 
+
+]
+
+
+---
+
+# Simple Linear Regression
+
+Let's formalise a bit what we are doing so far. 
+
+* We are interested in the relationship between two variables:
+
+--
+
+  * an __outcome variable__ (also called __dependent variable__):  
+  *average mathematics score* $(y)$
+  
+--
+  
+  * an __explanatory variable__ (also called __independent variable__ or __regressor__):  
+  *class size* $(x)$
+  
+--
+
+* For each class $i$ we observe both $x_i$ and $y_i$, and therefore we can plot the *joint distribution* of class size and average mathematics score.
+
+--
+
+* We summarise this relationship with a line (for now). The equation for such a line with an intercept $b_0$ and a slope $b_1$ is:
+    $$
+    \widehat{y}_i = b\_0 + b\_1 x\_i
+    $$
+
+--
+
+* $\widehat{y}_i$ is our *prediction* for $y$ at observation $i$ $(y_i)$ given our model (i.e. the line).
+
+---
+
+# What's A Line: A Refresher
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+b_0 = 32
+b_1 = 4.1
+space = .5
+
+base_plot <- ggplot() +
+    geom_abline(slope = b_1, intercept = b_0) +
+    scale_x_continuous(limits = c(-5,10), expand = c(0,0)) +
+    scale_y_continuous(limits = c(0,100), expand = c(0,0)) +
+    theme_bw(base_size = 16) +
+    annotate(geom = "text", x = -4.3, y = 94, label = "y", parse = TRUE, size = 8, hjust = 0) +
+    annotate(geom = "text", x = -4.3 + space, y = 94, label = "=", size = 8, hjust = 0) +
+    annotate(geom = "text", x = -4.3 + 2*space, y = 94, label = "b[0]", color = "#DE9854", parse = TRUE, size = 8, hjust = 0) +
+    annotate(geom = "text", x = -4.3 + 2*space + .6, y = 94, label = "+", size = 8, hjust = 0) +
+    annotate(geom = "text", x = -4.3 + 3*space + .6, y = 94, label = "b[1]", parse = TRUE, color = "#d90502", size = 8, hjust = 0) +
+    annotate(geom = "text", x = -4.3 + 4*space + .6, y = 94, label = "x", parse = TRUE, size = 8, hjust = 0)
+base_plot
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# What's A Line: A Refresher
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+library('latex2exp')
+plot_b_0 <- base_plot + 
+    annotate(geom = "segment", x = 0, xend = 0, y = 0, yend = b_0, arrow = arrow(angle = 12, type = "closed"), color = "#DE9854") +
+    annotate(geom = "segment", x = -5, xend = 0, y = b_0, yend = b_0, arrow = arrow(angle = 12, type = "closed", ends = "first"), color = "#DE9854") +
+    scale_y_continuous(limits = c(0,100), expand = c(0,0), breaks = c(0,25,b_0,50,75,100), labels = c("0","25",parse(text = TeX("$b_0$")),"50","75","100"), minor_breaks = seq(0,100,12.5)) +
+    theme(axis.text.y = element_text(color = c("grey30", "grey30", "#DE9854", "grey30", "grey30", "grey30")),
+          axis.ticks.y = element_line(color = c("grey30", "grey30", "#DE9854", "grey30", "grey30", "grey30")),
+          panel.grid.minor = element_line(color = c("grey92", "grey92", "grey92", "grey92", "grey92", "grey92")),
+          panel.grid.major.y = element_line(color = c("grey92", "grey92", NA, "grey92", "grey92", "grey92")))
+plot_b_0
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# What's A Line: A Refresher
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+plot_b_0 + 
+    annotate(geom = "segment", x = 5, xend = 6, y = b_0+5*b_1, yend = b_0+5*b_1, arrow = arrow(angle = 12, type = "closed", length = unit(.4, "cm")), color = "#d90502") +
+    annotate(geom = "text", x = 5.5, y = 49, label = "1", size = 5, color = "#d90502") +
+    annotate(geom = "segment", x = 6, xend = 6, y = b_0+5*b_1, yend = b_0+6*b_1, arrow = arrow(angle = 12, type = "closed", length = unit(.2, "cm")), color = "#d90502") +
+    annotate(geom = "text", x = 6.5, y = (b_0+6*b_1 + b_0+5*b_1)/2, label = "b[1]", parse = TRUE, size = 6, color = "#d90502")
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Residual
+
+* If all the data points were __on__ the line then $\widehat{y}_i = y_i$.
+
+--
+
+```{r, echo = FALSE, fig.height = 4,fig.width=7}
+x <- runif(50, min  = 0, max = 1)
+y <- 1 * x
+
+data <- data.frame(y = y,
+                   x = x)
+
+plot_ex <- data %>% ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  labs(x = "x",
+       y = "y") +
+  theme_bw(base_size = 14)
+plot_ex
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Residual
+
+* If all the data points were __on__ the line then $\widehat{y}_i = y_i$.
+
+```{r, echo = FALSE, fig.height = 4,fig.width=7}
+plot_ex + geom_line(color = "#d90502")
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Residual
+
+* If all the data points were __on__ the line then $\widehat{y}_i = y_i$.
+
+* However, since in most cases the *dependent variable* $(y)$ is not *only* explained by the chosen *independent variable* $(x)$, $\widehat{y}_i \neq y_i$, i.e. we make an __error__.  
+This __error__ is called the __residual__.
+
+--
+
+* At point $(x_i,y_i)$, we note this residual $e_i$.
+
+--
+
+* The *actual data* $(x_i,y_i)$ can thus be written as *prediction + residual*:
+
+  $$
+  y_i = \widehat y_i + e_i = b_0 + b_1 x_i + e_i
+  $$
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+plot_1 <- g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14)
+plot_1
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+plot_2 <- plot_1 +
+  stat_smooth(data = grades_avg_cs, method = "lm", se = FALSE, colour = "#d90502") +
+  annotate("text", x = 6.5, y = 64, label = "hat(y)", parse = TRUE, colour = "#d90502", size = 6)
+plot_2
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14) +
+  stat_smooth(method = "lm", se = FALSE, colour = "#d90502") +
+  annotate("text", x = 6.5, y = 64, label = "hat(y)", parse = TRUE, colour = "#d90502", size = 6) +
+  geom_point(data = grades_avg_cs %>% filter(classize == 17), aes(x = classize, y = avgmath_cs), color = "#d90502", size = 4) +
+  annotate("text", x = 17, y = 69, label = "y[x = 17]", parse = TRUE, colour = "#d90502", size = 6)
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+math_class_reg <- lm(avgmath_cs ~ classize, data = grades_avg_cs)
+math_class_reg <- broom::augment(math_class_reg)
+
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14) +
+  stat_smooth(method = "lm", se = FALSE, colour = "#d90502") +
+  annotate("text", x = 6.5, y = 64, label = "hat(y)", parse = TRUE, colour = "#d90502", size = 6) +
+  geom_point(data = grades_avg_cs %>% filter(classize == 17), aes(x = classize, y = avgmath_cs), color = "#d90502", size = 4) +
+  annotate("text", x = 17, y = 69, label = "y[x = 17]", parse = TRUE, colour = "#d90502", size = 6) +
+  geom_segment(data = math_class_reg %>% filter(classize == 17),
+               aes(xend = classize, yend = .fitted), color = "#d90502", size = 1) +
+  annotate("text", x = 18, y = 65.55, label = "e[x = 17]", parse = TRUE, colour = "#d90502", size = 6)
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+```{r, echo = F, fig.width = 10, fig.height = 5}
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14) +
+  stat_smooth(method = "lm", se = FALSE, colour = "#d90502") +
+  annotate("text", x = 6.5, y = 64, label = "hat(y)", parse = TRUE, colour = "#d90502", size = 6) +
+  geom_segment(data = math_class_reg,
+               aes(xend = classize, yend = .fitted), color = "#d90502", size = 0.5)
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Simple Linear Regression: Graphically
+
+.left-wide[
+```{r, echo = F, out.width = "100%", fig.height = 4.5}
+g_math_cs +
+    ylim(50, 80) +
+    theme_bw(base_size = 14) +
+  stat_smooth(method = "lm", se = FALSE, colour = "#d90502") +
+  annotate("text", x = 6.5, y = 64, label = "hat(y)", parse = TRUE, colour = "#d90502", size = 6) +
+  geom_segment(data = math_class_reg,
+               aes(xend = classize, yend = .fitted), color = "#d90502", size = 0.5)
+```
+]
+
+.right-thin[
+<br>
+<br>
+<p style="text-align: center; font-weight: bold; font-size: 35px; color: #d90502;">Which "minimisation" criterion should (can) be used?</strong>
+]
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS) Estimation
+
+--
+
+* Errors of different sign $(+/-)$ cancel out, so we consider **squared residuals** 
+$$\forall i \in [1,N], e_i^2 = (y_i - \widehat y_i)^2 = (y_i - b_0 - b_1 x_i)^2$$
+
+* Choose $(b_0,b_1)$ such that $\sum_{i = 1}^N e_1^2 + \dots + e_N^2$ is **as small as possible**.
+
+--
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,fig.width=7,fig.height = 3.5}
+g_math_cs +
+    ylim(50, 80) +
+    xlim(0, 50) +
+    theme_bw(base_size = 14) +
+    stat_smooth(method = "lm", se = FALSE, colour = "darkgreen") +
+  coord_fixed(ratio = 0.65)
+```
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS) Estimation
+
+* Errors of different sign $(+/-)$ cancel out, so we consider **squared residuals** 
+$$\forall i \in [1,N], e_i^2 = (y_i - \widehat y_i)^2 = (y_i - b_0 - b_1 x_i)^2$$
+
+* Choose $(b_0,b_1)$ such that $\sum_{i = 1}^N e_1^2 + \dots + e_N^2$ is **as small as possible**.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE,fig.width=7,fig.height = 3.5}
+g_math_cs +
+    ylim(50, 80) +
+    xlim(0, 50) +
+    theme_bw(base_size = 14) +
+    stat_smooth(method = "lm", se = FALSE, colour = "darkgreen") +
+    geom_rect(data = math_class_reg,
+              aes(
+              xmin = classize,
+              xmax = classize + abs(.resid)*0.65,
+              ymin = avgmath_cs,
+              ymax = avgmath_cs - .resid),
+              fill = "darkgreen",
+              alpha = 0.3) +
+  coord_fixed(ratio = 0.65)
+```
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS) Estimation
+
+```{r, echo = F, out.extra = 'style="border: none;"'}
+knitr::include_url("https://gustavek.shinyapps.io/reg_simple/")
+```
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS) Estimation
+
+```{r, echo = F, out.extra = 'style="border: none;"'}
+knitr::include_url("https://gustavek.shinyapps.io/SSR_cone/")
+```
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS): Coefficient Formulas
+
+* **OLS**: *estimation* method consisting in minimizing the sum of squared residuals.
+
+* Yields __unique__ solutions to this minization problem.
+
+* So what are the formulas for $b_0$ (intercept) and $b_1$ (slope)?
+
+--
+
+* In our single independent variable case:
+
+>   ### __Slope: $b_1^{OLS} = \frac{cov(x,y)}{var(x)}$ $\hspace{2cm}$ Intercept: $b_0^{OLS} = \bar{y} - b_1\bar{x}$__
+
+--
+
+
+* These formulas do not appear from magic. They can be found by solving the minimisation of squared errors. The maths can be found [here](https://www.youtube.com/watch?v=Hi5EJnBHFB4) for those who are interested.
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS): Interpretation
+
+For now assume both the dependent variable $(y)$ and the independent variable $(x)$ are numeric.
+
+--
+
+> Intercept $(b_0)$: **The predicted value of $y$ $(\widehat{y})$ if $x = 0$.**
+
+--
+
+> Slope $(b_1)$: **The predicted change, on average, in the value of $y$ *associated* to a one-unit increase in $x$.**
+
+--
+
+* ⚠️ Note that we use the term *associated*, **clearly avoiding interpreting $b_1$ as the causal impact of $x$ on $y$**. To make such a claim, we need some specific conditions to be met. (Next week!)
+
+--
+ 
+* Also notice that the units of $x$ will matter for the interpretation (and magnitude!) of $b_1$.
+
+--
+
+* **You need to be explicit about what the unit of $x$ is!**
+
+<div style="clear: both;"></div>
+
+---
+
+# OLS with `R`
+
+* In `R`, OLS regressions are estimated using the `lm` function.
+
+* This is how it works:
+
+  ```{r, echo = TRUE, eval = FALSE}
+  lm(formula = dependent variable ~  independent variable, data = data.frame containing the data)
+  ```
+
+---
+# OLS with `R`
+
+## Class size and student performance
+
+Let's estimate the following model by OLS: $\textrm{average math score}_i = b_0 + b_1 \textrm{class size}_i + e_i$
+
+
+
+```{r echo=T, eval=FALSE}
+# OLS regression of class size on average maths score
+lm(avgmath_cs ~ classize, grades_avg_cs) 
+```
+
+
+
+```{r echo=F, eval = TRUE}
+# OLS regression of class size on average maths score
+lm(avgmath_cs ~ classize, grades_avg_cs) 
+```
+
+
+<div style="clear: both;"></div>
+
+---
+
+# **O**rdinary **L**east **S**quares (OLS): Prediction
+
+```{r echo=F, eval = TRUE}
+# OLS regression of class size on average maths score
+lm(formula = avgmath_cs~classize, data = grades_avg_cs)
+```
+
+--
+
+This implies (abstracting the $_i$ subscript for simplicity):
+
+
+$$
+\begin{aligned}
+\widehat y &= b_0 + b_1 x \\
+\widehat {\text{average math score}} &= b_0 + b_1 \cdot \text{class size} \\
+\widehat {\text{average math score}} &= 61.11 + 0.19 \cdot \text{class size}
+\end{aligned}
+$$
+
+--
+
+What's the predicted average score for a class of 26 students? (Using the *exact* coefficients.)
+
+$$
+\begin{aligned}
+\widehat {\text{average math score}} &= 61.11 + 0.19 \cdot 26 \\
+\widehat {\text{average math score}} &= 66.08
+\end{aligned}
+$$
+
+
+<div style="clear: both;"></div>
+
+---
+
+class: inverse
+
+# Task 2: OLS Regression
+
+`r countdown(minutes = 10, top = 0)`
+
+Run the following code to aggregate the data at the class size level:
+
+```{r, eval = F}
+grades_avg_cs <- grades %>%
+  group_by(classize) %>%
+  summarise(avgmath_cs = mean(avgmath),
+            avgverb_cs = mean(avgverb))
+```
+
+1. Regress average verbal score (dependent variable) on class size (independant variable). Interpret the coefficients.
+
+1. Compute the OLS coefficients $b_0$ and $b_1$ of the previous regression using the formulas on slide 25. (*Hint:* you need to use the `cov`, `var`, and `mean` functions.)
+
+1. What is the predicted average verbal score when class size is equal to 0? (Does that even make sense?!)
+
+1. What is the predicted average verbal score when the class size is equal to 30 students?
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Predictions and Residuals: Properties
+
+.pull-left[
+* __The average of $\widehat{y}_i$ is equal to $\bar{y}$.__  
+    $$\begin{align} \frac{1}{N} \sum_{i=1}^N \widehat{y}_i &= \frac{1}{N} \sum_{i=1}^N b_0 + b_1 x_i \\ &= b_0 + b_1  \bar{x}  = \bar{y} \end{align}$$
+
+* __The average (or sum) of residuals is 0.__
+  $$\begin{align} \frac{1}{N} \sum_{i=1}^N e_i &= \frac{1}{N} \sum_{i=1}^N (y_i - \widehat y_i) \\ &= \bar{y} - \frac{1}{N} \sum_{i=1}^N \widehat{y}_i \\\ &= 0 \end{align}$$
+]
+
+--
+
+.pull-right[
+* __ Regressor and residuals are uncorrelated (by definition).__
+
+  $$Cov(x_i, e_i) = 0$$
+
+
+* __Prediction and residuals are uncorrelated.__
+
+  $$\begin{align} Cov(\widehat y_i, e_i) &= Cov(b_0 + b_1x_i, e_i) \\ &= b_1Cov(x_i,e_i) \\ &= 0 \end{align}$$
+  
+  Since $Cov(a + bx, y) = bCov(x,y)$.
+
+]
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Linearity Assumption: Visualize your Data!
+
+* It's important to keep in mind that covariance, correlation and simple OLS regression only measure **linear relationships** between two variables.
+
+* Two datasets with *identical* correlations and regression lines could look *vastly* different.
+
+--
+
+* Is that even possible?
+<img src="https://media.giphy.com/media/5aLrlDiJPMPFS/giphy.gif" height = "290" align = "middle" />
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Linearity Assumption: Anscombe
+
+* Francis Anscombe (1973) came up with 4 datasets with identical stats. But look!
+
+.left-wide[
+
+```{r,echo=FALSE,fig.height = 6}
+##-- now some "magic" to do the 4 regressions in a loop:
+ff <- y ~ x
+mods <- setNames(as.list(1:4), paste0("lm", 1:4))
+covs = data.frame(dataset = 1:4, cov = 0.0)
+for(i in 1:4) {
+  ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+  ## or   ff[[2]] <- as.name(paste0("y", i))
+  ##      ff[[3]] <- as.name(paste0("x", i))
+  mods[[i]] <- lmi <- lm(ff, data = anscombe)
+  covs[i,"cov"] = eval(parse(text = paste0("cov(anscombe$x",i,",anscombe$y",i,")")))
+  covs[i,"var(y)"] = eval(parse(text = paste0("var(anscombe$y",i,")")))
+  covs[i,"var(x)"] = eval(parse(text = paste0("var(anscombe$x",i,")")))
+}
+
+op <- par(mfrow = c(2, 2), mar = 0.1+c(4,4,1,1), oma =  c(0, 0, 0, 0))
+for(i in 1:4) {
+  ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+  plot(ff, data = anscombe, col = "black", pch = 21, bg = "#d90502", cex = 1.2,
+       xlim = c(3, 19), ylim = c(3, 13),main=paste("dataset",i))
+  abline(mods[[i]], col = "#DE9854")
+}
+par(op)
+```
+]
+
+--
+
+.right-thin[
+</br>
+</br>
+
+```{r,echo = FALSE}
+ch = kable(round(covs,3))
+ch %>%
+   kable_styling(bootstrap_options = "striped", font_size = 20)
+```
+
+]
+
+
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Nonlinear Relationships in Data?
+
+.pull-left[
+* We can accomodate non-linear relationships in regressions.
+
+* Just add a *higher order* term like this:
+    $$
+    y_i = b_0 + b_1 x_i + b_2 x_i^2 + e_i
+    $$
+    
+* This is __multiple regression__ (in 2 weeks!)
+]
+
+--
+
+.pull-right[
+* For example, suppose we had this data and fit the previous regression model:
+    ```{r non-line-cars-ols2,echo=FALSE,echo=FALSE,fig.height = 6}
+data(mtcars)
+mtcars %>% ggplot(aes(x = hp, y = mpg)) +
+    geom_point() +
+    stat_smooth(method='lm', formula = y~poly(x,2), se = FALSE, aes(colour="Nonlinear")) +
+    stat_smooth(method='lm', se = FALSE, aes(colour="Linear")) +
+    scale_colour_manual(name="legend", values=c("darkgreen", "#d90502")) +
+    labs(x = "x",
+         y = "y",
+         title = "Nonlinear relationship between x and y") +
+    theme_bw(base_size = 20) +
+    theme(legend.position="top") +
+    theme(legend.title = element_blank())
+
+    ```
+]
+
+<div style="clear: both;"></div>
+
+---
+
+# Analysis of Variance
+
+* Remember that $y_i = \widehat{y}_i + e_i$.
+
+* We have the following decomposition:
+    $$\begin{align} Var(y) &= Var(\widehat{y} + e)\\&= Var(\widehat{y}) + Var(e) + 2 Cov(\widehat{y},e)\\&= Var(\widehat{y}) + Var(e)\end{align}$$
+    
+* Because:
+  * $Var(x+y) = Var(x) + Var(y) + 2Cov(x,y)$
+  * $Cov(\hat{y},e)=0$
+
+* __Total variation (SST) = Model explained (SSE) + Unexplained (SSR)__
+
+
+<div style="clear: both;"></div>
+
+---
+
+# Goodness of Fit
+
+* The __ $R^2$ __ measures how well the __model fits the data__.
+
+--
+
+
+
+The formula expresses the $R^2$ as the ratio of what's **Explained** to the **Total** variation, which is equivalent to $1$ minus the ratio of what's **Unexplained** to the **Total** variation.
+
+$$\mathbf{R^2 = \frac{\text{Explained Variation}}{\text{Total Variation}} \quad = \quad 1 - \frac{\text{Unexplained Variation}}{\text{Total Variation}}}$$
+
+
+---
+
+# Goodness of Fit
+
+* The __ $R^2$ __ measures how well the __model fits the data__.
+
+### Formula using Sums of Squares
+
+In terms of the standard regression sums of squares:
+
+$$\mathbf{R^2 = \frac{ESS}{TSS} \quad = \quad 1 - \frac{SSR}{TSS}}\in[0,1]$$
+
+* **ESS (Explained Sum of Squares):** Variation explained by the regression.
+* **SSR (Sum of Squared Residuals):** Variation **unexplained** (the error).
+* **TSS (Total Sum of Squares):** The total variation in $Y$.
+
+
+--
+    
+* $R^2$ close to $1$ indicates a __very ***high*** explanatory power__ of the model.
+
+* $R^2$ close to $0$ indicates a __very ***low*** explanatory power__ of the model.
+
+--
+
+* *Interpretation:* an $R^2$ of 0.5, for example, means that the variation in $x$ "explains" 50% of the variation in $y$.
+
+--
+    
+* ⚠️ Low $R^2$ does __NOT__ mean it's a useless model! Remember that econometrics is interested in causal mechanisms, not prediction!
+
+--
+    
+* ⚠️ The $R^2$ is __NOT__ an indicator of whether a relationship is causal!
+
+
+<div style="clear: both;"></div>
+
+---
+
+
+#Graphically
+
+```{r r2-visualization A, echo=FALSE, fig.width=9, fig.height=6}
+
+library(ggplot2)
+# Load the necessary package
+library(ggplot2)
+
+# Create data and model
+set.seed(42)
+df <- data.frame(
+  X = 1:10,
+  Y = 2 + 1.5 * (1:10) + rnorm(10, 0, 1.5)
+)
+model <- lm(Y ~ X, data = df)
+df$Y_hat <- predict(model)
+df$Y_bar <- mean(df$Y)
+
+# Select one point to highlight
+highlight_i <- 7
+
+# Generate Plot
+ggplot(df, aes(x = X, y = Y)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "darkblue", linetype = "solid") +
+  geom_hline(aes(yintercept = Y_bar), color = "gray50", linetype = "dashed", linewidth = 1) +
+  
+  # Highlight the specific point
+  geom_point(data = df[highlight_i, ], color = "red", size = 4) +
+  
+  # ESS (Explained) - Green segment: Y_hat to Y_bar
+  geom_segment(data = df[highlight_i, ], 
+               aes(xend = X, y = Y_bar, yend = Y_hat), 
+               color = "forestgreen", linewidth = 2) +
+  
+  # SSR (Unexplained) - Red segment: Y_i to Y_hat
+  geom_segment(data = df[highlight_i, ], 
+               aes(xend = X, y = Y_hat, yend = Y), 
+               color = "red", linewidth = 2) +
+
+  labs(
+    title = expression(paste("Decomposition of Variation (TSS = ESS + SSR)")),
+    subtitle = expression(paste("R^2 = ESS / TSS")),
+    x = "Independent Variable (X)",
+    y = "Dependent Variable (Y)"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+---
+#Graphically
+
+```{r r2-visualization, echo=FALSE, fig.width=9, fig.height=6}
+
+# Load the necessary package
+library(ggplot2)
+
+# 1. Create Data and Model (Same as before)
+set.seed(42)
+df <- data.frame(
+  X = 1:10,
+  Y = 2 + 1.5 * (1:10) + rnorm(10, 0, 1.5)
+)
+model <- lm(Y ~ X, data = df)
+df$Y_hat <- predict(model)
+df$Y_bar <- mean(df$Y)
+
+# Select one point to highlight
+highlight_i <- 7
+
+# 2. Generate Corrected Plot
+ggplot(df, aes(x = X, y = Y)) +
+  
+  # Base plot elements
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "darkblue", linetype = "solid") +
+  geom_hline(aes(yintercept = Y_bar), color = "gray50", linetype = "dashed", linewidth = 1) +
+  
+  # Highlight the specific point
+  geom_point(data = df[highlight_i, ], color = "black", size = 4) +
+  
+  # --- Visualization of Components ---
+  
+  # ESS (Explained) - Forest Green segment
+  geom_segment(data = df[highlight_i, ], 
+               aes(xend = X, y = Y_bar, yend = Y_hat), 
+               color = "forestgreen", linewidth = 3, alpha = 0.7) +
+  
+  # SSR (Unexplained) - Red segment
+  geom_segment(data = df[highlight_i, ], 
+               aes(xend = X, y = Y_hat, yend = Y), 
+               color = "red", linewidth = 3, alpha = 0.7) +
+  
+  # ---  Annotations (using simple strings) ---
+  
+  # Label for the Mean (Y_bar)
+  annotate("text", x = 1.5, y = df$Y_bar[1] + 0.3, label = "Y bar", 
+           color = "gray50", fontface = "bold", size = 4) +
+  
+  # Label for ESS (Explained)
+  annotate("text", x = df$X[highlight_i] + 0.6, y = mean(c(df$Y_hat[highlight_i], df$Y_bar[1])) - 0.1, 
+           label = "ESS (Explained)", color = "forestgreen", fontface = "bold", size = 4) +
+  
+  # Label for SSR (Unexplained)
+  annotate("text", x = df$X[highlight_i] + 0.6, y = mean(c(df$Y[highlight_i], df$Y_hat[highlight_i])) + 0.1, 
+           label = "SSR (Unexplained)", color = "red", fontface = "bold", size = 4) +
+
+  # ---  Plot Labels  ---
+  labs(
+    title = "Visualizing R-squared Components: ESS + SSR = TSS",
+    subtitle = "R-squared = ESS / TSS",
+    x = "Independent Variable (X)",
+    y = "Dependent Variable (Y)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+
+---
+## Visualizing $R^2$: Components and Sign ⚠️
+
+Recall that the visualization shows the **magnitude** of the vertical distances. Mathematically, the components used in the $R^2$ formula are **squared** to ensure they are positive and can be summed (TSS = ESS + SSR).
+
+| Component | Visual Representation (Distance) | Mathematical Term (Before Squaring) | Sign |
+| :--- | :--- | :--- | :--- |
+| **TSS** (Total) | $Y_i$ to $\bar{Y}$ | $(Y_i - \bar{Y})$ | Can be positive or negative. |
+| **ESS** (Explained) | $\widehat{Y}_i$ to $\bar{Y}$ | $(\widehat{Y}_i - \bar{Y})$ | Can be positive or negative. |
+| **SSR** (Unexplained) | $Y_i$ to $\widehat{Y}_i$ | $(Y_i - \widehat{Y}_i)$ | Can be positive or negative. |
+
+--
+
+### Key Point
+
+The **Sum of Squares** ($\mathbf{\sum ( \cdot )^2}$) is necessary to eliminate the sign and aggregate the variation across **all** data points, resulting in a positive $R^2$ value between 0 and 1.
+
+
+
+---
+class: inverse
+
+# Task 3: $R^2$ and goodness of fit
+
+`r countdown(minutes = 10, top = 0)`
+
+1. Regress `avgmath_cs` on `classize`. Assign to an object `math_reg`.
+
+1. Pass `math_reg` in the `summary()` function. What is the (multiple) $R^2$ for this regression? How can you interpret it?
+
+1. Compute the squared correlation between `classize` and `avgmath_cs`. What does this tell you about the relationship between $R^2$ and the correlation in a regression with only one regressor?
+
+1. Repeat steps 1 and 2 for `avgverb_cs`. For which exam does the variance in class size explain more of the variance in students' scores?
+
+1. (Optional) Install and load the `broom` package. Pass `math_reg` in the `augment()` function and assign it to a new object. Use the variance in `avgmath_cs` (SST) and the variance in `.fitted` (predicted values; SSE) to find the $R^2$ using the formula on the previous slide.
+
+
+<div style="clear: both;"></div>
+
+---
+
+
+
+## Why Hypothesis Testing? 🤔
+
+### The Challenge: Sample vs. Population
+
+We're not just interested in the results from our **small sample of data**; we want to make confident **conclusions about the entire population**.
+
+--
+* **Example 1 (Mean):** If the average test score in our sample is $700$, can we confidently say the true **population average** ($\mu$) is really $700$?
+
+--
+* **Example 2 (Regression):** If our regression shows a coefficient of $-\mathbf{5.82}$ for class size, can we say for sure that this effect is **real** and not just due to random chance in our sample?
+
+<div style="clear: both;"></div>
+
+---
+
+### The Solution: Statistical Inference
+
+This is where **Hypothesis Testing** comes in.
+
+It's the essential tool we use to move from a **sample finding** to a **population conclusion**—to determine if our results are **statistically significant**.
+
+<br>
+
+**Our Plan:**
+
+1.   Testing the **Population Mean ($\mu$)**.
+2.  Apply that logic to our core econometrics task, e.g. testing the **Regression Coefficients ($\beta_i$)**.
+
+<div style="clear: both;"></div>
+
+---
+
+
+
+
+# Hypothesis Testing for the Population Mean ($\mu$)
+
+### The Simple $t$-Test
+
+<br>
+
+**1. Hypotheses**
+
+$$H_0: \mu = \mu_0 \quad \text{(Population mean equals hypothesized value)} \\
+H_1: \mu \neq \mu_0 \quad \text{(Population mean is different from hypothesized value)}$$
+
+
+<div style="clear: both;"></div>
+
+---
+**2. Test Statistic**
+
+The test statistic is:
+
+$$t^* = \frac{\bar{X} - \mu_0}{SE(\bar{X})} \sim t_{n-1}$$
+
+where:
+
+- $\bar{X}$: sample mean
+- $\mu_0$: hypothesized population mean (from $H_0$)
+- $SE(\bar{X}) = \frac{s}{\sqrt{n}}$: Standard Error of the sample mean
+- $n$: number of observations (sample size)
+- $n - 1$: degrees of freedom of the $t$-distribution
+
+
+<div style="clear: both;"></div>
+
+---
+
+** 3. Decision Rule (Critical Value Approach)**
+
+Decision rule: Reject $H_0$ if the calculated absolute $t^*$:
+
+$$|t^*| > t_{\alpha/2,\, n-1}$$
+
+The interval $\big[-t_{\alpha/2,\,n-1},\; t_{\alpha/2,\,n-1}\big]$ is the **Non-rejection Region**.
+
+--
+
+** 4. Decision Rule ($p$-value approach)**
+
+If ($p\text{-value}$ < $\alpha$),
+we **reject the null hypothesis** at the $\alpha$ significance level. (Commonly $\alpha$=0.05).
+
+--
+
+** 5. Interpretation of Results**
+
+If ($H_0$) is rejected $\to$ The true population mean ($\mu$) is **statistically different** from ($\mu_0$).
+
+If ($H_0$) is not rejected $\to$ There is **insufficient evidence** to conclude that $\mu$ is different from ($\mu_0$).
+
+
+
+
+---
+
+## Practical Example
+
+### The Scenario: State Mandate
+
+* **Problem:** A parent group claims the true **average test score ($\mu$)** is different from the mandated 650 points.
+* $H_0$: The district meets the mandate ($\mu = 650$)
+* $H_1$: The district fails the mandate ($\mu \neq 650$)
+* **Significance Level:** $\alpha = 0.05$
+
+<div style="clear: both;"></div>
+
+---
+
+### The Data & Test Statistic
+
+We take a sample ($n=25$) and find strong evidence:
+
+| Statistic | Value |
+| :--- | :--- |
+| Sample Mean ($\bar{X}$) | **628 points** |
+| Sample Standard Deviation ($s$) | 50 points |
+| Sample Size ($n$) | 25 |
+
+The calculated **Test Statistic ($t^*$)** is:
+$$t^* = \frac{\bar{X} - \mu_0}{s/\sqrt{n}} = \frac{628 - 650}{50/\sqrt{25}} = \frac{-22}{10} = \mathbf{-2.2}$$
+
+<div style="clear: both;"></div>
+
+---
+
+### The Decision: Reject $H_0$
+
+
+.pull-left[
+**1. Critical Value Approach**
+
+$$
+|t^*| = |-2.2| = 2.2 \quad \text{is} \quad > 2.064 \quad (t_{0.025, 24})
+$$
+
+**Conclusion:** **Reject $H_0$**
+]
+
+.pull-right[
+**2. $p$-value Approach**
+
+$p\text{-value} \approx \mathbf{0.037}$
+
+**Conclusion:** Since $0.037 < 0.05$, **Reject $H_0$**
+]
+
+
+### The Interpretation
+
+The sample mean of 628 is **statistically significantly** different from 650. We reject the null hypothesis and conclude there is strong evidence the true average score is below the state mandate.
+
+<div style="clear: both;"></div>
+
+---
+
+# Hypothesis Testing for Regression Coefficients
+
+### Individual Significance Test
+
+<br>
+
+**1. Hypotheses**
+
+$$H_0: \beta_i = 0 \quad \text{(no effect)} \\
+H_1: \beta_i \neq 0 \quad \text{(significant effect)}$$
+
+<div style="clear: both;"></div>
+
+---
+**2. Test statistic**
+
+The test statistic is:
+
+$$t^* = \frac{\widehat{\beta}_i - \beta_i}{SE(\widehat{\beta}_i)} \sim t_{n-k-1}$$
+
+The typical test for $H_0: \beta_i = 0$ simplifies this to:
+
+$$t^* = \frac{\widehat{\beta}_i - 0}{SE(\widehat{\beta}_i)} \sim t_{n-k-1}$$
+
+where:
+
+- \(n\): number of observations  
+- \(k\): number of parameters  
+- \(n - k - 1\): degrees of freedom of the t-distribution  
+- ($\alpha$): significance level (probability of rejecting $H_0$ when $H_0$ is true, usually $\alpha$=0.05)
+
+
+<div style="clear: both;"></div>
+
+---
+
+**3. Decision Rule (Critical Value Approach)
+
+
+
+Decision rule: If the absolute calculated $t^*$ is within the Non-rejection Region (N.R.):
+
+
+$$t^* \in \text{N.R.} = \big[-t_{\alpha/2,\,n-k-1},\; t_{\alpha/2,\,n-k-1}\big]$$
+
+we ** do not reject the null hypothesis** ($H_0$).  
+
+The critical values in this interval are obtained from the t-distribution tables.
+
+--
+
+**4. Test p-value
+
+If ($p\text{-value}$ < 0.05),  
+we **reject the null hypothesis** at the 5% significance level.
+
+
+--
+
+**5. Interpretation of Results
+
+If ($H_0$) is rejected → variable ($X_i$) is **relevant** to explain variable \(Y\).  
+If ($H_0$) is not rejected → variable ($X_i$) has **no statistically significant effect** on ($Y$).
+
+<div style="clear: both;"></div>
+
+---
+
+
+
+
+# On the way to causality
+
+✅ How to manage data? Read it, tidy it, visualise it...
+
+🚧  **How to summarise relationships between variables?** Simple linear regression... to be continued
+
+❌ What is causality?
+
+❌ What if we don't observe an entire population?
+
+❌  Are our findings just due to randomness?
+
+❌ How to find exogeneity in practice?
+
+<div style="clear: both;"></div>
+
+---
+
+
+class: title-slide-final, middle
+
+
+# SEE YOU NEXT WEEK!
