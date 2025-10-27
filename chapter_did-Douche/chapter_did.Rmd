@@ -1026,7 +1026,7 @@ ck_mw %>%
 
 --
 
-## DiD Estimate
+### DiD Estimate
 
 Differences-in-differences causal estimate: $0.59 - (-2.17) = 2.76$
 

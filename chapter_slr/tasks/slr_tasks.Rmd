@@ -1,6 +1,6 @@
 ---
 title: "Simple Linear Regression - Tasks"
-author: "Florian Oswald, Gustave Kenedi and Pierre Villedieu"
+author: "Florian Oswald"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -121,6 +121,14 @@ b_0 = y_bar - b_1 * x_bar
 b_0
 ```
 
+Let's check that this is indeed identical to what the `lm` function would return:
+
+```{r}
+lm(avgmath_cs ~ classize, data = grades_avg_cs)
+```
+
+🎉 looking good!
+
 2\. Regress average verbal score (dependent variable) on class size (independant variable). Interpret the coefficients.
 
 ```{r}
@@ -190,3 +198,213 @@ summary(verb_reg)
 
 **The $R^2$ is greater for maths than for reading, therefore class size explains more of the variation in math scores than in reading scores.**
 
+
+# Task 4 : Why is $\text{Cov}(X, e) = 0$ alayws true in model estimated via OLS?
+
+Consider the true population model
+
+$$y = \alpha + \beta x + \varepsilon$$
+
+We *assume* on this model that
+
+$$E[\varepsilon | x] = 0$$ 
+
+and we say that $x$ is **exogenous** to the model (i.e. determined outside of it - nothing to do with whatever is in $\varepsilon$).
+
+Now suppose we want estimate those true parameters $\alpha,\beta$ via OLS, using this statistical model:
+
+$$y = a + bx + e$$
+
+$a,b$ are our *estimates* of $\alpha,\beta$.
+
+**Question**: Why is $\text{Cov}(x, e) = 0$ in the OLS statistical model?
+
+Can't we have systematically larger $x$ associated with larger $e$? Wouldn't $\text{Cov}(X, e) > 0$ just imply that for larger $x$, our prediction would incur a larger error? You may have that intuition:
+
+> I can draw a scatter plot where larger $x$ are associated with larger deviations of $y_i$ from $\hat{y}_i$, no?
+
+Yes, you can certainly do that. There is a name for this, actually, it's called *heteroskedasticity*. Look at the left panel: the larger $X$, the larger the deviations around the line. But then, look at the right panel, too. Can you see that the residuals are not _systematically_ either above or below their mean (i.e. zero), as $X$ increases? That's the point I'm trying to make here. 
+
+```{r,echo = FALSE}
+# Heteroskedasticity Example: Larger X → Larger Error Variance
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Generate data
+n <- 100
+x <- runif(n, 0, 10)
+
+# True relationship: y = 2 + 3*x + e
+# But variance of e increases with x (heteroskedasticity)
+true_a <- 2
+true_b <- 3
+hetsk = 0.5
+e <- rnorm(n, mean = 0, sd = 0.5 + hetsk * x)  # sd increases with x
+
+y <- true_a + true_b * x + e
+
+# Fit OLS
+model <- lm(y ~ x)
+y_fitted <- fitted(model)
+residuals <- resid(model)
+
+# Create plot
+par(mfrow = c(1, 2), mar = c(4, 4, 3, 1))
+
+# Left plot: Scatter with regression line
+plot(x, y, pch = 16, col = rgb(0, 0, 0, 0.5),
+     xlab = "X", ylab = "Y",
+     main = "Heteroskedasticity:\nVariance increases with X")
+abline(model, col = "blue", lwd = 2)
+
+# Add vertical lines showing residuals
+segments(x, y, x, y_fitted, col = rgb(1, 0, 0, 0.3))
+
+# Add text
+text(2, max(y) - 2, 
+     paste0("ŷ = ", round(coef(model)[1], 2), " + ", 
+            round(coef(model)[2], 2), "x"),
+     pos = 4, col = "blue")
+
+# Right plot: Residuals vs X
+plot(x, residuals, pch = 16, col = rgb(0, 0, 0, 0.5),
+     xlab = "X", ylab = "Residuals",
+     main = "Residuals vs X:\nSpread increases,\n but Cov(X,ê)=0")
+abline(h = 0, col = "blue", lwd = 2, lty = 2)
+
+# Add envelope showing increasing variance
+x_sorted <- sort(x)
+upper_env <- 0.5 + hetsk * x_sorted * 2
+lower_env <- -(0.5 + hetsk * x_sorted * 2)
+lines(x_sorted, upper_env, col = "red", lwd = 2, lty = 2)
+lines(x_sorted, lower_env, col = "red", lwd = 2, lty = 2)
+
+# Verify that Cov(X, residuals) ≈ 0
+cov_x_e <- cov(x, residuals)
+text(2, max(residuals) - 1,
+     paste0("Cov(X, e) = ", round(cov_x_e, 6)),
+     pos = 4, col = "darkgreen", font = 2)
+
+par(mfrow = c(1, 1))
+```
+
+```{r,echo = FALSE}
+# Print summary
+cat(sprintf("\n=== Heteroskedasticity Example ===\nTrue coefficients: alpha = %g, beta = %g\nOLS estimates:     a = %.3f, b = %.3f\n\nCov(X, residuals) = %.8f ≈ 0\nThis is VERY close to zero, as required by OLS!\n\nNote: Errors get larger as X increases (heteroskedasticity),\nbut they're still uncorrelated with X (Cov = 0).\n", 
+        true_a, true_b, coef(model)[1], coef(model)[2], cov_x_e))
+```
+
+
+What would happens if Cov(X, e) ≠ 0?
+
+When $\text{Cov}(X, e) \neq 0$, your OLS estimate $b$ will be **biased**. The estimated coefficient will systematically differ from the true causal effect of $X$ on $Y$.
+
+**Why?** If $e$ is correlated with $X$, when you estimate $\beta$ using OLS, you can't tell whether changes in $Y$ are due to:
+
+- The true effect of $X$ (what $\beta$ captures), or
+- The fact that $e$ happens to be larger when $X$ is larger
+
+Your estimate $b$ will pick up *both* effects, making it biased. It's easy to see, if you remember that OLS recovers the expected value of $y$ given $x$:
+
+$$E[y | x] = E[ a + b x + e | x] = a + b x + E[e | x]$$
+if the last bit is not zero, then, as you vary $x$, you cannot say that _all else being equal_, moving $x$ by 1 unit changes $E[y | x]$ by $b$ units: because also $E[e | x]$ will move! Ok, and of course we already know (right?!) that
+
+$$E[e | x] \Rightarrow Cov(x,e) = 0$$.
+
+
+### $Cov(X, e) = 0$ by *construction* in OLS
+
+Here's something crucial: **once you fit OLS and compute residuals $e_i$, they are *always* uncorrelated with $X$ by construction**.
+
+This is **not** an assumption but a consequence of how OLS works. Let's see why. To see this clearly, we need to write out the OLS estimator in algebra. You don't need to study this if you don't want to, the picture above should give you all the insights you need. But if not, follow along!
+
+### Deriving the OLS estimators
+
+We want to minimize the sum of squared residuals:
+$$\min_{a, b} \sum_{i=1}^{n} (y_i - a - bx_i)^2$$
+
+**First Order Conditions**
+
+Taking derivatives and setting them to zero:
+
+**With respect to $a$:**
+$$\frac{\partial}{\partial a} \sum (y_i - a - bx_i)^2 = -2\sum (y_i - a - bx_i) = 0$$
+
+**With respect to $b$:**
+$$\frac{\partial}{\partial b} \sum (y_i - a - bx_i)^2 = -2\sum x_i(y_i - a - bx_i) = 0$$
+
+
+**FOC 1:**
+$$\sum (y_i - a - b x_i) = 0$$
+
+**FOC 2:**
+$$\sum x_i(y_i - a - b x_i) = 0$$
+
+### Why Residuals Are Uncorrelated with X
+
+Notice that $(y_i - a - b x_i) = e_i$ is the residual. So FOC 2 says:
+$$\sum x_i e_i = 0$$
+
+This is **exactly the statement** that $X$ and the residuals are uncorrelated (in sample)!
+
+From FOC 1, we also have $\sum e_i = 0$, which means $\bar{e} = 0$.
+
+Therefore:
+$$\text{Cov}(X, e) = \frac{1}{n}\sum (x_i - \bar{x})(e_i - \bar{e}) = \frac{1}{n}\sum x_i e_i - \bar{x}\bar{e} = 0$$
+
+**Key insight**: OLS mechanically forces the residuals to be uncorrelated with $X$. This isn't an assumption—it's baked into the optimization.
+
+### Solving for the Estimates
+
+**Step 1:** Solve for $a$ from FOC 1
+
+From $\sum (y_i - a - bx_i) = 0$:
+$$\sum y_i - na - b\sum x_i = 0$$
+$$na = \sum y_i - b\sum x_i$$
+$$a = \bar{y} - b\bar{x}$$
+
+### Step 2: Substitute into FOC 2
+
+Plug $a = \bar{y} - b\bar{x}$ into FOC 2:
+$$\sum x_i(y_i - (\bar{y} - b\bar{x}) - bx_i) = 0$$
+$$\sum x_i(y_i - \bar{y} + b\bar{x} - bx_i) = 0$$
+$$\sum x_i(y_i - \bar{y}) + b\bar{x}\sum x_i - b\sum x_i^2 = 0$$
+
+### Step 3: Simplify using $\sum x_i = n\bar{x}$
+
+Since $\bar{x} = \frac{1}{n}\sum x_i$, we have $\sum x_i = n\bar{x}$.
+
+Therefore:
+$$\sum x_i(y_i - \bar{y}) = b\sum x_i^2 - b\bar{x}(n\bar{x})$$
+$$\sum x_i(y_i - \bar{y}) = b(\sum x_i^2 - n\bar{x}^2)$$
+
+Solving for $b$:
+$$b = \frac{\sum x_i(y_i - \bar{y})}{\sum x_i^2 - n\bar{x}^2}$$
+
+### Step 4: Rewrite in covariance form
+
+**Numerator**: We can show that $\sum x_i(y_i - \bar{y}) = \sum (x_i - \bar{x})(y_i - \bar{y})$ because:
+$$\sum (x_i - \bar{x})(y_i - \bar{y}) = \sum x_i(y_i - \bar{y}) - \bar{x}\sum(y_i - \bar{y})$$
+
+and $\sum(y_i - \bar{y}) = 0$ (deviations from the mean sum to zero).
+
+**Denominator**: Similarly, $\sum x_i^2 - n\bar{x}^2 = \sum(x_i - \bar{x})^2$ because:
+$$\sum(x_i - \bar{x})^2 = \sum(x_i^2 - 2x_i\bar{x} + \bar{x}^2) = \sum x_i^2 - 2\bar{x}\sum x_i + n\bar{x}^2$$
+$$= \sum x_i^2 - 2\bar{x}(n\bar{x}) + n\bar{x}^2 = \sum x_i^2 - n\bar{x}^2$$
+
+Therefore, the OLS estimates are:
+
+$$\boxed{b = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum(x_i - \bar{x})^2} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)}}$$
+
+$$\boxed{a = \bar{y} - b\bar{x}}$$
+
+# Summary
+
+1. **The assumption** $\text{Cov}(X, \varepsilon) = 0$ is about the **true errors** $\varepsilon$ in the population, not the residuals $e$ we observe when computing the OLS estimates.
+
+2. The **result** that OLS residuals $e$ are *always* uncorrelated with $X$ is a mechanical consequence of how we compute the estimators. You can see how it falls out of the first order conditions used above.
+
+3. When $\text{Cov}(X, \varepsilon) \neq 0$ in reality (e.g., due to omitted variables), OLS gives you biased estimates even though the residuals appear well-behaved.
+
+4. Don't confuse correlation with heteroskedasticity: larger errors for larger $X$ (in magnitude) is about variance, not bias (see picture above!)
