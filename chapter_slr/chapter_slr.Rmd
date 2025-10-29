@@ -783,6 +783,8 @@ ch %>%
     $$
     
 * This is __multiple regression__ (in 2 weeks!)
+
+* Notice that we can **not** have non-linearities in the $b$'s!!
 ]
 
 --
@@ -869,6 +871,55 @@ class: inverse
 
 1. (Optional) Install and load the `broom` package. Pass `math_reg` in the `augment()` function and assign it to a new object. Use the variance in `avgmath_cs` (SST) and the variance in `.fitted` (predicted values; SSE) to find the $R^2$ using the formula on the previous slide.
 
+
+
+---
+
+# Least Squares Assumptions
+
+We need 3 conditions for OLS to yield unbiased estimates:
+
+1. $E[u | X] = 0$: The conditional mean of the population regression function ($u$) is uncorrelated to $X$. In other words, all unobserved factors - absent from the model and lumped into $u$ - are *not* systematically related to the explanatory variable $X$.
+
+2. $\left\{X_i,Y_i\right\}_{i=1}^n$ is an i.i.d. sample. There is no dependence between observations (like in time series data for example)
+
+3. There are no large outliers in the data.
+
+---
+
+# Large Sample Distribution of OLS Estimators
+
+Under the assumptions on the previous slide, we have:
+
+1. Both coefficients are unbiased: $E(b_0) = \beta_0, E(b_1) = \beta_1$.
+
+2. $b_0,b_1$ are *joint* normally distributed. We have
+
+$$\sigma_{b_1}^2 = \frac{1}{n} \frac{var\left((X_i - \mu_X) u_i \right)}{var\left(X_i  \right)^2}$$
+
+and
+
+$$\sigma_{b_0}^2 = \frac{1}{n} \frac{var\left(H_i u_i \right)}{\left[E(H_i^2)\right]^2}, H_i = 1 - \left[ \frac{\mu_X}{E(X_i^2)} \right] X_i$$
+
+
+
+---
+
+# Large Sample Distribution of OLS Estimators
+
+$$\sigma_{b_1}^2 = \frac{1}{n} \frac{var\left((X_i - \mu_X) u_i \right)}{var\left(X_i  \right)^2}$$
+
+and
+
+$$\sigma_{b_0}^2 = \frac{1}{n} \frac{var\left(H_i u_i \right)}{\left[E(H_i^2)\right]^2}, H_i = 1 - \left[ \frac{\mu_X}{E(X_i^2)} \right] X_i$$
+
+👉 Both variances here decrease with $n$!
+
+👉 Both variances here decrease with $var(u)$!
+
+👉 Both variances here decrease with $var(X)$!
+
+
 ---
 
 # On the way to causality
@@ -895,12 +946,3 @@ background-size: 250px
 background-position: 9% 19%
 
 # SEE YOU NEXT WEEK!
-
-
-|                                                                                                            |                                   |
-| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="mailto:florian.oswald@sciencespo.fr">.ScPored[<i class="fa fa-paper-plane fa-fw"></i>]               | florian.oswald@sciencespo.fr       |
-| <a href="https://github.com/ScPoEcon/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
