@@ -36,6 +36,7 @@ knitr::opts_chunk$set(
   #fig.height = 5
 )
 
+library(tinyplot)
 library("tidyverse")
 library("kableExtra")
 # library("repmis")
@@ -915,10 +916,44 @@ $$\sigma_{b_0}^2 = \frac{1}{n} \frac{var\left(H_i u_i \right)}{\left[E(H_i^2)\ri
 
 👉 Both variances here decrease with $n$!
 
-👉 Both variances here decrease with $var(u)$!
+👉 Both variances here increase with $var(u)$!
 
 👉 Both variances here decrease with $var(X)$!
 
+
+---
+
+# How does $Var(X)$ impact OLS?
+
+.left-wide[
+```{r,echo = FALSE,fig.width = 8,fig.height = 6}
+dd = data.frame(X = runif(150,min = 96, max = 103))
+a = 0
+b = 1
+dd$y = a + b * dd$X + rnorm(150, sd = 2)
+dd$large_var = (dd$X < 99) | (dd$X > 101)
+
+op = tpar(
+  bty    = "n",           # No box (frame) around the plot 
+  grid   = TRUE,          # Add a background grid
+  las    = 1,             # Horizontal axis tick labels
+  pch    = 19             # Larger filled points as default
+)
+plt(y ~ X | large_var, data = dd )
+plt_add(type = "lm",lw = 2)
+```
+]
+
+.right-narrow[
+
+<br>
+
+* larger $var(X)$ makes it easier to draw the line!
+
+* Look at those error bands!
+
+
+]
 
 ---
 
