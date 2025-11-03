@@ -894,7 +894,7 @@ Under the assumptions on the previous slide, we have:
 
 1. Both coefficients are unbiased: $E(b_0) = \beta_0, E(b_1) = \beta_1$.
 
-2. $b_0,b_1$ are *joint* normally distributed. We have
+2. $b_0,b_1$ are *joint* normally distributed (if sample is sufficiently large). We have
 
 $$\sigma_{b_1}^2 = \frac{1}{n} \frac{var\left((X_i - \mu_X) u_i \right)}{var\left(X_i  \right)^2}$$
 
@@ -914,19 +914,19 @@ and
 
 $$\sigma_{b_0}^2 = \frac{1}{n} \frac{var\left(H_i u_i \right)}{\left[E(H_i^2)\right]^2}, H_i = 1 - \left[ \frac{\mu_X}{E(X_i^2)} \right] X_i$$
 
-👉 Both variances here decrease with $n$!
+👉 Both variances here *decrease* with $n$!
 
-👉 Both variances here increase with $var(u)$!
+👉 Both variances here *increase* with $var(u)$!
 
-👉 Both variances here decrease with $var(X)$!
+👉 Both variances here *decrease* with $var(X)$!
 
 
 ---
 
 # How does $Var(X)$ impact OLS?
 
-.left-wide[
-```{r,echo = FALSE,fig.width = 8,fig.height = 6}
+
+```{r,echo = FALSE,fig.width = 9,fig.height = 7}
 dd = data.frame(X = runif(150,min = 96, max = 103))
 a = 0
 b = 1
@@ -942,18 +942,19 @@ op = tpar(
 plt(y ~ X | large_var, data = dd )
 plt_add(type = "lm",lw = 2)
 ```
-]
+<!-- ] -->
 
-.right-narrow[
+<!-- .right-thin[ -->
 
-<br>
+<!-- <br> -->
+<!-- <br> -->
 
-* larger $var(X)$ makes it easier to draw the line!
+<!-- * larger $var(X)$ makes it easier to draw the line! -->
 
-* Look at those error bands!
+<!-- * Look at those error bands! -->
 
 
-]
+<!-- ] -->
 
 ---
 
