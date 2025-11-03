@@ -56,8 +56,8 @@ clean_pdf_all <- function(){
     print("done")
 }
 
-pdf_all <- function(){
-    lf = fs::dir_ls(path = ".",regexp = "chapter")
+pdf_all <- function(chapter = "chapter"){
+    lf = fs::dir_ls(path = ".",regexp = chapter)
     
     for (fi in lf){
         for (fj in fs::dir_ls(fi, glob = "*.Rmd")){
