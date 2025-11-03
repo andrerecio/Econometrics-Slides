@@ -923,6 +923,20 @@ Let's use the *STAR* data (used in the previous task) to review the main concept
 
 ---
 
+# Least Squares Assumptions In Multiple Regression Model
+
+We need 3 conditions for OLS to yield unbiased estimates:
+
+1. $E[u | X_{i,1}, X_{i,2}, \dots, X_{i,k}] = 0$: The conditional mean of the population regression function ($u$) is uncorrelated to $X$. In other words, all unobserved factors - absent from the model and lumped into $u$ - are *not* systematically related to the explanatory variable $X$.
+
+2. $\left\{X_{i,1}, X_{i,2}, \dots, X_{i,k},Y_i\right\}_{i=1}^n$ is an i.i.d. sample. There is no dependence between observations (like in time series data for example)
+
+3. There are no large outliers in the data.
+
+4. There is no *perfect* multicollinearity: each added regressor adds *at least some* new information. 
+
+---
+
 # On the way to causality
 
 ✅ How to manage data? Read it, tidy it, visualise it...
@@ -954,14 +968,6 @@ background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 
-# SEE YOU NEXT WEEK!
+# END
 
-
-|                                                                                                            |                                   |
-| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="mailto:florian.oswald@sciencespo.fr">.ScPored[<i class="fa fa-paper-plane fa-fw"></i>]               | florian.oswald@sciencespo.fr       |
-| <a href="https://github.com/ScPoEcon/Econometrics-Slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
 
