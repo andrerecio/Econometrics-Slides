@@ -410,9 +410,6 @@ $$\boxed{a = \bar{y} - b\bar{x}}$$
 4. Don't confuse correlation with heteroskedasticity: larger errors for larger $X$ (in magnitude) is about variance, not bias (see picture above!)
 
 
-# Task 4
-
-
 # Task 4: Mean Reversion
 
 Sir Francis Galton examined the relationship between the height of children and their parents towards the end of the 19th century. You decide to update his findings by collecting data from 110 ESOMAS students. Your data is [here](https://www.dropbox.com/scl/fi/yrv6m41sgpa46997uj4om/galton_students_110.csv?rlkey=udp2uy6mdicdul7n5jn0bgbzq&dl=1)
@@ -422,8 +419,9 @@ Sir Francis Galton examined the relationship between the height of children and 
 2. What is the meaning of the cofficients and the R2 measure?
 3. What is the prediction for the height of a child whose parents have an average height of 180cms? What if they have 160 cm?
 4. type `summary(m)` to get the model summary and tell us what the Residual Standard Error in this regression is. What is its interpretation?
-5. Given the positive intercept and the fact that the slope lies between zero and one, what can you say about the height of students who have quite tall parents? Those who have quite short parents?
-6. Galton was concerned about the height of the English aristocracy and referred to the above result as "regression towards mediocrity." Can you figure out what his concern was? Why do you think that we refer to this result today as "Galton's Fallacy"?
+5. Show that in a single linear regression model, the formula for the slope estimate $b_1$ can be written as $$b_1 = r \frac{s_y}{s_x}$$ where $r$ is $corr(x,y)$, and $s_k$ is the standard deviation of variable $k$. Compute the slope coefficient in this way.
+6. Given the positive intercept and the fact that the slope lies between zero and one, what can you say about the height of students who have quite tall parents? Those who have quite short parents?
+7. Galton was concerned about the height of the English aristocracy and referred to the above result as "regression towards mediocrity." Can you figure out what his concern was? Why do you think that we refer to this result today as "Galton's Fallacy"?
 
 
 ### Answers
@@ -442,8 +440,39 @@ summary(m)
 
 * intercept: with parents of 0 cm height, children expect on average to be 63 cm tall. No sensible interpretation.
 * slope: the average parental height increasing by 1 cm implies the child's height to increase on average by 0.62 cm. The R2 means that this model explains 26% of the variation in the data.
-* Prediction: 
+* Prediction: you can of course do this by hand (in the exam you will have to do it by hand!)
 ```{r}
-predict(m, newdata = data.frame(mid_parent_height = c(160,180)))
+predictions = data.frame(mid_parent_height_cm = c(160,180))
+predictions$pred_child_height = predict(m, newdata = predictions)
 ```
 
+* We see a SER of about 4.5. This means that the estimated standard deviation of regression residuals $e$ is equal to 4.5. This is measured in the units of the outcome variable, i.e. cm. It means that the average spread of data around the regression line is 4.5 cm. This measure is defined as $$\sqrt{\frac{SSR}{n-2}}$$. We can verify this by computing by hand:
+
+```{r}
+sqrt(
+    sum(m$residuals^2) / (nrow(d) - 2)
+)
+```
+
+* We can express the slope cofficient as usual as the ratio of variance over variance of $x$. We just need to realize that the correlation is 
+
+$$r = \frac{cov(x,y)}{s_x s_y}$$ 
+
+from there we just substitute:
+
+$$\begin{align}
+b1 &= \frac{cov(x,y)}{var(x)} \\
+   &= \frac{cov(x,y)}{s_x s_x} \\
+   &= \frac{cov(x,y)}{s_x s_x} \\
+   &= r \frac{s_y}{s_x} 
+\end{align}$$
+
+```{r}
+sx = sd(d$mid_parent_height_cm)
+sy = sd(d$child_height_cm)
+cor(d$mid_parent_height_cm,d$child_height_cm) * sy / sx
+```
+
+
+* Those who have relatively small parents are on average taller than them, and vice versa for the ones with tall parents.
+* Galton feared that human population would "regress" to some intermediate height: all tall people would have less tall offspring, so human size shrinks. Clearly, we know this is not the case - if anything, average human height has steadily increased over time. The fallacy of Galton was to take the regression result at face value, instead of thinking about the underlying process that generates the data. Parental and Child height are two imperfectly correlated random variables

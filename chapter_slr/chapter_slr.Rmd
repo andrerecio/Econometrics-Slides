@@ -956,6 +956,29 @@ plt_add(type = "lm",lw = 2)
 
 <!-- ] -->
 
+
+---
+
+
+# Task 4: Mean Reversion
+
+Sir Francis Galton examined the relationship between the height of children and their parents towards the end of the 19th century. You decide to update his findings by collecting data from 110 ESOMAS students. Your data is [here](https://www.dropbox.com/scl/fi/yrv6m41sgpa46997uj4om/galton_students_110.csv?rlkey=udp2uy6mdicdul7n5jn0bgbzq&dl=1)
+
+1. Load the data and make a scatter plot of `child_height_cm` vs `mid_parent_height_cm`. Ideally add a regression line to your plot.
+2. estimate the model $$\text{child_height_cm} = \beta_0 + \beta_1 \text{mid_parent_height_cm} + u$$ and save it as object `m`.
+2. What is the meaning of the cofficients and the R2 measure?
+3. What is the prediction for the height of a child whose parents have an average height of 180cms? What if they have 160 cm?
+4. type `summary(m)` to get the model summary and tell us what the Residual Standard Error in this regression is. What is its interpretation?
+5. Show that in a single linear regression model, the formula for the slope estimate $b_1$ can be written as $$b_1 = r \frac{s_y}{s_x}$$ where $r$ is $corr(x,y)$, and $s_k$ is the standard deviation of variable $k$. Compute the slope coefficient in this way.
+
+---
+
+# Task 4: Mean Reversion
+
+<span>6.</span> Given the positive intercept and the fact that the slope lies between zero and one, what can you say about the height of students who have quite tall parents? Those who have quite short parents?
+
+<span>7.</span> Galton was concerned about the height of the English aristocracy and referred to the above result as "regression towards mediocrity." Can you figure out what his concern was? Why do you think that we refer to this result today as "Galton's Fallacy"?
+
 ---
 
 # On the way to causality
