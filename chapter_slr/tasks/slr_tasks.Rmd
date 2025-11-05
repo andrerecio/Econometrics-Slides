@@ -475,4 +475,124 @@ cor(d$mid_parent_height_cm,d$child_height_cm) * sy / sx
 
 
 * Those who have relatively small parents are on average taller than them, and vice versa for the ones with tall parents.
-* Galton feared that human population would "regress" to some intermediate height: all tall people would have less tall offspring, so human size shrinks. Clearly, we know this is not the case - if anything, average human height has steadily increased over time. The fallacy of Galton was to take the regression result at face value, instead of thinking about the underlying process that generates the data. Parental and Child height are two imperfectly correlated random variables
+* Galton feared that human population would "regress" to some intermediate height: all tall people would have less tall offspring, so human size shrinks. Clearly, we know this is not the case - if anything, average human height has steadily increased over time. The fallacy of Galton was to take the regression result at face value, instead of thinking about the underlying process that generates the data. Parental and Child height are two imperfectly correlated random variables, and there is no perfect inheritance of the "tallness" trait. Many other factors (in $u$) impact the height of a person.
+
+
+
+
+# Task 5: No Intercept
+
+
+What is a regression without any intercept? In other words, $b_0 = 0$. To generate some intuition, let's get one of R's built-in datasets and have a look:
+
+
+
+```{r, fig.height=5}
+plt(speed ~ dist, cars,ylim = c(0,30)) # mtcars is always available, nothing to load
+plt_add(type = "lm")
+```
+
+```{r}
+lm(speed ~ dist, cars)
+```
+
+How does this look if we **force** $b_0 = 0$?
+
+Well, we just compute the slope estimator without the $b_0$:
+
+$$\min_{b_1} \sum_{i=1}^N (y_i - b_1 x_i)^2$$
+
+Take the foc wrt b:
+
+$$-2 \sum_{i=1}^N (y_i - b_1 x_i) x_i = 0$$
+
+which leads to 
+
+$$b_1 = \frac{\sum_{i=1}^N y_i x_i}{\sum_{i=1}^N x_i^2}$$
+
+You can see that this looks different from our usual formula - if our variables are not *centered* wrt to their mean. Anway, let's see what it looks like! We know one thing: by courtesy of $b_0 = 0$, this line **must pass through the origin** of our plot!
+
+```{r}
+b1 = sum(cars$speed * cars$dist) / sum((cars$dist)^2)
+b0 = 0
+```
+
+Ready?
+
+```{r}
+plt(speed ~ dist, cars, ylim  = c(0,30)) # cars is always available, nothing to load
+plt_add(type = "lm")
+plt_add(type = type_abline(a = b0, b = b1), col = "red")
+
+```
+
+```{r}
+lm(speed ~ -1 + dist, cars)
+```
+
+check that is the same as `b1` from above.
+
+
+# Task 6: Centered Regression
+
+By *centering* or *demeaning* a regression, we mean to substract from both $y$ and $x$ their respective averages to obtain $\tilde{y}_i = y_i - \bar{y}$ and $\tilde{x}_i = x_i - \bar{x}$. 
+
+We then run a regression *without intercept* as above. That is, we use $\tilde{x}_i,\tilde{y}_i$ instead of $x_i,y_i$ to obtain our slope estimate $b_1$:
+
+$$\begin{align}
+b_1 &= \frac{\frac{1}{N}\sum_{i=1}^N \tilde{x}_i \tilde{y}_i}{\frac{1}{N}\sum_{i=1}^N \tilde{x}_i^2}\\
+    &= \frac{\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x}) (y_i - \bar{y})}{\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x})^2} \\
+    &= \frac{cov(x,y)}{var(x)}
+    
+\end{align}$$
+
+This last expression is *identical* to the one in @eq1beta1hat! It's the standard OLS estimate for the slope coefficient. We note the following: 
+
+::: {.callout-note}
+Adding a constant to a regression produces the same result as centering all variables and estimating without intercept. So, unless all variables are centered, **always** include an intercept in the regression.
+:::
+
+<br>
+To get a better feel for what is going on here, you can try this out now by yourself by typing:
+
+```{r,eval=FALSE}
+launchApp("demeaned_reg")
+```
+
+
+
+# Task 6: Standardized Regression
+
+
+We now know that we can write the slope estimator also as $$b_1 = r \frac{s_y}{s_x}.$$
+
+Show that if we *standardize* both x and y, then we have that $b_1$ is *exactly equal* to $r$!
+
+## Answer
+
+We can use the same formula from above, because if we standardize both left and rigiht hand side in this here
+
+$$y_i = b_0 + b_1 x_i + e_i$$
+
+then $b_0$ drops out! So, we have
+
+$$b_1 = \frac{\sum_{i=1}^N y_i x_i}{\sum_{i=1}^N x_i^2}$$
+
+and now we just replace the y and x variables:
+
+We define transformed variables $\breve{y}_i = \frac{y_i-\bar{y}}{\sigma_y}$ and $\breve{x}_i = \frac{x_i-\bar{x}}{\sigma_x}$ where $\sigma_z$ is the standard deviation of variable $z$. From here on, you should by now be used to what comes next! As above, we use $\breve{x}_i,\breve{y}_i$ instead of $x_i,y_i$ in the formula for the slope estimator:
+
+
+$$\begin{align}
+b_1 &= \frac{\frac{1}{N}\sum_{i=1}^N \breve{x}_i \breve{y}_i}{\frac{1}{N}\sum_{i=1}^N \breve{x}_i^2}\\
+    &= \frac{\frac{1}{N}\sum_{i=1}^N \frac{x_i - \bar{x}}{\sigma_x} \frac{y_i - \bar{y}}{\sigma_y}}{\frac{1}{N}\sum_{i=1}^N \left(\frac{x_i - \bar{x}}{\sigma_x}\right)^2} \\
+    &= \frac{Cov(x,y)}{\sigma_x \sigma_y} \\
+    &= Corr(x,y)  = r
+\end{align}$$
+
+So, if our variables have been standardized before running the regression, there is no adjustment of $\frac{s_y}{s_x}$ to make as above.
+
+```{r,eval = FALSE}
+EconometricsApps::launchApp("reg_standardized")
+```
+

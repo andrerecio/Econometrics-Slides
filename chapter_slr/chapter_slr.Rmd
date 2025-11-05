@@ -979,6 +979,43 @@ Sir Francis Galton examined the relationship between the height of children and 
 
 <span>7.</span> Galton was concerned about the height of the English aristocracy and referred to the above result as "regression towards mediocrity." Can you figure out what his concern was? Why do you think that we refer to this result today as "Galton's Fallacy"?
 
+
+---
+
+# Task 5: no intercept
+
+What is a regression without any intercept? In other words, $b_0 = 0$. To generate some intuition, let's get one of R's built-in datasets and have a look:
+
+.pull-left[
+
+```{r, fig.height=5}
+plt(mpg ~ disp, mtcars)
+plt_add(type = "lm")
+```
+
+]
+
+.pull-right[
+
+```{r}
+lm(mpg ~ disp, mtcars)
+```
+
+How does this look if we **force** $b_0 = 0$?
+
+]
+
+
+---
+
+# Task 6
+
+We now know that we can write the slope estimator also as $$b_1 = r \frac{s_y}{s_x}$$. 
+
+Show that if we *standardize* both x and y, then we have that $b_1$ is *exactly equal* to $r$!
+
+
+
 ---
 
 # On the way to causality
