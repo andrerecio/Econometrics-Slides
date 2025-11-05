@@ -408,3 +408,42 @@ $$\boxed{a = \bar{y} - b\bar{x}}$$
 3. When $\text{Cov}(X, \varepsilon) \neq 0$ in reality (e.g., due to omitted variables), OLS gives you biased estimates even though the residuals appear well-behaved.
 
 4. Don't confuse correlation with heteroskedasticity: larger errors for larger $X$ (in magnitude) is about variance, not bias (see picture above!)
+
+
+# Task 4
+
+
+# Task 4: Mean Reversion
+
+Sir Francis Galton examined the relationship between the height of children and their parents towards the end of the 19th century. You decide to update his findings by collecting data from 110 ESOMAS students. Your data is [here](https://www.dropbox.com/scl/fi/yrv6m41sgpa46997uj4om/galton_students_110.csv?rlkey=udp2uy6mdicdul7n5jn0bgbzq&dl=1)
+
+1. Load the data and make a scatter plot of `child_height_cm` vs `mid_parent_height_cm`. Ideally add a regression line to your plot.
+2. estimate the model $$\text{child_height_cm} = \beta_0 + \beta_1 \text{mid_parent_height_cm} + u$$ and save it as object `m`.
+2. What is the meaning of the cofficients and the R2 measure?
+3. What is the prediction for the height of a child whose parents have an average height of 180cms? What if they have 160 cm?
+4. type `summary(m)` to get the model summary and tell us what the Residual Standard Error in this regression is. What is its interpretation?
+5. Given the positive intercept and the fact that the slope lies between zero and one, what can you say about the height of students who have quite tall parents? Those who have quite short parents?
+6. Galton was concerned about the height of the English aristocracy and referred to the above result as "regression towards mediocrity." Can you figure out what his concern was? Why do you think that we refer to this result today as "Galton's Fallacy"?
+
+
+### Answers
+
+```{r}
+d = read.csv("https://www.dropbox.com/scl/fi/yrv6m41sgpa46997uj4om/galton_students_110.csv?rlkey=udp2uy6mdicdul7n5jn0bgbzq&dl=1")
+
+library(tinyplot)
+plt(child_height_cm ~ mid_parent_height_cm, data = d, grid = TRUE)
+plt_add(type = "lm")
+```
+```{r}
+m = lm(child_height_cm ~ mid_parent_height_cm, d)
+summary(m)
+```
+
+* intercept: with parents of 0 cm height, children expect on average to be 63 cm tall. No sensible interpretation.
+* slope: the average parental height increasing by 1 cm implies the child's height to increase on average by 0.62 cm. The R2 means that this model explains 26% of the variation in the data.
+* Prediction: 
+```{r}
+predict(m, newdata = data.frame(mid_parent_height = c(160,180)))
+```
+

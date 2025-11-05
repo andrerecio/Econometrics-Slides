@@ -925,7 +925,7 @@ Let's use the *STAR* data (used in the previous task) to review the main concept
 
 # Least Squares Assumptions In Multiple Regression Model
 
-We need 3 conditions for OLS to yield unbiased estimates:
+We need 4 conditions for OLS to yield unbiased estimates:
 
 1. $E[u | X_{i,1}, X_{i,2}, \dots, X_{i,k}] = 0$: The conditional mean of the population regression function ($u$) is uncorrelated to $X$. In other words, all unobserved factors - absent from the model and lumped into $u$ - are *not* systematically related to the explanatory variable $X$.
 
@@ -936,6 +936,70 @@ We need 3 conditions for OLS to yield unbiased estimates:
 4. There is no *perfect* multicollinearity: each added regressor adds *at least some* new information. 
 
 ---
+
+class: inverse
+
+# Task 4
+
+When you have an omitted variable problem, the assumption that $E(u_i | X_i) = 0$ is violated. This implies that:
+
+A) the sum of the residuals is no longer zero.
+B) there is another estimator called weighted least squares, which is BLUE.
+C) the sum of the residuals times any of the explanatory variables is no longer zero.
+D) the OLS estimator is no longer consistent.
+
+
+---
+
+class: inverse
+
+# Task 5
+
+The intercept in the multiple regression model:
+
+A) should be excluded if one explanatory variable has negative values.
+B) determines the height of the regression line.
+C) should be excluded because the population regression function does not go through the origin.
+D) is statistically significant if it is larger than 1.96.
+
+
+---
+
+# Task 6
+
+In the multiple regression model, the least squares estimator is derived by:
+
+A) minimizing the sum of squared prediction mistakes.
+B) setting the sum of squared errors equal to zero.
+C) minimizing the absolute difference of the residuals.
+D) forcing the smallest distance between the actual and fitted values.
+
+
+---
+
+# Task 7
+
+Omitted variable bias:
+
+A) will always be present as long as the regression R2 < 1.
+B) is always there but is negligible in almost all economic examples.
+C) exists if the omitted variable is correlated with the included regressor but is not a determinant of the dependent variable.
+D)  exists if the omitted variable is correlated with the included regressor and is a determinant of the dependent variable.
+
+---
+
+# Task 8
+
+Consider the multiple regression model with two regressors X1 and X2, where both variables are determinants of the dependent variable. When omitting X2 from the regression, then there will be omitted variable bias for:
+
+A) if X1 and X2 are correlated
+B) always
+C) if X2 is measured in percentages
+D) if X2 is a dummy variable
+
+
+---
+
 
 # On the way to causality
 
