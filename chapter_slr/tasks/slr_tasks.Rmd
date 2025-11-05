@@ -483,17 +483,17 @@ cor(d$mid_parent_height_cm,d$child_height_cm) * sy / sx
 # Task 5: No Intercept
 
 
-What is a regression without any intercept? In other words, $b_0 = 0$. To generate some intuition, let's get one of R's built-in datasets and have a look:
-
-
+What is a regression without any intercept? In other words, $b_0 = 0$. To generate some intuition, let's get one of R's built-in datasets and have a look. The `cars` dataset has 2 varialbes, `speed` and `dist` of 1920's cars. `dist` is "stopping distance", i.e. basically how far did you travel after you hit the breaks.
 
 ```{r, fig.height=5}
+library(tinyplot)  # my new favourite plotting package
 plt(speed ~ dist, cars,ylim = c(0,30)) # mtcars is always available, nothing to load
 plt_add(type = "lm")
 ```
 
 ```{r}
-lm(speed ~ dist, cars)
+m0 = lm(speed ~ dist, cars)
+coef(m0)
 ```
 
 How does this look if we **force** $b_0 = 0$?
@@ -513,8 +513,8 @@ $$b_1 = \frac{\sum_{i=1}^N y_i x_i}{\sum_{i=1}^N x_i^2}$$
 You can see that this looks different from our usual formula - if our variables are not *centered* wrt to their mean. Anway, let's see what it looks like! We know one thing: by courtesy of $b_0 = 0$, this line **must pass through the origin** of our plot!
 
 ```{r}
-b1 = sum(cars$speed * cars$dist) / sum((cars$dist)^2)
-b0 = 0
+b0 = 0  # by assumption
+(b1 = sum(cars$speed * cars$dist) / sum((cars$dist)^2)) # the bracket makes it display
 ```
 
 Ready?
@@ -527,6 +527,7 @@ plt_add(type = type_abline(a = b0, b = b1), col = "red")
 ```
 
 ```{r}
+# the -1 in the formula means "no intercept"
 lm(speed ~ -1 + dist, cars)
 ```
 
@@ -537,26 +538,39 @@ check that is the same as `b1` from above.
 
 By *centering* or *demeaning* a regression, we mean to substract from both $y$ and $x$ their respective averages to obtain $\tilde{y}_i = y_i - \bar{y}$ and $\tilde{x}_i = x_i - \bar{x}$. 
 
-We then run a regression *without intercept* as above. That is, we use $\tilde{x}_i,\tilde{y}_i$ instead of $x_i,y_i$ to obtain our slope estimate $b_1$:
+We then run a regression *without intercept* as above. That is, we use $\tilde{x}_i,\tilde{y}_i$ instead of $x_i,y_i$ to obtain our slope estimate $b_1$. The formula is identical to the one used above, i.e. for the case where we don't have an intercept:
 
 $$\begin{align}
 b_1 &= \frac{\frac{1}{N}\sum_{i=1}^N \tilde{x}_i \tilde{y}_i}{\frac{1}{N}\sum_{i=1}^N \tilde{x}_i^2}\\
     &= \frac{\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x}) (y_i - \bar{y})}{\frac{1}{N}\sum_{i=1}^N (x_i - \bar{x})^2} \\
     &= \frac{cov(x,y)}{var(x)}
-    
 \end{align}$$
 
-This last expression is *identical* to the one in @eq1beta1hat! It's the standard OLS estimate for the slope coefficient. We note the following: 
+This last expression is *identical* to our usual one! It's the standard OLS estimate for the slope coefficient. We note the following: 
 
-::: {.callout-note}
 Adding a constant to a regression produces the same result as centering all variables and estimating without intercept. So, unless all variables are centered, **always** include an intercept in the regression.
-:::
+
+Plot.
+
+```{r,fig.cap="When centering variables by their mean, we get the same slope coefficient, but we force the regression to the origin."}
+cars$speed_centered = cars$speed - mean(cars$speed)
+cars$dist_centered = cars$dist - mean(cars$dist)
+plt(speed_centered ~ dist_centered, cars)
+plt_add(type = "lm")
+plt_add(type = type_hline(h = 0), col = "red")
+plt_add(type = type_vline(v = 0), col = "red")
+```
+
+**Notice:** The width of *support* of data is the same. By that I mean the length of the interval where all data is contained: centered x lies in `r paste0("[",paste(range(cars$dist_centered),collapse = ","),"]")` and not centered x lies in `r paste0("[",paste(range(cars$dist),collapse = ","),"]")`. The length of the first interval is `r diff(range(cars$dist_centered))`, the second one is also `r diff(range(cars$dist))`. We just shifted the location of each data point by the mean (towards the left for x, and down for y). That's why the slope coefficient is unchanged.
+```{r}
+lm(speed_centered ~ -1 + dist_centered, cars)
+```
 
 <br>
 To get a better feel for what is going on here, you can try this out now by yourself by typing:
 
 ```{r,eval=FALSE}
-launchApp("demeaned_reg")
+EconometricsApps::launchApp("demeaned_reg")
 ```
 
 
@@ -570,11 +584,7 @@ Show that if we *standardize* both x and y, then we have that $b_1$ is *exactly 
 
 ## Answer
 
-We can use the same formula from above, because if we standardize both left and rigiht hand side in this here
-
-$$y_i = b_0 + b_1 x_i + e_i$$
-
-then $b_0$ drops out! So, we have
+We can use the same formula from above because we run this without intercept again:
 
 $$b_1 = \frac{\sum_{i=1}^N y_i x_i}{\sum_{i=1}^N x_i^2}$$
 
@@ -591,6 +601,31 @@ b_1 &= \frac{\frac{1}{N}\sum_{i=1}^N \breve{x}_i \breve{y}_i}{\frac{1}{N}\sum_{i
 \end{align}$$
 
 So, if our variables have been standardized before running the regression, there is no adjustment of $\frac{s_y}{s_x}$ to make as above.
+
+Plot!!
+
+```{r,fig.cap="When *standardizing* variables we force again going through the origin, but the slope is now different! "}
+cars$speed_std = (cars$speed - mean(cars$speed)) / sd(cars$speed)
+cars$dist_std = (cars$dist - mean(cars$dist)) / sd(cars$dist)
+plt(speed_std ~ dist_std, cars)
+plt_add(type = "lm")
+plt_add(type = type_hline(h = 0), col = "red")
+plt_add(type = type_vline(v = 0), col = "red")
+```
+
+
+**Notice:** The *range* of data is no longer the same: standardized `r paste0("[",paste(range(cars$dist_std),collapse = ","),"]")` and not `r paste0("[",paste(range(cars$dist),collapse = ","),"]")` . We *rescaled* the variables by a a number (that's what the division did). That's why our slope estimate is not the same anymore.
+
+```{r}
+lm(speed_std ~ -1 + dist_std, cars)
+```
+Finally:
+
+```{r}
+with(cars, cor(speed, dist))
+```
+
+**Notice:** in real applications it is more common to standardize *only* the x variable. As we will see in the lectures later, this leads to an interpretation of the estimate as *a 1 std. deviation increase in $x$ is associated with a $b_1$ units increase in outcome $y$*
 
 ```{r,eval = FALSE}
 EconometricsApps::launchApp("reg_standardized")
