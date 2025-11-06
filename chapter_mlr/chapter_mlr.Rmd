@@ -423,6 +423,59 @@ You ***need*** to pay attention to whether you are talking about ***percentage p
 
 ---
 
+
+```{r plane3D-lwage,echo=FALSE,fig.width=12,fig.height=9}
+# data("wage1", package = "wooldridge")
+# linear fit
+fit <- lm(avgmath ~ classize + disadvantaged , data=grades)
+ 
+to_plot_x <- range(grades$classize)
+to_plot_y <- range(grades$disadvantaged)
+
+df <- data.frame(classize = rep(to_plot_x, 2),
+           disadvantaged = rep(to_plot_y, each = 2))
+df["pred"] <- predict.lm(fit, df, se.fit = F)
+
+surf <- acast(df, classize ~ disadvantaged)
+
+color <- rep(0, length(df))
+p1 = grades %>%
+  plot_ly(colors = "blue") %>%
+  add_markers(x = ~classize, y = ~disadvantaged, z = ~avgmath,name = "data",opacity = .8, marker=list(color = 'red', size = 5, hoverinfo="skip", opacity = 0.5)) %>%
+  add_surface(x = to_plot_x, y = to_plot_y, z = ~surf, inherit = F, name = "Avgmath score", opacity = .75, cauto = F, surfacecolor = color) %>%
+  hide_colorbar() %>%
+    layout(showlegend = FALSE)
+p1
+```
+
+
+---
+
+```{r plane3D,echo=FALSE,fig.width=12,fig.height=9}
+# linear fit
+fit <- lm(mpg ~ wt+hp,data=mtcars)
+ 
+to_plot_x <- range(mtcars$wt)
+to_plot_y <- range(mtcars$hp)
+
+df <- data.frame(wt = rep(to_plot_x, 2),
+           hp = rep(to_plot_y, each = 2))
+df["pred"] <- predict.lm(fit, df, se.fit = F)
+
+surf2 <- acast(df, wt ~ hp)
+
+color <- rep(0, length(df))
+p2 = mtcars %>%
+  plot_ly(colors = "grey") %>%
+  add_markers(x = ~wt, y = ~hp, z = ~mpg,name = "data",opacity = .8, marker=list(color = 'red', size = 5, hoverinfo="skip")) %>%
+  add_surface(x = to_plot_x, y = to_plot_y, z = ~surf2, inherit = FALSE, name = "Mtcars 3D", opacity = .75, cauto = F, surfacecolor = color) %>%
+  hide_colorbar() %>%
+    layout(showlegend = FALSE)
+p2
+```
+
+---
+
 class:inverse
 
 # Task 1
