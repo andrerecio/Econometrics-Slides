@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 format: 
     html:
         number-sections: true
+        embed-resources: true
 ---
 
 ```{r setup, include=FALSE}
