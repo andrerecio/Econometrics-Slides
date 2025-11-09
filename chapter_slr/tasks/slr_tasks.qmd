@@ -2,14 +2,16 @@
 title: "Simple Linear Regression - Tasks"
 author: "Florian Oswald"
 date: "`r Sys.Date()`"
-output: html_document
+format: 
+    html:
+        number-sections: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Task 1: Getting to know the data
+# Task: Getting to know the data
 
 1\. Load the data from [here](https://www.dropbox.com/s/wwp2cs9f0dubmhr/grade5.dta?dl=1) as `grades`. You need to find the function that enables importing *.dta* files. (FYI: *.dta* is the extension for data files used in [*Stata*](https://www.stata.com/))
 
@@ -95,7 +97,7 @@ grades %>%
 **Both correlations are positive, consistent with the positive association suggested by the previous scatter plots. However, they are quite weak, around 0.2, suggesting the relationship isn't very strong. Recall that a correlation of 1 implies a perfect positive *linear* relationship, i.e. all points are on the same line, while a correlation of -1 implies a perfect negative *linear* relationship. A correlation of 0 implies no linear association whatsoever.**
 
 
-## Task 2: OLS Regression
+# Task: OLS Regression
 
 Run the following code to aggregate the data at the class size level:
 
@@ -152,7 +154,7 @@ lm(avgverb_cs ~ classize, grades_avg_cs)
 **The predicted average verbal score when the class size is equal to 30 students is: 69.19 + 0.13 x 30 = `r 69.19 + 0.13 * 30`.**
 
 
-# Task 3: $R^2$ and goodness of fit
+# Task: $R^2$ and goodness of fit
 
 1\. Regress `avgmath_cs` on `classize`. Assign to an object `math_reg`.
 
@@ -199,7 +201,7 @@ summary(verb_reg)
 **The $R^2$ is greater for maths than for reading, therefore class size explains more of the variation in math scores than in reading scores.**
 
 
-# Task 4 : Why is $\text{Cov}(X, e) = 0$ alayws true in model estimated via OLS?
+# Task : Why is $\text{Cov}(X, e) = 0$ alayws true in model estimated via OLS?
 
 Consider the true population model
 
@@ -313,13 +315,13 @@ if the last bit is not zero, then, as you vary $x$, you cannot say that _all els
 $$E[e | x] \Rightarrow Cov(x,e) = 0$$.
 
 
-### $Cov(X, e) = 0$ by *construction* in OLS
+## $Cov(X, e) = 0$ by *construction* in OLS
 
 Here's something crucial: **once you fit OLS and compute residuals $e_i$, they are *always* uncorrelated with $X$ by construction**.
 
 This is **not** an assumption but a consequence of how OLS works. Let's see why. To see this clearly, we need to write out the OLS estimator in algebra. You don't need to study this if you don't want to, the picture above should give you all the insights you need. But if not, follow along!
 
-### Deriving the OLS estimators
+## Deriving the OLS estimators
 
 We want to minimize the sum of squared residuals:
 $$\min_{a, b} \sum_{i=1}^{n} (y_i - a - bx_i)^2$$
@@ -341,7 +343,7 @@ $$\sum (y_i - a - b x_i) = 0$$
 **FOC 2:**
 $$\sum x_i(y_i - a - b x_i) = 0$$
 
-### Why Residuals Are Uncorrelated with X
+## Why Residuals Are Uncorrelated with X {#sec-covxe}
 
 Notice that $(y_i - a - b x_i) = e_i$ is the residual. So FOC 2 says:
 $$\sum x_i e_i = 0$$
@@ -364,14 +366,14 @@ $$\sum y_i - na - b\sum x_i = 0$$
 $$na = \sum y_i - b\sum x_i$$
 $$a = \bar{y} - b\bar{x}$$
 
-### Step 2: Substitute into FOC 2
+**Step 2:** Substitute into FOC 2
 
 Plug $a = \bar{y} - b\bar{x}$ into FOC 2:
 $$\sum x_i(y_i - (\bar{y} - b\bar{x}) - bx_i) = 0$$
 $$\sum x_i(y_i - \bar{y} + b\bar{x} - bx_i) = 0$$
 $$\sum x_i(y_i - \bar{y}) + b\bar{x}\sum x_i - b\sum x_i^2 = 0$$
 
-### Step 3: Simplify using $\sum x_i = n\bar{x}$
+**Step 3:** Simplify using $\sum x_i = n\bar{x}$
 
 Since $\bar{x} = \frac{1}{n}\sum x_i$, we have $\sum x_i = n\bar{x}$.
 
@@ -382,7 +384,7 @@ $$\sum x_i(y_i - \bar{y}) = b(\sum x_i^2 - n\bar{x}^2)$$
 Solving for $b$:
 $$b = \frac{\sum x_i(y_i - \bar{y})}{\sum x_i^2 - n\bar{x}^2}$$
 
-### Step 4: Rewrite in covariance form
+**Step 4:** Rewrite in covariance form
 
 **Numerator**: We can show that $\sum x_i(y_i - \bar{y}) = \sum (x_i - \bar{x})(y_i - \bar{y})$ because:
 $$\sum (x_i - \bar{x})(y_i - \bar{y}) = \sum x_i(y_i - \bar{y}) - \bar{x}\sum(y_i - \bar{y})$$
@@ -399,7 +401,7 @@ $$\boxed{b = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum(x_i - \bar{x})^2} =
 
 $$\boxed{a = \bar{y} - b\bar{x}}$$
 
-# Summary
+## Summary
 
 1. **The assumption** $\text{Cov}(X, \varepsilon) = 0$ is about the **true errors** $\varepsilon$ in the population, not the residuals $e$ we observe when computing the OLS estimates.
 
@@ -410,12 +412,12 @@ $$\boxed{a = \bar{y} - b\bar{x}}$$
 4. Don't confuse correlation with heteroskedasticity: larger errors for larger $X$ (in magnitude) is about variance, not bias (see picture above!)
 
 
-# Task 4: Mean Reversion
+# Task: Mean Reversion
 
 Sir Francis Galton examined the relationship between the height of children and their parents towards the end of the 19th century. You decide to update his findings by collecting data from 110 ESOMAS students. Your data is [here](https://www.dropbox.com/scl/fi/yrv6m41sgpa46997uj4om/galton_students_110.csv?rlkey=udp2uy6mdicdul7n5jn0bgbzq&dl=1)
 
 1. Load the data and make a scatter plot of `child_height_cm` vs `mid_parent_height_cm`. Ideally add a regression line to your plot.
-2. estimate the model $$\text{child_height_cm} = \beta_0 + \beta_1 \text{mid_parent_height_cm} + u$$ and save it as object `m`.
+2. estimate the model $$\text{child\_height\_cm} = \beta_0 + \beta_1 \text{mid\_parent\_height\_cm} + u$$ and save it as object `m`.
 2. What is the meaning of the cofficients and the R2 measure?
 3. What is the prediction for the height of a child whose parents have an average height of 180cms? What if they have 160 cm?
 4. type `summary(m)` to get the model summary and tell us what the Residual Standard Error in this regression is. What is its interpretation?
@@ -480,7 +482,7 @@ cor(d$mid_parent_height_cm,d$child_height_cm) * sy / sx
 
 
 
-# Task 5: No Intercept
+# Task: No Intercept
 
 
 What is a regression without any intercept? In other words, $b_0 = 0$. To generate some intuition, let's get one of R's built-in datasets and have a look. The `cars` dataset has 2 varialbes, `speed` and `dist` of 1920's cars. `dist` is "stopping distance", i.e. basically how far did you travel after you hit the breaks.
@@ -533,8 +535,39 @@ lm(speed ~ -1 + dist, cars)
 
 check that is the same as `b1` from above.
 
+## Mean of Residuals?
 
-# Task 6: Centered Regression
+Notice another important fact here. Given that we only have a *single* margin of adjustment in this case (i.e. only the slope), via this condition
+
+$$-2 \sum_{i=1}^N (y_i - b_1 x_i) x_i = 0,$$
+
+with respect to the case *with* intercept, we are missing this one (which was the FOC wrt to the intercept parameter $a$):
+
+$$\sum (y_i - a - b x_i) = \sum e_i = 0$$
+That is, without this condition (where can shift the line up and down by the amount $a$), there is **no guarantee** that the mean (and sum) of residuals is zero! You should quickly reconsider what that means for our deliberations about correlation between $x$ and $e$ in the standard case above in @sec-covxe. We saw above that this is always zero if there is an intercept - not so without! That's the main reason why we include an intercept. quick numerical check:
+
+```{r}
+# standard model WITH intercept
+m1 = lm(dist ~ speed, cars)
+
+# model withOUT intercept (but same variables!)
+m2 = lm(dist ~ -1 + speed, cars)
+```
+
+compare the average of residuals in each case. Standard model:
+
+```{r}
+mean(summary(m1)$residuals)
+```
+
+Model without intercept (but same variables):
+
+```{r}
+mean(summary(m2)$residuals)
+```
+
+
+# Task: Centered Regression
 
 By *centering* or *demeaning* a regression, we mean to substract from both $y$ and $x$ their respective averages to obtain $\tilde{y}_i = y_i - \bar{y}$ and $\tilde{x}_i = x_i - \bar{x}$. 
 
@@ -575,7 +608,7 @@ EconometricsApps::launchApp("demeaned_reg")
 
 
 
-# Task 6: Standardized Regression
+# Task: Standardized Regression
 
 
 We now know that we can write the slope estimator also as $$b_1 = r \frac{s_y}{s_x}.$$
@@ -614,7 +647,7 @@ plt_add(type = type_vline(v = 0), col = "red")
 ```
 
 
-**Notice:** The *range* of data is no longer the same: standardized `r paste0("[",paste(range(cars$dist_std),collapse = ","),"]")` and not `r paste0("[",paste(range(cars$dist),collapse = ","),"]")` . We *rescaled* the variables by a a number (that's what the division did). That's why our slope estimate is not the same anymore.
+**Notice:** The *range* of data is no longer the same: standardized `r paste0("[",paste(round(range(cars$dist_std),2),collapse = ","),"]")` and not `r paste0("[",paste(range(cars$dist),collapse = ","),"]")` . We *rescaled* the variables by a a number (that's what the division did). That's why our slope estimate is not the same anymore.
 
 ```{r}
 lm(speed_std ~ -1 + dist_std, cars)
