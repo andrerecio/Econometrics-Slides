@@ -996,10 +996,10 @@ class: inverse
 
 When you have an omitted variable problem, the assumption that $E(u_i | X_i) = 0$ is violated. This implies that:
 
-A) the sum of the residuals is no longer zero.
-B) there is another estimator called weighted least squares, which is BLUE.
-C) the sum of the residuals times any of the explanatory variables is no longer zero.
-D) the OLS estimator is no longer consistent.
+1. the sum of the residuals is no longer zero.
+2. there is another estimator called weighted least squares, which is BLUE.
+3. the sum of the residuals times any of the explanatory variables is no longer zero.
+4. the OLS estimator is no longer consistent.
 
 
 ---
@@ -1010,10 +1010,10 @@ class: inverse
 
 The intercept in the multiple regression model:
 
-A) should be excluded if one explanatory variable has negative values.
-B) determines the height of the regression line.
-C) should be excluded because the population regression function does not go through the origin.
-D) is statistically significant if it is larger than 1.96.
+1. should be excluded if one explanatory variable has negative values.
+2. determines the height of the regression line.
+3. should be excluded because the population regression function does not go through the origin.
+4. is statistically significant if it is larger than 1.96.
 
 
 ---
@@ -1022,10 +1022,10 @@ D) is statistically significant if it is larger than 1.96.
 
 In the multiple regression model, the least squares estimator is derived by:
 
-A) minimizing the sum of squared prediction mistakes.
-B) setting the sum of squared errors equal to zero.
-C) minimizing the absolute difference of the residuals.
-D) forcing the smallest distance between the actual and fitted values.
+1. minimizing the sum of squared prediction mistakes.
+1. setting the sum of squared errors equal to zero.
+1. minimizing the absolute difference of the residuals.
+1. forcing the smallest distance between the actual and fitted values.
 
 
 ---
@@ -1034,10 +1034,10 @@ D) forcing the smallest distance between the actual and fitted values.
 
 Omitted variable bias:
 
-A) will always be present as long as the regression R2 < 1.
-B) is always there but is negligible in almost all economic examples.
-C) exists if the omitted variable is correlated with the included regressor but is not a determinant of the dependent variable.
-D)  exists if the omitted variable is correlated with the included regressor and is a determinant of the dependent variable.
+1. will always be present as long as the regression R2 < 1.
+1. is always there but is negligible in almost all economic examples.
+1. exists if the omitted variable is correlated with the included regressor but is not a determinant of the dependent variable.
+1. exists if the omitted variable is correlated with the included regressor and is a determinant of the dependent variable.
 
 ---
 
@@ -1045,10 +1045,10 @@ D)  exists if the omitted variable is correlated with the included regressor and
 
 Consider the multiple regression model with two regressors X1 and X2, where both variables are determinants of the dependent variable. When omitting X2 from the regression, then there will be omitted variable bias for:
 
-A) if X1 and X2 are correlated
-B) always
-C) if X2 is measured in percentages
-D) if X2 is a dummy variable
+1. if X1 and X2 are correlated
+1. always
+1. if X2 is measured in percentages
+1. if X2 is a dummy variable
 
 
 ---

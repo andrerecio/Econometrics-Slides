@@ -509,7 +509,7 @@ layout: true
   
 * In practice, if we interact $x_1$ and $x_2$, we would write our model like this : 
 
-$$y_i =  b_0 + b_1 x_{1,i} + b_2 x_{2,i} + b_3x_{1,i} \times x_{2,i} + ... + e_i$$
+$$y_i =  b_0 + b_1 x_{1,i} + b_2 x_{2,i} + b_3(x_{1,i} \times x_{2,i}) + ... + e_i$$
 
 --
 
@@ -539,7 +539,7 @@ How does the effect of being in a small vs regular class vary with the experienc
 
 Our regression model becomes:
 
-$$ \textrm{score}_i = \color{#d96502}{b_0} + \color{#027D83}{b_1} \textrm{small}_i + \color{#02AB0D}{b_2} \textrm{experience}_i + \color{#d90502}{b_3} \textrm{small}_i \times \textrm{experience}_i + e_i$$ 
+$$ \textrm{score}_i = \color{#d96502}{b_0} + \color{#027D83}{b_1} \textrm{small}_i + \color{#02AB0D}{b_2} \textrm{experience}_i + \color{#d90502}{b_3} (\textrm{small}_i \times \textrm{experience}_i) + e_i$$ 
 
 --
 
@@ -591,7 +591,7 @@ lm(math ~ small+ experience + small*experience, star_df)
 
 # Interacting Regressors: Visually
 
-$$ \textrm{score}_i = \color{#d96502}{b_0} + \color{#027D83}{b_1} \textrm{small}_i + \color{#02AB0D}{b_2} \textrm{experience}_i + \color{#d90502}{b_3} \textrm{small}_i * \textrm{experience}_i + e_i$$ 
+$$ \textrm{score}_i = \color{#d96502}{b_0} + \color{#027D83}{b_1} \textrm{small}_i + \color{#02AB0D}{b_2} \textrm{experience}_i + \color{#d90502}{b_3} (\textrm{small}_i * \textrm{experience}_i) + e_i$$ 
 
 ```{r,echo=F, eval = F}
 # graph_base <- star_df %>%
