@@ -334,6 +334,25 @@ gapminder %>%
 
 ***Elasticity of $y$ with respect to $x$:*** percent change in $y$ following a 1% increase in $x$.
 
+
+---
+
+class: inverse
+
+# Task 1: Wages or Log Wages?
+
+`r countdown(minutes = 10, top = 0)`
+
+1. install the "wooldridge" package via `install.packages("wooldridge")`. Check out [Jeffrey Wooldridge's](https://econ.msu.edu/about/directory/wooldridge-jeffrey) website. 
+
+2. Make a plot of `wage ~ educ`, and plot the distribution of `wage` alone. What do you observe?
+
+3. Make the same plot but use `log(wage) ~ educ` as your formula instead. Observe what?
+
+4. Run 3 regression models: `wage ~ educ, log(wage) ~ educ, log(wage) ~ log(educ)`. Take care with the last model! Interpret the coefficients!
+
+
+
 ---
 
 # Accounting for Other Types Non-Linear Relationships
@@ -472,7 +491,7 @@ knitr::include_graphics("chapter_regext_files/figure-html/curve_fitting.png")
 
 class:inverse
 
-# Task 1: Non-linear relationships
+# Task 2: Non-linear relationships
 
 `r countdown(minutes = 10, top = 0)`
 
@@ -742,7 +761,7 @@ knitr::include_graphics("chapter_regext_files/figure-html/graph_reg_b0_b1_b2_b3.
 
 class:inverse
 
-# Task 2: Wages, education and gender in 1985
+# Task 3: Wages, education and gender in 1985
 
 `r countdown(minutes = 10, top = 0)`
 
@@ -880,7 +899,7 @@ If the ***regressor*** $x_k$ is standardized, i.e. the model is $y = b_0 + \sum_
 
 class:inverse
 
-# Task 3: Standardized regression
+# Task 4: Standardized regression
 
 `r countdown(minutes = 7, top = 0)`
 
