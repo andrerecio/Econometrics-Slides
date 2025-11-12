@@ -26,7 +26,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS </br> 2025-10-09
+### UniTo ESOMAS </br> 2025-11-12
 ]
 
 ---
@@ -165,7 +165,7 @@ class: inverse
 
 # Task 1
 
-<div class="countdown" id="timer_accc0c92" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_cf0cfb8a" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -223,7 +223,7 @@ The proportions are as follows: `(0.7,0.7,0.5,0.5,0.3,0.5,0.4,0.45,0.55,0.4,0.35
 # Taking Virtual (not Real) Samples
 
 .pull-left[
-* We counted the exact number of green, red and yellow noodles in the bowl 🧐 `#confinement`
+* We counted the exact number of green, red and yellow noodles in the bowl 🧐 `#lockdown`
 
 * All the noodles in the bowl are stored in a csv file [here](https://www.dropbox.com/s/qpjsk0rfgc0gx80/pasta.csv?dl=1).
 
@@ -231,29 +231,17 @@ The proportions are as follows: `(0.7,0.7,0.5,0.5,0.3,0.5,0.4,0.45,0.55,0.4,0.35
 ``` r
 bowl &lt;- read.csv("https://www.dropbox.com/s/qpjsk0rfgc0gx80/pasta.csv?dl=1")
 
-head(bowl)
+kable(head(bowl, n = 4)) # first 4 rows
 ```
 
-<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
-<col><col><thead>
-<tr>
-<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt;">pasta_ID</th><th class="huxtable-cell huxtable-header" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt;">color</th></tr>
-</thead>
-<tbody>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0.4pt;     background-color: rgb(242, 242, 242);">1</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0pt 0pt;     background-color: rgb(242, 242, 242);">yellow</td></tr>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">2</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">red</td></tr>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;     background-color: rgb(242, 242, 242);">3</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;     background-color: rgb(242, 242, 242);">green</td></tr>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;">4</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;">yellow</td></tr>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0.4pt;     background-color: rgb(242, 242, 242);">5</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0.4pt 0pt 0pt;     background-color: rgb(242, 242, 242);">red</td></tr>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0.4pt;">6</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0.4pt 0.4pt 0pt;">green</td></tr>
-</tbody>
-</table>
+
+
+| pasta_ID|color  |
+|--------:|:------|
+|        1|yellow |
+|        2|red    |
+|        3|green  |
+|        4|yellow |
 
 ]
 
@@ -348,20 +336,14 @@ sample_1 &lt;- virtual_shovel %&gt;%
   mutate(
     # proportion of green noodles in sample
     prop_green = num_green / sample_n)
-sample_1
+kable(sample_1)
 ```
 
-<table class="huxtable" data-quarto-disable-processing="true"  style="margin-left: auto; margin-right: auto;">
-<col><col><col><col><thead>
-<tr>
-<th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt;">replicate</th><th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;">num_green</th><th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;">sample_n</th><th class="huxtable-cell huxtable-header" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt;">prop_green</th></tr>
-</thead>
-<tbody>
-<tr>
-<td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0.4pt;     background-color: rgb(242, 242, 242);">1</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;     background-color: rgb(242, 242, 242);">23</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0pt 0.4pt 0pt;     background-color: rgb(242, 242, 242);">50</td><td class="huxtable-cell" style="text-align: right;  border-style: solid solid solid solid; border-width: 0.4pt 0.4pt 0.4pt 0pt;     background-color: rgb(242, 242, 242);">0.46</td></tr>
-</tbody>
-</table>
 
+
+| replicate| num_green| sample_n| prop_green|
+|---------:|---------:|--------:|----------:|
+|         1|        23|       50|       0.46|
 ]
 
 .pull-right[
@@ -544,7 +526,7 @@ class: inverse
 
 # Task 2
 
-<div class="countdown" id="timer_e061ecc8" data-update-every="1" tabindex="0" style="top:0;right:0;">
+<div class="countdown" id="timer_8944171c" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">&minus;</button><button class="countdown-bump-up">&plus;</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -821,13 +803,7 @@ Scenario | Population parameter | Notation | Point estimate | Symbol(s)
 
 * In other words, their sampling distribution increasingly follows a ***normal distribution*** and the *variation of these sampling distributions gets smaller*, as quantified by their ***standard errors***.
 
----
-
-# Central Limit Theorem - NYTimes video
-
-.center[
-&lt;iframe width="684" height="464" src="https://www.youtube.com/embed/jvoxEYmQHNM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
-]
+* We have discussed this in the early lectures of this semester.
 
 ---
 

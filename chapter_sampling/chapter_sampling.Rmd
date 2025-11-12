@@ -280,15 +280,16 @@ pasta_samples %>%
 # Taking Virtual (not Real) Samples
 
 .pull-left[
-* We counted the exact number of green, red and yellow noodles in the bowl 🧐 `#confinement`
+* We counted the exact number of green, red and yellow noodles in the bowl 🧐 `#lockdown`
 
 * All the noodles in the bowl are stored in a csv file [here](https://www.dropbox.com/s/qpjsk0rfgc0gx80/pasta.csv?dl=1).
 
-```{r, echo = TRUE}
+```{r, echo = TRUE,}
 bowl <- read.csv("https://www.dropbox.com/s/qpjsk0rfgc0gx80/pasta.csv?dl=1")
 
-head(bowl)
+kable(head(bowl, n = 4)) # first 4 rows
 ```
+
 ]
 
 --
@@ -356,7 +357,7 @@ sample_1 <- virtual_shovel %>%
   mutate(
     # proportion of green noodles in sample
     prop_green = num_green / sample_n)
-sample_1
+kable(sample_1)
 ```
 ]
 
@@ -821,13 +822,7 @@ Scenario | Population parameter | Notation | Point estimate | Symbol(s)
 
 * In other words, their sampling distribution increasingly follows a ***normal distribution*** and the *variation of these sampling distributions gets smaller*, as quantified by their ***standard errors***.
 
----
-
-# Central Limit Theorem - NYTimes video
-
-.center[
-<iframe width="684" height="464" src="https://www.youtube.com/embed/jvoxEYmQHNM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-]
+* We have discussed this in the early lectures of this semester.
 
 ---
 
