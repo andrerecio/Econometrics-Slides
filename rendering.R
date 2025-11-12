@@ -60,12 +60,14 @@ pdf_all <- function(chapter = "chapter"){
     lf = fs::dir_ls(path = ".",regexp = chapter)
     
     for (fi in lf){
-        for (fj in fs::dir_ls(fi, glob = "*.Rmd")){
-            fn = tools::file_path_sans_ext(fj)
-            #print(paste("doing", fj))
-            cmd = paste0("decktape ",paste0(fn,".html")," ",paste0(fn,".pdf")," --chrome-arg=--disable-web-security")
-            print(cmd)
-            system(cmd)
+        if (!(fi %in% c("chapter_slr", "chapter_mlr"))){
+            for (fj in fs::dir_ls(fi, glob = "*.Rmd")){
+                fn = tools::file_path_sans_ext(fj)
+                #print(paste("doing", fj))
+                cmd = paste0("decktape ",paste0(fn,".html")," ",paste0(fn,".pdf")," --chrome-arg=--disable-web-security")
+                print(cmd)
+                system(cmd)
+            }
         }
     }
     print("done")
