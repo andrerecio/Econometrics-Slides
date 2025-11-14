@@ -14,6 +14,12 @@ Modified by Florian Oswald for Unito
 
 .remark-slide-content { font-size: 23px; }
 
+/* section divider red */
+.separator {
+  background-color: #d90502;
+  padding-left: 100px;  /* delete this for 4:3 aspect ratio */
+}
+
 pre {
     display: block;
     font-family: monospace;

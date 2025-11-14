@@ -24,6 +24,18 @@ replace_logos <- function(){
             curr = stringr::str_replace_all(string = curr,
                                             pattern = "ScPo-econ.png",
                                             replacement = "esomas.png")
+            curr = stringr::str_replace_all(string = curr,
+                                            pattern = "../../css",
+                                            replacement = "../css")
+            curr = stringr::str_replace_all(string = curr,
+                                            pattern = "../../js",
+                                            replacement = "../js")
+            curr = stringr::str_replace_all(string = curr,
+                                            pattern = "../../libs",
+                                            replacement = "../libs")
+            curr = stringr::str_replace_all(string = curr,
+                                            pattern = "../../img",
+                                            replacement = "../img")
             readr::write_lines(curr, fj)
             
         }
