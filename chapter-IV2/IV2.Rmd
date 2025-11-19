@@ -53,13 +53,12 @@ gom = "p.value.|se_type|statistic.end|statistic.overid|statistic.weakinst"
 
 .pull-left[
 
-## What Did we Do Last Week?
+## What Did we on IV already?
 
 * We learned about John Snow's grand experiment in London 1850.
 
 * We used his story to motivate the IV estimator.
 
-* You took a quiz about some IV aspects.
 
 ]
 
@@ -1195,14 +1194,4 @@ background-position: 9% 19%
 
 # END
 
-
-
-
-|                                                                                                            |                                   |
-| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="mailto:florian.oswald@sciencespo.fr">.ScPored[<i class="fa fa-paper-plane fa-fw"></i>]               | florian.oswald@sciencespo.fr       |
-| <a href="https://github.com/ScPoEcon/Advanced-Metrics-slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
 
