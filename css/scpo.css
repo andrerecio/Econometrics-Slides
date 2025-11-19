@@ -18,6 +18,7 @@ Modified by Florian Oswald for Unito
 .separator {
   background-color: #d90502;
   padding-left: 100px;  /* delete this for 4:3 aspect ratio */
+  color: white;
 }
 
 pre {

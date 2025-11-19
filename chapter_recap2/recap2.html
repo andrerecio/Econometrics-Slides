@@ -1,32 +1,21 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>ScPoEconometrics Advanced</title>
+    <title>Econometrics</title>
     <meta charset="utf-8" />
     <meta name="author" content="Florian Oswald" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/5235085b15.js"></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-41584331-6"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-41584331-6');
-    </script>
-
-    <link rel="stylesheet" href="../../css/scpo.css" type="text/css" />
-    <link rel="stylesheet" href="../../css/scpo-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="../css/scpo.css" type="text/css" />
+    <link rel="stylesheet" href="../css/scpo-fonts.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
 .title[
-# ScPoEconometrics Advanced
+# Econometrics
 ]
 .subtitle[
 ## Recap 2
@@ -35,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### SciencesPo Paris </br> 2024-01-22
+### UniTo ESOMAS 2025-11-19
 ]
 
 ---
@@ -43,7 +32,7 @@ class: center, middle, inverse, title-slide
 
 layout: true
 
-&lt;div class="my-footer"&gt;&lt;img src="../../img/logo/ScPo-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
+&lt;div class="my-footer"&gt;&lt;img src="../img/logo/unito-shield.png" style="height: 60px;"/&gt;&lt;/div&gt; 
 
 ---
 
@@ -86,7 +75,7 @@ layout: true
 
 .left-thin[
 
-* Remember what we learned about the [STAR Experiment](https://scpoecon.github.io/ScPoEconometrics/STAR.html)
+* Remember what we learned about the [STAR Experiment](https://scpoecon.github.io/Econometrics/STAR.html)
 
 * What is the causal impact of class size on test scores?
 
@@ -237,10 +226,6 @@ count: false
 Unbiased regression estimate: `\(\widehat{\text{Pay}}_i = 20.9 + 0.4 \times \text{School}_i + 9.1 \times \text{Male}_i\)`
 
 &lt;img src="recap2_files/figure-html/plot ovb 5-1.svg" style="display: block; margin: auto;" /&gt;
----
-layout: false
-class: clear, middle, center
-
 
 
 
@@ -253,7 +238,7 @@ layout: false
 
 1. Don't omit variables 😜
 
-2. Instrumental variables and two-stage least squares (coming soon): If we could find something that **only** affects `\(x_1\)` but *not* the omitted variable, we can make progress!
+2. Instrumental variables and two-stage least squares: If we could find something that **only** affects `\(x_1\)` but *not* the omitted variable, we can make progress!
 
 3. Use multiple observations for the same unit `\(i\)`: panel data.
 
@@ -268,11 +253,8 @@ layout: false
 
 
 ---
-
-
----
 layout: false
-class: separator, middle
+class: title-slide-section-red, middle
 
 # Interpreting coefficients
 
@@ -500,7 +482,7 @@ $$ \log(\text{price}_i) = \beta_0 + \beta_1  \text{bdrms}_i + u_i $$
 This specification changes our interpretation of the slope coefficients.
 
 
-```r
+``` r
 data(hprice1,package = "wooldridge")
 lm(log(price) ~ bdrms, data = hprice1) %&gt;% tidy()
 ```
@@ -530,7 +512,7 @@ lm(log(price) ~ bdrms, data = hprice1) %&gt;% tidy()
 ]
 
 .pull-right[
-&lt;img src="recap2_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="recap2_files/figure-html/unnamed-chunk-3-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -573,7 +555,7 @@ What about that **approximation** part?
 
 .pull-right[
 
-&lt;img src="recap2_files/figure-html/unnamed-chunk-5-1.svg" style="display: block; margin: auto;" /&gt;
+&lt;img src="recap2_files/figure-html/unnamed-chunk-4-1.svg" style="display: block; margin: auto;" /&gt;
 
 
 ]
@@ -669,7 +651,7 @@ class: inverse
 
 .pull-left[
 
-```r
+``` r
 lm(log(price) ~ log(sqrft), data = hprice1) %&gt;% tidy()
 ```
 
@@ -781,14 +763,16 @@ Our current workflow:
 But how do we actually **learn** something from this exercise?
 ---
 
-## Linkup with Intro Course
+## Linkup with Earlier Material
 
-This is related to [*Intro Course material*](https://github.com/ScPoEcon/ScPoEconometrics-Slides):
+This is related to the chapters on:
 
-1. [Sampling](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter6/chapter6.html)
+1. Sampling
 
-2. [Hypothesis Testing](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_CI_hypothesis/CI_and_hypothesis_test.html) 
-3. [Regression Inference](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_reginference/reg_inference.html)
+2. Hypothesis Testing
+
+3. Regression Inference
+
 ---
 
 ## There is more
@@ -903,7 +887,7 @@ For example, 100 obs., two coefficients (_i.e._, `\(\hat{\beta}_0\)` and `\(\hat
 
 **Example:**
 
-```r
+``` r
 lm(y ~ x, data = pop_df) %&gt;% tidy(conf.int = TRUE)
 ```
 
@@ -939,7 +923,7 @@ What does it mean?
 **More formally:** If repeatedly sample from our population and construct confidence intervals for each of these samples, `\((1-\alpha)\)` percent of our intervals (_e.g._, 95%) will contain the population parameter *somewhere in the interval*.
 
 --
-https://scpoecon.github.io/ScPoEconometrics/std-errors.html#class-reg
+https://scpoecon.github.io/Econometrics/std-errors.html#class-reg
 Now back to our simulation...
 
 ---
@@ -962,7 +946,7 @@ Now, let's estimate 95% confidence intervals for each of these intervals...
 ]
 
 .right-thin[
-**From our previous simulation:** 97.6% of our 95% confidences intervals contain the true parameter value of `\(\beta_1\)`.
+**From our previous simulation:** 97.8% of our 95% confidences intervals contain the true parameter value of `\(\beta_1\)`.
 
 That's a **probabilistic statement**:
 
@@ -1026,7 +1010,7 @@ Very small p-values (generally &lt; 0.05) mean that it would be unlikely to see 
 `R` and `stata`s default to testing hypotheses against the value zero.
 
 
-```r
+``` r
 lm(y ~ x, data = pop_df) %&gt;% tidy()
 ```
 
@@ -1117,7 +1101,7 @@ $$ \text{Consumption}\_i = \beta\_0 + \beta\_1 \text{Income}\_{i} + \beta\_2 \te
 ---
 layout: false
 class: title-slide-final, middle
-background-image: url(../../img/logo/ScPo-econ.png)
+background-image: url(../img/logo/esomas.png)
 background-size: 250px
 background-position: 9% 19%
 
@@ -1126,25 +1110,15 @@ background-position: 9% 19%
 
 
 
-|                                                                                                            |                                   |
-| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| &lt;a href="mailto:florian.oswald@sciencespo.fr"&gt;.ScPored[&lt;i class="fa fa-paper-plane fa-fw"&gt;&lt;/i&gt;]               | florian.oswald@sciencespo.fr       |
-| &lt;a href="https://github.com/ScPoEcon/Advanced-Metrics-slides"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Slides |
-| &lt;a href="https://scpoecon.github.io/ScPoEconometrics"&gt;.ScPored[&lt;i class="fa fa-link fa-fw"&gt;&lt;/i&gt;] | Book |
-| &lt;a href="http://twitter.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-twitter fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                         |
-| &lt;a href="http://github.com/ScPoEcon"&gt;.ScPored[&lt;i class="fa fa-github fa-fw"&gt;&lt;/i&gt;]                          | @ScPoEcon                       |
-
-
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
-<script src="../../js/ru_xaringan.js"></script>
+<script src="../js/ru_xaringan.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"ratio": "16:9"
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

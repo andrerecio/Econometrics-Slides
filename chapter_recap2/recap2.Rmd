@@ -1,5 +1,5 @@
 ---
-title: "Econometrics Advanced"
+title: "Econometrics"
 subtitle: "Recap 2"
 author: "Florian Oswald"
 date: "UniTo ESOMAS `r Sys.Date()`"
@@ -404,34 +404,9 @@ theme(
 scale_color_manual("", values = c(scpo_red, "darkslategrey"), labels = c("Female", "Male")) +
 scale_shape_manual("", values = c(16, 1), labels = c("Female", "Male"))
 ```
----
-layout: false
-class: clear, middle, center
 
-```{R, venn2, dev = "svg", echo = F,eval = F}
-# Line types (order: x1, x2, x3, y)
-venn_lines <- c("solid", "dotted", "dotted", "solid")
-# Venn
-ggplot(data = venn_df, aes(x0 = x, y0 = y, r = r, fill = l, color = l)) +
-geom_circle(aes(linetype = l), alpha = 0.3, size = 0.75) +
-theme_void() +
-theme(legend.position = "none") +
-scale_fill_manual(values = venn_colors) +
-scale_color_manual(values = venn_colors) +
-scale_linetype_manual(values = venn_lines) +
-geom_text(aes(x = xl, y = yl, label = l), size = 9, family = "Fira Sans Book", parse = T) +
-annotate(
-  x = -5.5, y = 3.3,
-  geom = "text", label = "Omitted variables", size = 9, family = "Fira Sans Book", hjust = 0
-) +
-xlim(-5.5, 4.5) +
-ylim(-4.2, 3.4) +
-coord_equal()
-```
 
-```{r}
 
-```
 ---
 layout: false
 
@@ -441,7 +416,7 @@ layout: false
 
 1. Don't omit variables 😜
 
-2. Instrumental variables and two-stage least squares (coming soon): If we could find something that **only** affects $x_1$ but *not* the omitted variable, we can make progress!
+2. Instrumental variables and two-stage least squares: If we could find something that **only** affects $x_1$ but *not* the omitted variable, we can make progress!
 
 3. Use multiple observations for the same unit $i$: panel data.
 
@@ -456,11 +431,8 @@ layout: false
 
 
 ---
-
-
----
 layout: false
-class: separator, middle
+class: title-slide-section-red, middle
 
 # Interpreting coefficients
 
@@ -1048,14 +1020,16 @@ Our current workflow:
 But how do we actually **learn** something from this exercise?
 ---
 
-## Linkup with Intro Course
+## Linkup with Earlier Material
 
-This is related to [*Intro Course material*](https://github.com/ScPoEcon/Econometrics-Slides):
+This is related to the chapters on:
 
-1. [Sampling](https://raw.githack.com/ScPoEcon/Econometrics-Slides/master/chapter6/chapter6.html)
+1. Sampling
 
-2. [Hypothesis Testing](https://raw.githack.com/ScPoEcon/Econometrics-Slides/master/chapter_CI_hypothesis/CI_and_hypothesis_test.html) 
-3. [Regression Inference](https://raw.githack.com/ScPoEcon/Econometrics-Slides/master/chapter_reginference/reg_inference.html)
+2. Hypothesis Testing
+
+3. Regression Inference
+
 ---
 
 ## There is more
@@ -1266,7 +1240,7 @@ ci_df <- sim_df %>% filter(term == "x") %>%
 ggplot(data = ci_df) +
 geom_segment(aes(y = lb, yend = ub, x = x, xend = x, color = ci_contains)) +
 geom_hline(yintercept = lm0$coefficients[2]) +
-scale_y_continuous(breaks = lm0$coefficients[2], labels = TeX("$\\beta_1$")) +
+scale_y_continuous(breaks = lm0$coefficients[2], labels = "beta1") +
 scale_color_manual(values = c(scpo_red, "grey85")) +
 theme_simple +
 theme(
@@ -1430,16 +1404,6 @@ background-position: 9% 19%
 
 # END
 
-
-
-
-|                                                                                                            |                                   |
-| :--------------------------------------------------------------------------------------------------------- | :-------------------------------- |
-| <a href="mailto:florian.oswald@sciencespo.fr">.ScPored[<i class="fa fa-paper-plane fa-fw"></i>]               | florian.oswald@sciencespo.fr       |
-| <a href="https://github.com/ScPoEcon/Advanced-Metrics-slides">.ScPored[<i class="fa fa-link fa-fw"></i>] | Slides |
-| <a href="https://scpoecon.github.io/Econometrics">.ScPored[<i class="fa fa-link fa-fw"></i>] | Book |
-| <a href="http://twitter.com/ScPoEcon">.ScPored[<i class="fa fa-twitter fa-fw"></i>]                          | @ScPoEcon                         |
-| <a href="http://github.com/ScPoEcon">.ScPored[<i class="fa fa-github fa-fw"></i>]                          | @ScPoEcon                       |
 
 
 
