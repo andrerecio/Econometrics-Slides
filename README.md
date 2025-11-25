@@ -46,6 +46,8 @@ SME: Scuola di Management e Economia, Corso Unione Sovietica 218 bis, Torino
 
 The suggested reading list can be found [here](https://github.com/floswald/Econometrics-Slides/blob/master/syllabus.md).
 
+The writeup about hypothesis tests can be found [here](hypothesis.pdf)
+
 ## Additional Lectures
 
 Bootstrapping: More details about bootstrapping. [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter_bootstrap/boostrap.html)
