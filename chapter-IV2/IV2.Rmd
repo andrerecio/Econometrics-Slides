@@ -1193,8 +1193,3 @@ background-size: 250px
 background-position: 9% 19%
 
 # END
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 75ca1667436763d29912d1ce97b52a9e12dbbb7d
