@@ -44,6 +44,8 @@ library(data.table)
 gofmap = data.table(modelsummary::gof_map)
 gofmap[,omit := TRUE]
 gofmap[clean == "R2", omit := FALSE]
+library(ggplot2)
+mytheme = theme_bw(base_size = 16)
 
 ```
 
@@ -63,11 +65,9 @@ gofmap[clean == "R2", omit := FALSE]
 .pull-right[
 **Today**
 
-1. Talk about Mid-Term Exam! 😬
+1. Any questions about Exam? 😬
 
-2. Revisit the Ability Bias [in an App](https://floswald.shinyapps.io/ScPoMetrics-ability-bias/) 😎
-
-3. Introduce Panel Data
+2. Introduce Panel Data
 
 ]
 
@@ -164,8 +164,8 @@ crime4 %>%
 * This is sometimes called a *simultaneous equation model* situation: police response impacts crime, but crime impacts police response
 
 \begin{align}
-police &= \alpha_0 + \alpha_1 crime \\
-crime &= \beta_0 + \beta_1 police
+\text{police} &= \alpha_0 + \alpha_1 \text{crime} + u\\
+\text{crime} &= \beta_0   + \beta_1  \text{police} + e
 \end{align}
 
 
@@ -189,7 +189,7 @@ crime &= \beta_0 + \beta_1 police
 
 * Let's look at the crime rate vs probability of arrest relationship
 
-* First for all of them together as a single cross section
+* First: for all of them together as a single cross section
 
 * Then taking advantage of the panel structure (i.e. each county over time).
 
@@ -214,10 +214,10 @@ css = crime4 %>%
 ggplot(css,
        aes(x = prbarr, 
            y = crmrte)) + 
-  geom_point() + 
+  geom_point(size=3) + 
   geom_smooth(method="lm",
               se=FALSE) + 
-  theme_bw() +
+  mytheme +
   labs(x = 'Probability of Arrest', 
        y = 'Crime Rate')
 ```
@@ -229,9 +229,9 @@ css = crime4 %>%
   filter(county %in% c(1,3,145, 23))  # subset to 4 counties
 
 ggplot(css,aes(x =  prbarr, y = crmrte)) + 
-  geom_point() + 
-  geom_smooth(method="lm",se=FALSE) + 
-  theme_bw() +
+  geom_point(size=3) + 
+  geom_smooth(method="lm",se=FALSE,linewidth =2) + 
+  mytheme +
   labs(x = 'Probability of Arrest', y = 'Crime Rate')
 ```
 ]
@@ -289,9 +289,9 @@ xsection_p = round(predict(xsection,newdata = data.frame(prbarr = c(0.2,0.3))),3
 
 ---
 
-# Crime in a DAG
 
-```{r cri-dag,echo = FALSE,message = FALSE,fig.height=5.5}
+
+```{r cri-dag,echo = FALSE,message = FALSE,fig.height=8,fig.width = 10}
 library(ggdag)
 coords <- list(
     x = c(ProbArrest = 1,LawAndOrder = 1, Police = 1.5, CivilRights = 3,Poverty = 3, CrimeRate = 5, LocalStuff = 5),
@@ -414,9 +414,9 @@ pcolor = css %>%
   mcrm = mean(crmrte),
   mpr = mean(prbarr)) %>%
   ggplot(aes(x =  prbarr, y = crmrte, label = label)) + 
-  geom_point(aes(color = factor(county))) + 
-  theme_bw() +
-  geom_smooth(method = "lm", se=FALSE) +
+  geom_point(aes(color = factor(county)),size = 3) + 
+  mytheme +
+  geom_smooth(method = "lm", se=FALSE,linewidth=2) +
   labs(x = 'Probability of Arrest', 
        y = 'Crime Rate',
        color = "County") 
@@ -435,11 +435,12 @@ pcolor
 
 * And then a regression through those 4 points!
 
+---
 
---
+# Pooled OLS recovers *between* variation
 
 
-```{r,echo = FALSE,fig.height = 4,warning = FALSE,message = FALSE,fig.width=8}
+```{r,echo = FALSE,fig.height = 5,warning = FALSE,message = FALSE,fig.width=10}
 p1 = css %>% 
   group_by(county) %>%
   mutate(label = case_when(
@@ -450,7 +451,7 @@ p1 = css %>%
   mpr = mean(prbarr)) %>%
   ggplot(aes(x =  prbarr, y = crmrte, label = label)) + 
   geom_point(aes(color = factor(county))) + 
-  theme_bw() +
+  mytheme +
   # geom_smooth(method = "lm", se=FALSE) +
   scale_x_continuous(limits = c(0.1,0.43)) + 
   scale_y_continuous(limits = c(0.01,0.041)) +
@@ -472,7 +473,7 @@ p2 = css %>%
   mcrm = mean(crmrte),
   mpr = mean(prbarr)) %>%
   ggplot(aes(x = mpr, y = mcrm)) + 
-  theme_bw() +
+  mytheme +
   geom_smooth(method = "lm",se = FALSE) +
   geom_point(size = 20, shape = 3, aes(color = factor(county))) +   
   scale_x_continuous(limits = c(0.1,0.43)) + 
@@ -608,7 +609,7 @@ broom::tidy(mod$dummy)
 
 # Dummy Variable Regression
 
-.left-wide[
+.pull-left[
 ```{r dummy,echo = FALSE,message = FALSE,fig.height = 5}
 # not sure that's helpful
 css$pred <- predict(mod$dummy)  # get predicted line
@@ -617,7 +618,7 @@ pcolor = css %>%
   ggplot(aes(x =  prbarr, y = crmrte, color =factor(county) )) +
   geom_point() + 
   geom_line(aes(y = pred ),size = 1) +
-  theme_bw() +
+  mytheme +
   # geom_smooth(method = "lm", se=FALSE) +
   labs(x = 'Probability of Arrest', 
        y = 'Crime Rate',
@@ -626,7 +627,7 @@ pcolor
 ```
 ]
 
-.right-thin[
+.pull-right[
 * *Within* each county, now is a **negative** relationship!! 
 
 * Different intercepts (county 1 is be the reference group), 
@@ -753,14 +754,20 @@ panel_p = round(predict(mod$dummy,newdata = data.frame(prbarr = c(0.2,0.3), coun
 
 * How to interpret those negative slopes?
 
+.pull-left[
+
 * We look at a single unit $i$ and ask: 
 
 > if the arrest probability in $i$ increases by 10 percentage points (i.e. from 0.2 to 0.3) from year $t$ to $t+1$, we expect crimes per person to fall from `r panel_p[1]` to `r panel_p[2]`, or by `r round(100 * diff(panel_p) / panel_p[1],2)` percent (in the reference county number 1).
 
-```{r,echo = FALSE,fig.height = 3}
+]
+
+.pull-right[
+
+```{r,echo = FALSE,fig.height = 5}
 pcolor
 ```
-
+]
 
 ---
 
@@ -779,7 +786,7 @@ mod$FE = fixest::feols(crmrte ~ prbarr | county, cdata)
 
 * Notice the similar setup to the `estimatr::iv_robust` *two-part formula*. Here the fixed effects come after the `|`. 
 
-* Also, we can have *more than one fixed effect*! For a cool example with *three* fixed effects see the package [vignette](https://cran.r-project.org/web/packages/fixest/vignettes/fixest_walkthrough.html)
+* Also, we can have *more than one fixed effect*! For a cool example with *three* fixed effects see the package [vignette](https://cran.r-project.org/web/packages/fixest/vignettes/fixest_walkthrough.html).
 
 ---
 
