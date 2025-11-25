@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS 2025-11-19
+### UniTo ESOMAS 2025-11-25
 ]
 
 ---
@@ -413,160 +413,34 @@ logit &lt;- glm(inlf ~ age,
 .pull-left[
 
 ``` r
-modelsummary::modelsummary(list("probit" = probit,"logit" = logit))
+print(modelsummary(list("probit" = probit,"logit" = logit)))
 ```
 
-```{=html}
-&lt;!-- preamble start --&gt;
-
-    &lt;script&gt;
-
-      function styleCell_s2d1p3ofim6s5ft70e5a(i, j, css_id) {
-          var table = document.getElementById("tinytable_s2d1p3ofim6s5ft70e5a");
-          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
-          if (cell) {
-              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
-              cell.classList.add(css_id);
-          } else {
-              console.warn(`Cell at (${i}, ${j}) not found.`);
-          }
-      }
-      function insertSpanRow(i, colspan, content) {
-        var table = document.getElementById('tinytable_s2d1p3ofim6s5ft70e5a');
-        var newRow = table.insertRow(i);
-        var newCell = newRow.insertCell(0);
-        newCell.setAttribute("colspan", colspan);
-        // newCell.innerText = content;
-        // this may be unsafe, but innerText does not interpret &lt;br&gt;
-        newCell.innerHTML = content;
-      }
-      function spanCell_s2d1p3ofim6s5ft70e5a(i, j, rowspan, colspan) {
-        var table = document.getElementById("tinytable_s2d1p3ofim6s5ft70e5a");
-        const targetRow = table.rows[i];
-        const targetCell = targetRow.cells[j];
-        for (let r = 0; r &lt; rowspan; r++) {
-          // Only start deleting cells to the right for the first row (r == 0)
-          if (r === 0) {
-            // Delete cells to the right of the target cell in the first row
-            for (let c = colspan - 1; c &gt; 0; c--) {
-              if (table.rows[i + r].cells[j + c]) {
-                table.rows[i + r].deleteCell(j + c);
-              }
-            }
-          }
-          // For rows below the first, delete starting from the target column
-          if (r &gt; 0) {
-            for (let c = colspan - 1; c &gt;= 0; c--) {
-              if (table.rows[i + r] &amp;&amp; table.rows[i + r].cells[j]) {
-                table.rows[i + r].deleteCell(j);
-              }
-            }
-          }
-        }
-        // Set rowspan and colspan of the target cell
-        targetCell.rowSpan = rowspan;
-        targetCell.colSpan = colspan;
-      }
-      // tinytable span after
-      window.addEventListener('load', function () {
-          var cellsToStyle = [
-            // tinytable style arrays after
-          { positions: [ { i: 10, j: 1 }, { i: 10, j: 2 },  ], css_id: 'tinytable_css_6jdi8sm3sfkdd67i27pb',}, 
-          { positions: [ { i: 4, j: 2 }, { i: 4, j: 1 },  ], css_id: 'tinytable_css_ph8rxshpc196fiygmbdk',}, 
-          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 8, j: 1 }, { i: 5, j: 1 }, { i: 6, j: 1 }, { i: 3, j: 1 }, { i: 1, j: 2 }, { i: 9, j: 1 }, { i: 3, j: 2 }, { i: 7, j: 1 }, { i: 5, j: 2 }, { i: 2, j: 2 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 9, j: 2 }, { i: 6, j: 2 },  ], css_id: 'tinytable_css_hfuh61lnn5rfwnjfgvg3',}, 
-          { positions: [ { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_3em0svb0d890l6f8lqif',}, 
-          { positions: [ { i: 10, j: 0 },  ], css_id: 'tinytable_css_7yhi0rt3drqcgwadbaqc',}, 
-          { positions: [ { i: 4, j: 0 },  ], css_id: 'tinytable_css_0faao3e7tenr7o3gn8hk',}, 
-          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 8, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 9, j: 0 },  ], css_id: 'tinytable_css_7nrn1ycx15j8653rrw3o',}, 
-          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_vlslsjmvbyf1tr38pzww',}, 
-          ];
-
-          // Loop over the arrays to style the cells
-          cellsToStyle.forEach(function (group) {
-              group.positions.forEach(function (cell) {
-                  styleCell_s2d1p3ofim6s5ft70e5a(cell.i, cell.j, group.css_id);
-              });
-          });
-      });
-    &lt;/script&gt;
-
-    &lt;style&gt;
-      /* tinytable css entries after */
-      .table td.tinytable_css_6jdi8sm3sfkdd67i27pb, .table th.tinytable_css_6jdi8sm3sfkdd67i27pb { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_ph8rxshpc196fiygmbdk, .table th.tinytable_css_ph8rxshpc196fiygmbdk { text-align: center; border-bottom: solid black 0.05em; }
-      .table td.tinytable_css_hfuh61lnn5rfwnjfgvg3, .table th.tinytable_css_hfuh61lnn5rfwnjfgvg3 { text-align: center; }
-      .table td.tinytable_css_3em0svb0d890l6f8lqif, .table th.tinytable_css_3em0svb0d890l6f8lqif { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-      .table td.tinytable_css_7yhi0rt3drqcgwadbaqc, .table th.tinytable_css_7yhi0rt3drqcgwadbaqc { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
-      .table td.tinytable_css_0faao3e7tenr7o3gn8hk, .table th.tinytable_css_0faao3e7tenr7o3gn8hk { text-align: left; border-bottom: solid black 0.05em; }
-      .table td.tinytable_css_7nrn1ycx15j8653rrw3o, .table th.tinytable_css_7nrn1ycx15j8653rrw3o { text-align: left; }
-      .table td.tinytable_css_vlslsjmvbyf1tr38pzww, .table th.tinytable_css_vlslsjmvbyf1tr38pzww { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
-    &lt;/style&gt;
-    &lt;div class="container"&gt;
-      &lt;table class="table table-borderless" id="tinytable_s2d1p3ofim6s5ft70e5a" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing='true'&gt;
-        &lt;thead&gt;
-        
-              &lt;tr&gt;
-                &lt;th scope="col"&gt; &lt;/th&gt;
-                &lt;th scope="col"&gt;probit&lt;/th&gt;
-                &lt;th scope="col"&gt;logit&lt;/th&gt;
-              &lt;/tr&gt;
-        &lt;/thead&gt;
-        
-        &lt;tbody&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;(Intercept)&lt;/td&gt;
-                  &lt;td&gt;0.707&lt;/td&gt;
-                  &lt;td&gt;1.136&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;&lt;/td&gt;
-                  &lt;td&gt;(0.248)&lt;/td&gt;
-                  &lt;td&gt;(0.398)&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;age&lt;/td&gt;
-                  &lt;td&gt;-0.013&lt;/td&gt;
-                  &lt;td&gt;-0.020&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;&lt;/td&gt;
-                  &lt;td&gt;(0.006)&lt;/td&gt;
-                  &lt;td&gt;(0.009)&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;Num.Obs.&lt;/td&gt;
-                  &lt;td&gt;753&lt;/td&gt;
-                  &lt;td&gt;753&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;AIC&lt;/td&gt;
-                  &lt;td&gt;1028.9&lt;/td&gt;
-                  &lt;td&gt;1028.9&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;BIC&lt;/td&gt;
-                  &lt;td&gt;1038.1&lt;/td&gt;
-                  &lt;td&gt;1038.1&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;Log.Lik.&lt;/td&gt;
-                  &lt;td&gt;-512.442&lt;/td&gt;
-                  &lt;td&gt;-512.431&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;F&lt;/td&gt;
-                  &lt;td&gt;4.828&lt;/td&gt;
-                  &lt;td&gt;4.858&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                  &lt;td&gt;RMSE&lt;/td&gt;
-                  &lt;td&gt;0.49&lt;/td&gt;
-                  &lt;td&gt;0.49&lt;/td&gt;
-                &lt;/tr&gt;
-        &lt;/tbody&gt;
-      &lt;/table&gt;
-    &lt;/div&gt;
-&lt;!-- hack to avoid NA insertion in last line --&gt;
+```
+## 
+## +-------------+----------+----------+
+## |             | probit   | logit    |
+## +=============+==========+==========+
+## | (Intercept) | 0.707    | 1.136    |
+## +-------------+----------+----------+
+## |             | (0.248)  | (0.398)  |
+## +-------------+----------+----------+
+## | age         | -0.013   | -0.020   |
+## +-------------+----------+----------+
+## |             | (0.006)  | (0.009)  |
+## +-------------+----------+----------+
+## | Num.Obs.    | 753      | 753      |
+## +-------------+----------+----------+
+## | AIC         | 1028.9   | 1028.9   |
+## +-------------+----------+----------+
+## | BIC         | 1038.1   | 1038.1   |
+## +-------------+----------+----------+
+## | Log.Lik.    | -512.442 | -512.431 |
+## +-------------+----------+----------+
+## | F           | 4.828    | 4.858    |
+## +-------------+----------+----------+
+## | RMSE        | 0.49     | 0.49     |
+## +-------------+----------+----------+
 ```
 ]
 
@@ -635,9 +509,9 @@ glms$probitMean &lt;- mfx::probitmfx(formula = f,
                     data = mroz, atmean = TRUE)
 glms$probitAvg &lt;- mfx::probitmfx(formula = f, 
                     data = mroz, atmean = FALSE)
-glms$logitMean &lt;- mfx::logitmfx(formula = f, 
+glms$logitMean &lt;- mfx::logitmfx(formula = f,
                     data = mroz, atmean = TRUE)
-glms$logitAvg &lt;- mfx::logitmfx(formula = f, 
+glms$logitAvg &lt;- mfx::logitmfx(formula = f,
                     data = mroz, atmean = FALSE)
 ```
 

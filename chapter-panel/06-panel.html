@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Florian Oswald
 ]
 .date[
-### UniTo ESOMAS 2025-11-19
+### UniTo ESOMAS 2025-11-25
 ]
 
 ---
@@ -54,11 +54,9 @@ layout: true
 .pull-right[
 **Today**
 
-1. Talk about Mid-Term Exam! 😬
+1. Any questions about Exam? 😬
 
-2. Revisit the Ability Bias [in an App](https://floswald.shinyapps.io/ScPoMetrics-ability-bias/) 😎
-
-3. Introduce Panel Data
+2. Introduce Panel Data
 
 ]
 
@@ -151,8 +149,8 @@ Now, let's add a `time` index: `Year`.
 * This is sometimes called a *simultaneous equation model* situation: police response impacts crime, but crime impacts police response
 
 `\begin{align}
-police &amp;= \alpha_0 + \alpha_1 crime \\
-crime &amp;= \beta_0 + \beta_1 police
+\text{police} &amp;= \alpha_0 + \alpha_1 \text{crime} + u\\
+\text{crime} &amp;= \beta_0   + \beta_1  \text{police} + e
 \end{align}`
 
 
@@ -176,7 +174,7 @@ crime &amp;= \beta_0 + \beta_1 police
 
 * Let's look at the crime rate vs probability of arrest relationship
 
-* First for all of them together as a single cross section
+* First: for all of them together as a single cross section
 
 * Then taking advantage of the panel structure (i.e. each county over time).
 
@@ -202,10 +200,10 @@ css = crime4 %&gt;%
 ggplot(css,
        aes(x = prbarr, 
            y = crmrte)) + 
-  geom_point() + 
+  geom_point(size=3) + 
   geom_smooth(method="lm",
               se=FALSE) + 
-  theme_bw() +
+  mytheme +
   labs(x = 'Probability of Arrest', 
        y = 'Crime Rate')
 ```
@@ -272,7 +270,7 @@ coef(xsection)[2]  # gets slope coef
 
 ---
 
-# Crime in a DAG
+
 
 &lt;img src="06-panel_files/figure-html/cri-dag-1.svg" style="display: block; margin: auto;" /&gt;
 
@@ -371,8 +369,9 @@ background-size: 300px
 
 * And then a regression through those 4 points!
 
+---
 
---
+# Pooled OLS recovers *between* variation
 
 
 &lt;img src="06-panel_files/figure-html/unnamed-chunk-9-1.svg" style="display: block; margin: auto;" /&gt;
@@ -490,11 +489,11 @@ broom::tidy(mod$dummy)
 
 # Dummy Variable Regression
 
-.left-wide[
+.pull-left[
 &lt;img src="06-panel_files/figure-html/dummy-1.svg" style="display: block; margin: auto;" /&gt;
 ]
 
-.right-thin[
+.pull-right[
 * *Within* each county, now is a **negative** relationship!! 
 
 * Different intercepts (county 1 is be the reference group), 
@@ -636,12 +635,18 @@ We get this table:
 
 * How to interpret those negative slopes?
 
+.pull-left[
+
 * We look at a single unit `\(i\)` and ask: 
 
 &gt; if the arrest probability in `\(i\)` increases by 10 percentage points (i.e. from 0.2 to 0.3) from year `\(t\)` to `\(t+1\)`, we expect crimes per person to fall from 0.039 to 0.036, or by -7.69 percent (in the reference county number 1).
 
-&lt;img src="06-panel_files/figure-html/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+]
 
+.pull-right[
+
+&lt;img src="06-panel_files/figure-html/unnamed-chunk-15-1.svg" style="display: block; margin: auto;" /&gt;
+]
 
 ---
 
@@ -661,7 +666,7 @@ mod$FE = fixest::feols(crmrte ~ prbarr | county, cdata)
 
 * Notice the similar setup to the `estimatr::iv_robust` *two-part formula*. Here the fixed effects come after the `|`. 
 
-* Also, we can have *more than one fixed effect*! For a cool example with *three* fixed effects see the package [vignette](https://cran.r-project.org/web/packages/fixest/vignettes/fixest_walkthrough.html)
+* Also, we can have *more than one fixed effect*! For a cool example with *three* fixed effects see the package [vignette](https://cran.r-project.org/web/packages/fixest/vignettes/fixest_walkthrough.html).
 
 ---
 
@@ -681,7 +686,7 @@ mod$FE = fixest::feols(crmrte ~ prbarr | county, cdata)
 <tr>
 <td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">prbarr</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">0.065</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);">-0.028</span></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);"></span></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);">-0.028</span></td></tr>
 <tr>
-<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.016)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.014)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.005)</td></tr>
+<td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.016)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.014)</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">(0.014)</td></tr>
 <tr>
 <td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;">demeaned_prob</td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);"></span></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);">-0.028</span></td><td class="huxtable-cell" style="border-style: solid solid solid solid; border-width: 0pt 0pt 0pt 0pt;"><span style="color: rgb(255, 0, 0);"></span></td></tr>
 <tr>

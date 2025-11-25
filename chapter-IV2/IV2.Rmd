@@ -53,13 +53,12 @@ gom = "p.value.|se_type|statistic.end|statistic.overid|statistic.weakinst"
 
 .pull-left[
 
-## What Did we Do Last Week?
+## What Did we on IV already?
 
 * We learned about John Snow's grand experiment in London 1850.
 
 * We used his story to motivate the IV estimator.
 
-* You took a quiz about some IV aspects.
 
 ]
 
@@ -1195,3 +1194,7 @@ background-position: 9% 19%
 
 # END
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 75ca1667436763d29912d1ce97b52a9e12dbbb7d
