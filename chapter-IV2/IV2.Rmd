@@ -53,7 +53,7 @@ gom = "p.value.|se_type|statistic.end|statistic.overid|statistic.weakinst"
 
 .pull-left[
 
-## What Did we on IV already?
+## What Did we Do on IV already?
 
 * We learned about John Snow's grand experiment in London 1850.
 
@@ -1193,5 +1193,3 @@ background-size: 250px
 background-position: 9% 19%
 
 # END
-
-
