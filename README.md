@@ -39,7 +39,7 @@ SME: Scuola di Management e Economia, Corso Unione Sovietica 218 bis, Torino
 | Lecture 12: Instrumental Variables 1 | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-IV/IV.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-IV/IV.pdf)  | [HTML]() [.Rmd]() |
 | Lecture 12: Instrumental Variables 2 | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-IV2/IV2.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-IV2/IV2.pdf)  | [HTML]() [.Rmd]() |
 | Lecture 13: Panel Data | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-panel/06-panel.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-panel/panel.pdf)  | [HTML]() [.Rmd]() |
-| Lecture 14: Discrete Choice | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/discrete.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/discrete.pdf)  | [HTML]() [.Rmd]() |
+| Lecture 14: Discrete Choice | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/07-discrete.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/07-discrete.pdf)  | [HTML]() [.Rmd]() |
 | Lecture 15: Regression Discontinuity | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-RDD/RDD.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-RDD/RDD.pdf)  | [HTML]() [.Rmd]() |
 
 
