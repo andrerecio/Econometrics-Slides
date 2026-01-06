@@ -42,7 +42,11 @@ SME: Scuola di Management e Economia, Corso Unione Sovietica 218 bis, Torino
 | Lecture 14: Discrete Choice | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/07-probit.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-discrete/07-probit.pdf)  | [HTML]() [.Rmd]() |
 | Lecture 15: Regression Discontinuity | [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter-RDD/RDD.html) | [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter-RDD/RDD.pdf)  | [HTML]() [.Rmd]() |
 
+## Sample of Exam Solutions
 
+you can see a subset of exam solutions [here](https://raw.githack.com/floswald/Econometrics-Slides/master/solutions-2025.html). Notice that questions 7 and 8 have been removed from the exam, hence, will no longer appear on any future exams.
+
+## Reading List
 
 The suggested reading list can be found [here](https://github.com/floswald/Econometrics-Slides/blob/master/syllabus.md).
 
