@@ -59,6 +59,14 @@ Bootstrapping: More details about bootstrapping. [HTML](https://raw.githack.com/
 Differences-in-differences:
 [HTML](https://raw.githack.com/floswald/Econometrics-Slides/master/chapter_did/chapter_did.html) [PDF](https://rawcdn.githack.com/floswald/Econometrics-Slides/master/chapter_did/chapter_did.pdf)
 
+## Thesis
+
+If you want to write your thesis with me, then you need to follow those rules:
+
+1. you come up with the topic
+2. Your topic has to make use of at least one of the methods we touched upon in this course. It has to involve *data* either as real observational data or created in a simulation experiment.
+3. You produce your thesis with [Rmarkdown](https://rmarkdown.rstudio.com/docs/index.html), embedding code, text and output in a single document.
+
 ## Legal
 
 You can copy and adapt this material for your purposes, as long as you give appropriate credit and share the work yourself  under same terms. Of course you can use the slides to teach in your classrooms. *Appropriate Credit* means that somewhere in your slides there is link back to this repo, indicating that this is what you are building upon. Click on the icon for details.
